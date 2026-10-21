@@ -22,7 +22,10 @@
 }
 * { box-sizing: border-box; }
 html { scroll-padding-top: 96px; -webkit-text-size-adjust: 100%; }
-html, body { margin: 0; overflow-x: hidden; }
+html, body { margin: 0; }
+/* clip statt hidden: verhindert seitliches Scrollen, ohne position: sticky kaputtzumachen */
+body { overflow-x: hidden; overflow-x: clip; }
+button, a, input, label, summary { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 body {
   min-height: 100vh;
   font-family: var(--sans);

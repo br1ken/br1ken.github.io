@@ -81,7 +81,10 @@ Falls du stattdessen ein Repo mit anderem Namen nimmst (Adresse `…github.io/re
 ## Das Klanglabor
 
 - Bis zu zwölf Bausteine, davon bis zu vier Oszillatoren. Oszillator (Sinus, Dreieck, Sägezahn, Rechteck), Widerstand, Kondensator, Spule, Tremolo, Ausgang.
-- **Verbinden:** vom OUT-Punkt eines Bausteins ein Kabel auf einen anderen Baustein ziehen. Alternativ OUT antippen und dann den Ziel-Baustein antippen. Das geht auch rückwärts: von IN ziehen.
+- **Zwei Ansichten**, umschaltbar über „Einfach“ / „Frei patchen“. Die Wahl wird im Browser gemerkt.
+  - **Einfach** (Standard auf Handy und Tablet): Der Signalweg als senkrechte Kette mit großen Karten und großen Reglern. Mit **÷2 / ×2** verdoppelst oder halbierst du einen Wert und bekommst sofort erklärt, was das bewirkt. „+ Baustein einfügen“ zwischen den Karten, „+ Weiterer Ton“ für Akkorde und Schwebungen. Die Play-Leiste mit Mini-Oszilloskop bleibt beim Scrollen oben.
+  - **Frei patchen** (Standard am Computer): das Pult mit frei verschiebbaren Bausteinen und Kabeln. Ein dort verzweigter Patch lässt sich in der einfachen Ansicht per Knopf wieder als Kette ordnen.
+- **Verbinden (freies Pult):** vom OUT-Punkt eines Bausteins ein Kabel auf einen anderen Baustein ziehen. Alternativ OUT antippen und dann den Ziel-Baustein antippen. Das geht auch rückwärts: von IN ziehen.
 - **Trennen:** das × in der Mitte eines Kabels.
 - **↶ Zurück / ↷ Vor** (auch ⌘Z / ⇧⌘Z), **Aufräumen** ordnet nach Signalfluss, **Teilen** erzeugt einen Link mit genau diesem Patch.
 - **Zoom** unten rechts, „Alles zeigen“ passt den Patch ein. Auf dem Handy startet das Labor automatisch eingepasst.

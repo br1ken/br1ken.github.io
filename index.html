@@ -43,17 +43,20 @@
 <section class="section playground" id="labor" aria-labelledby="play-title">
   <span id="playground"></span>
   <div class="section-heading"><div><span class="eyebrow">001 / Interaktives Klanglabor</span><h2 id="play-title">Kleine Teile.<br>Große Ideen.</h2></div><span class="lab-stamp">SOUND<br>COMPUTER<br>01—BASIC</span></div>
-  <p class="intro">Greifen. Verbinden. Hören. Drück auf ▶, zieh an den Reglern und steck Kabel um. Nebenbei erfährst du, was in Widerständen, Kondensatoren und Spulen steckt. Kaputt machen kannst du nichts — ↶ macht alles rückgängig.</p>
+  <p class="intro">Drück auf ▶, zieh an den Reglern, füg Bausteine ein. Nebenbei erfährst du, was in Widerständen, Kondensatoren und Spulen steckt. „Einfach“ zeigt den Signalweg als Liste, „Frei patchen“ als Pult mit Kabeln. Kaputt machen kannst du nichts — ↶ macht alles rückgängig.</p>
 
-  <div class="sound-computer" id="lab">
+  <div class="sound-computer" id="lab" data-view="frei">
     <div class="computer-bar">
       <span class="computer-name"><span class="live-dot" aria-hidden="true"></span>osci//lab <small>— patch desk</small></span>
+      <canvas class="scope-mini" id="scope-mini" aria-hidden="true"></canvas>
       <div class="transport">
         <label class="master-label" for="master">Pegel <input id="master" type="range" min="0" max="25" value="10" aria-label="Ausgangspegel"></label>
         <button class="button primary" id="audio-toggle" type="button" aria-pressed="false">▶ Ton starten</button>
       </div>
+      <p class="lab-hint" id="lab-hint" aria-hidden="true"></p>
     </div>
     <div class="toolbar">
+      <div class="view-switch" role="group" aria-label="Ansicht"><button type="button" data-view-switch="kette" aria-pressed="false">Einfach</button><button type="button" data-view-switch="frei" aria-pressed="true">Frei patchen</button></div>
       <div class="palette" aria-label="Bausteine hinzufügen">
         <span class="palette-label">+ Baustein</span>
         <button type="button" data-add="osc"><b>∿</b> Oszillator</button>
@@ -69,6 +72,7 @@
         <button type="button" id="share" title="Link zu diesem Patch teilen">↗ <span>Teilen</span></button>
       </div>
     </div>
+    <div class="chain" id="chain" aria-label="Signalkette"></div>
     <div class="desk-layout">
       <div class="patch-area">
         <div class="desk-instructions"><span><b>01</b> ▶ Ton starten</span><span><b>02</b> Regler ziehen</span><span><b>03</b> Kabel von OUT ● auf einen Baustein ziehen</span><span><b>04</b> × auf dem Kabel trennt</span></div>

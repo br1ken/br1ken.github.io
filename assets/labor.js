@@ -127,7 +127,14 @@ const board = $('patch-board'), nodesEl = $('nodes'), wires = $('wires'), handle
 const getNode = id => state.nodes.find(n => n.id === id);
 const nodeName = n => `${DEFINITIONS[n.type].title} ${n.id.slice(1)}`;
 function save() { try { localStorage.setItem(STORAGE, JSON.stringify(state)); } catch { /* Speicher kann deaktiviert sein; das Labor funktioniert trotzdem. */ } }
-function message(text) { $('patch-message').textContent = text; }
+let hintTimer = 0;
+function message(text) {
+  $('patch-message').textContent = text;
+  /* Auf dem Handy zusätzlich kurz in der mitlaufenden Play-Leiste zeigen, wo man gerade hinschaut. */
+  const hint = $('lab-hint');
+  hint.textContent = text; hint.classList.add('show');
+  clearTimeout(hintTimer); hintTimer = setTimeout(() => hint.classList.remove('show'), 4200);
+}
 
 /* ---------- Rückgängig / Wiederholen ---------- */
 const history = {past: [], future: []};
@@ -223,7 +230,7 @@ function selectNode(id) {
   nodesEl.querySelectorAll('.node').forEach(el => el.classList.toggle('selected', el.dataset.id === id));
   renderInspector(); drawWires(); save();
 }
-function render() { renderNodes(); renderInspector(); save(); }
+function render() { renderNodes(); renderInspector(); renderChain(); save(); }
 
 /* Kabel-Geometrie direkt aus den Node-Positionen: OUT sitzt auf der rechten Kante, IN auf der linken,
    der Punkt 6 px unter der halben Höhe (darüber steht die Beschriftung, siehe .port in labor.css). */
@@ -433,8 +440,7 @@ $('inspector').addEventListener('click', event => {
 });
 
 /* Aufräumen: Spalten nach Signalfluss (Quelle links, Ausgang rechts). */
-function tidy() {
-  remember();
+function flowDepths() {
   const depth = new Map();
   const visit = (id, seen = new Set()) => {
     if (depth.has(id)) return depth.get(id);
@@ -445,6 +451,10 @@ function tidy() {
     depth.set(id, d); return d;
   };
   state.nodes.forEach(n => visit(n.id));
+  return depth;
+}
+function layoutByFlow() {
+  const depth = flowDepths();
   const out = getOut(), maxDepth = Math.max(0, ...state.nodes.filter(n => n !== out).map(n => depth.get(n.id)));
   depth.set(out.id, Math.max(depth.get(out.id), maxDepth + (state.nodes.some(n => n !== out && depth.get(n.id) === maxDepth) ? 1 : 0)));
   const columns = new Map();
@@ -457,10 +467,15 @@ function tidy() {
       n.y = Math.round(list.length === 1 ? 140 : 20 + i * step);
     });
   }
+}
+function tidy() {
+  remember();
+  layoutByFlow();
   render(); fitView(); message('Aufgeräumt: Quellen links, Ausgang rechts. ↶ stellt die alte Anordnung wieder her.');
 }
 
 /* ---------- Werte ändern ---------- */
+let playHintShown = false;
 function updateParam(node, key, value, source) {
   rememberGesture(`${node.id}-${key}`);
   node.p[key] = value;
@@ -473,7 +488,9 @@ function updateParam(node, key, value, source) {
   const summary = nodesEl.querySelector(`[data-summary="${node.id}"]`), result = nodesEl.querySelector(`[data-result="${node.id}"]`);
   if (summary) summary.textContent = d.detail(node.p);
   if (result) result.textContent = nodeResult(node);
+  document.querySelectorAll(`[data-chain-result="${node.id}"]`).forEach(el => { el.textContent = chainResult(node); });
   if (node.id === state.selected && $('model-result')) $('model-result').textContent = d.result(node.p);
+  if (!audio && !playHintShown) { playHintShown = true; message('Tipp: Drück oben auf ▶ Ton starten — dann hörst du jede Änderung sofort.'); }
   document.querySelectorAll(`[data-exact="${node.id}"][data-key="${key}"]`).forEach(input => { if (input !== source) input.value = value; });
   if (node.type === 'out') $('master').value = value;
   save(); liveUpdate(node, key) || scheduleAudio();
@@ -482,9 +499,10 @@ function setWave(node, wave) {
   if (!node || !Object.hasOwn(waveNames, wave) || node.p.wave === wave) return;
   remember();
   node.p.wave = wave;
-  nodesEl.querySelectorAll(`[data-quick-wave="${node.id}"]`).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.waveValue === wave)));
+  document.querySelectorAll(`[data-quick-wave="${node.id}"]`).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.waveValue === wave)));
   const select = document.querySelector(`[data-wave="${node.id}"]`); if (select) select.value = wave;
-  nodesEl.querySelector(`[data-summary="${node.id}"]`).textContent = DEFINITIONS.osc.detail(node.p);
+  const summary = nodesEl.querySelector(`[data-summary="${node.id}"]`);
+  if (summary) summary.textContent = DEFINITIONS.osc.detail(node.p);
   save(); liveUpdate(node, 'wave') || scheduleAudio();
   message(`${nodeName(node)}: ${waveNames[wave]}.${wave === 'sine' ? ' Ein Sinus hat keine Obertöne — Filter wirken hier kaum hörbar.' : ''}`);
 }
@@ -604,15 +622,23 @@ document.addEventListener('keydown', event => {
   else if (mod && event.key.toLowerCase() === 'y') { event.preventDefault(); redo(); }
   else if ((event.key === 'Delete' || event.key === 'Backspace') && event.target.closest('.node')) { event.preventDefault(); removeNode(event.target.closest('.node').dataset.id); }
 });
-$('load-preset').addEventListener('click', () => {
+const PRESETS = [
+  {id: 'rc', label: 'Weicher · RC'},
+  {id: 'rl', label: 'Spule · RL'},
+  {id: 'pulse', label: 'Pulsieren'},
+  {id: 'beat', label: 'Schwebung'}
+];
+function loadPreset(kind) {
   remember();
-  state = starter($('preset').value); pending = null; render(); fitView(); scheduleAudio(true);
+  state = starter(kind); pending = null; pickerAt = null; render(); if (view === 'frei') fitView(); scheduleAudio(true);
+  $('preset').value = kind;
   message(`Starter-Patch geladen. Alle Kabel stecken schon.${audio ? '' : ' Drück ▶ und verändere einen Wert.'}`);
-});
+}
+$('load-preset').addEventListener('click', () => loadPreset($('preset').value));
 
 /* ---------- Klang: gerichteter, azyklischer Graph aus gepufferten Audio-Modulen ---------- */
 let audio = null, starting = false, audioGeneration = 0, rebuildTimer = 0, scopeFrame = 0;
-const scope = $('scope'), pen = scope.getContext('2d'), reducedMotion = matchMedia('(prefers-reduced-motion:reduce)');
+const scopes = [$('scope'), $('scope-mini')].map(canvas => ({canvas, pen: canvas.getContext('2d')})), reducedMotion = matchMedia('(prefers-reduced-motion:reduce)');
 function audibleSources() {
   const out = getOut(), visited = new Set();
   function visit(id) { if (visited.has(id)) return; visited.add(id); state.edges.filter(e => e.to === id).forEach(e => visit(e.from)); }
@@ -735,24 +761,29 @@ function stopAudio(text = 'Ton ist aus.') {
 }
 $('audio-toggle').addEventListener('click', () => audio ? stopAudio() : startAudio());
 
-/* Oszilloskop mit Trigger auf steigende Nulldurchgänge, damit das Bild stillsteht. */
+/* Oszilloskop mit Trigger auf steigende Nulldurchgänge, damit das Bild stillsteht.
+   Zeichnet ins große Oszilloskop unten und ins kleine in der Play-Leiste (nur sichtbare Flächen). */
 function drawScope() {
-  if (!pen) return;
-  const ratio = Math.min(devicePixelRatio || 1, 2), w = scope.clientWidth, h = scope.clientHeight;
-  if (!w || !h) return;
-  if (scope.width !== Math.round(w * ratio) || scope.height !== Math.round(h * ratio)) { scope.width = Math.round(w * ratio); scope.height = Math.round(h * ratio); }
-  pen.setTransform(ratio, 0, 0, ratio, 0, 0); pen.clearRect(0, 0, w, h); pen.lineWidth = 1; pen.strokeStyle = '#dadad1'; pen.beginPath();
-  for (let x = 0; x < w; x += 25) { pen.moveTo(x, 0); pen.lineTo(x, h); }
-  pen.moveTo(0, h / 2); pen.lineTo(w, h / 2); pen.stroke();
-  pen.strokeStyle = '#22221e'; pen.lineWidth = 1.6; pen.beginPath();
+  let s = null, start = 0;
   if (audio) {
-    const s = audio.samples, span = s.length / 2;
+    s = audio.samples;
     audio.analyser.getByteTimeDomainData(s);
-    let start = 0;
-    for (let i = 1; i < span; i++) if (s[i - 1] < 128 && s[i] >= 128) { start = i; break; }
-    for (let i = 0; i < span; i++) { const x = i / (span - 1) * w, y = h / 2 - (s[start + i] - 128) / 128 * h * .45; if (i) pen.lineTo(x, y); else pen.moveTo(x, y); }
-  } else { pen.moveTo(0, h / 2); pen.lineTo(w, h / 2); }
-  pen.stroke();
+    for (let i = 1; i < s.length / 2; i++) if (s[i - 1] < 128 && s[i] >= 128) { start = i; break; }
+  }
+  for (const {canvas, pen} of scopes) {
+    const ratio = Math.min(devicePixelRatio || 1, 2), w = canvas.clientWidth, h = canvas.clientHeight;
+    if (!pen || !w || !h) continue;
+    if (canvas.width !== Math.round(w * ratio) || canvas.height !== Math.round(h * ratio)) { canvas.width = Math.round(w * ratio); canvas.height = Math.round(h * ratio); }
+    pen.setTransform(ratio, 0, 0, ratio, 0, 0); pen.clearRect(0, 0, w, h); pen.lineWidth = 1; pen.strokeStyle = '#dadad1'; pen.beginPath();
+    for (let x = 0; x < w; x += 25) { pen.moveTo(x, 0); pen.lineTo(x, h); }
+    pen.moveTo(0, h / 2); pen.lineTo(w, h / 2); pen.stroke();
+    pen.strokeStyle = '#22221e'; pen.lineWidth = 1.6; pen.beginPath();
+    if (s) {
+      const span = s.length / 2;
+      for (let i = 0; i < span; i++) { const x = i / (span - 1) * w, y = h / 2 - (s[start + i] - 128) / 128 * h * .45; if (i) pen.lineTo(x, y); else pen.moveTo(x, y); }
+    } else { pen.moveTo(0, h / 2); pen.lineTo(w, h / 2); }
+    pen.stroke();
+  }
 }
 function drawScopeLoop() { drawScope(); if (audio && !reducedMotion.matches) scopeFrame = requestAnimationFrame(drawScopeLoop); }
 reducedMotion.addEventListener('change', () => { cancelAnimationFrame(scopeFrame); drawScopeLoop(); });
@@ -797,9 +828,175 @@ $('lesson').addEventListener('click', event => {
   }
 });
 
+/* ---------- Einfache Ansicht: die Signalkette ----------
+   Für Handy und Einsteiger: Quellen oben, Bausteine darunter, Ausgang unten — das Signal fließt von oben nach unten.
+   Intern bleibt es derselbe Patch (Bausteine + Kabel); die Kette baut die Kabel nur automatisch. */
+const VIEW_KEY = 'osci-log-ansicht';
+let view = (() => {
+  try { const v = localStorage.getItem(VIEW_KEY); if (v === 'kette' || v === 'frei') return v; } catch { /* ohne Speicher */ }
+  return matchMedia('(max-width: 760px), (pointer: coarse)').matches ? 'kette' : 'frei';
+})();
+let pickerAt = null; // an welcher Stelle der Baustein-Auswahl gerade offen ist
+const EFFECT_TYPES = ['resistor', 'capacitor', 'inductor', 'tremolo'];
+const STEP_HINTS = {
+  'osc.frequency': ['Halbe Frequenz: eine Oktave tiefer.', 'Doppelte Frequenz: eine Oktave höher.'],
+  'capacitor.c': ['Halbes C → doppelte Grenzfrequenz: heller.', 'Doppeltes C → halbe Grenzfrequenz: dumpfer.'],
+  'capacitor.r': ['Halbes R → doppelte Grenzfrequenz: heller.', 'Doppeltes R → halbe Grenzfrequenz: dumpfer.'],
+  'inductor.l': ['Halbes L → doppelte Grenzfrequenz: heller.', 'Doppeltes L → halbe Grenzfrequenz: dumpfer.'],
+  'inductor.r': ['Halbes R → halbe Grenzfrequenz (beim RL-Glied!): dumpfer.', 'Doppeltes R → doppelte Grenzfrequenz (beim RL-Glied!): heller.'],
+  'resistor.r': ['Kleineres R → mehr Spannung an der Last: lauter.', 'Größeres R → weniger Spannung an der Last: leiser.'],
+  'tremolo.rate': ['Halbes Tempo: langsameres Pulsieren.', 'Doppeltes Tempo: schnelleres Pulsieren.']
+};
+const NOTE_NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'H'];
+function noteName(f) {
+  const midi = Math.round(12 * Math.log2(f / 440) + 69);
+  return `${NOTE_NAMES[(midi % 12 + 12) % 12]}${Math.floor(midi / 12) - 1}`;
+}
+function chainResult(n) {
+  if (n.type === 'osc') return `${number(n.p.frequency)} Hz ≈ Ton ${noteName(n.p.frequency)} · eine Schwingung dauert ${number(1000 / n.p.frequency)} ms`;
+  if (n.type === 'out') return audibleSources().length ? 'Hier kommt dein Signal an.' : 'Noch still — es fehlt eine Klangquelle.';
+  return DEFINITIONS[n.type].result(n.p);
+}
+function chainEdges(sources, effects, out) {
+  const first = effects[0] || out, edges = sources.map(src => ({from: src.id, to: first.id}));
+  effects.forEach((n, i) => edges.push({from: n.id, to: (effects[i + 1] || out).id}));
+  return edges;
+}
+/* Ist der Patch eine einfache Kette? Dann lässt er sich als Liste zeigen. */
+function chainModel() {
+  const out = getOut(), sources = state.nodes.filter(n => n.type === 'osc'), effects = [];
+  for (let cur = out; ;) {
+    const ins = state.edges.filter(e => e.to === cur.id).map(e => getNode(e.from)).filter(n => n.type !== 'osc');
+    if (ins.length !== 1 || effects.includes(ins[0])) break;
+    effects.unshift(ins[0]); cur = ins[0];
+  }
+  const expected = chainEdges(sources, effects, out);
+  const same = expected.length === state.edges.length && expected.every(c => state.edges.some(e => e.from === c.from && e.to === c.to));
+  return {sources, effects, out, ok: same && effects.length === state.nodes.length - sources.length - 1};
+}
+function applyChain(sources, effects) {
+  state.edges = chainEdges(sources, effects, getOut());
+  layoutByFlow(); // damit das freie Pult danach ordentlich aussieht
+}
+function chainInsert(index, type) {
+  if (state.nodes.length >= 12) { message('Zwölf Bausteine reichen fürs kleine Labor. Entferne erst einen.'); return; }
+  const m = chainModel();
+  remember();
+  const n = makeNode(type, 20, 20);
+  state.nodes.push(n); m.effects.splice(index, 0, n);
+  applyChain(m.sources, m.effects);
+  state.selected = n.id; pickerAt = null; render(); scheduleAudio(true);
+  message(`${DEFINITIONS[type].title} eingesetzt. ${DEFINITIONS[type].nudge}`);
+  requestAnimationFrame(() => document.querySelector(`[data-chain-id="${n.id}"]`)?.scrollIntoView({block: 'center', behavior: reducedMotion.matches ? 'instant' : 'smooth'}));
+}
+function chainAddSource() {
+  const m = chainModel();
+  if (m.sources.length >= 4) { message('Bis zu vier Töne können zusammen spielen.'); return; }
+  remember();
+  const n = makeNode('osc', 20, 20);
+  const base = m.sources[0]?.p.frequency || 220;
+  n.p.frequency = Number((m.sources.length ? base * [1.5, 1.25, 2][m.sources.length - 1] : 220).toPrecision(4)); // Quinte, Terz, Oktave
+  n.p.wave = 'sine';
+  state.nodes.push(n); m.sources.push(n);
+  applyChain(m.sources, m.effects);
+  state.selected = n.id; render(); scheduleAudio(true);
+  message(m.sources.length > 1 ? 'Zweiter Ton dazu — beide werden gemischt. Stell die Frequenzen fast gleich ein, dann hörst du eine Schwebung.' : 'Klangquelle hinzugefügt.');
+}
+function chainRemove(id) {
+  const n = getNode(id); if (!n || n.type === 'out') return;
+  const m = chainModel();
+  remember();
+  state.nodes = state.nodes.filter(x => x.id !== id);
+  applyChain(m.sources.filter(x => x.id !== id), m.effects.filter(x => x.id !== id));
+  state.selected = getOut().id; render(); scheduleAudio(true);
+  message(`${DEFINITIONS[n.type].title} entfernt. ↶ holt ihn zurück.`);
+}
+function chainLinearize() {
+  remember();
+  const depth = flowDepths();
+  const effects = state.nodes.filter(n => n.type !== 'osc' && n.type !== 'out').sort((a, b) => depth.get(a.id) - depth.get(b.id) || a.x - b.x);
+  applyChain(state.nodes.filter(n => n.type === 'osc'), effects);
+  render(); scheduleAudio(true);
+  message('Als Kette geordnet. ↶ stellt die alten Verbindungen wieder her.');
+}
+function stepParam(node, key, dir) {
+  const spec = DEFINITIONS[node.type].params[key];
+  const v = node.p[key];
+  const next = clamp(Number((spec.log ? v * 2 ** dir : v + dir * (spec.max - spec.min) / 10).toPrecision(4)), spec.min, spec.max);
+  if (next === v) { message(`${spec.label} ist schon am ${dir > 0 ? 'Maximum' : 'Minimum'} (${number(v)} ${spec.unit}).`); return; }
+  updateParam(node, key, next, null);
+  const hint = STEP_HINTS[`${node.type}.${key}`];
+  if (hint) message(hint[dir > 0 ? 1 : 0]);
+}
+function bigControl(n, key) {
+  const spec = DEFINITIONS[n.type].params[key], id = `big-${n.id}-${key}`;
+  const less = spec.log ? '÷2' : '−', more = spec.log ? '×2' : '+';
+  return `<div class="big-control"><label class="big-label" for="${id}"><span>${spec.label}</span><output data-read="${n.id}-${key}">${number(n.p[key])} ${spec.unit}</output></label><div class="big-row"><button type="button" class="big-step" data-step="${n.id}" data-key="${key}" data-dir="-1" aria-label="${spec.label} ${spec.log ? 'halbieren' : 'verringern'}">${less}</button><input id="${id}" type="range" min="0" max="100" step="0.1" value="${sliderPosition(n.p[key], spec)}" data-node="${n.id}" data-param="${key}" aria-valuetext="${number(n.p[key])} ${spec.unit}"><button type="button" class="big-step" data-step="${n.id}" data-key="${key}" data-dir="1" aria-label="${spec.label} ${spec.log ? 'verdoppeln' : 'erhöhen'}">${more}</button></div></div>`;
+}
+function chainCard(n) {
+  const d = DEFINITIONS[n.type];
+  const waves = n.type === 'osc' ? `<div class="big-waves" role="group" aria-label="Wellenform">${Object.entries(waveNames).map(([v, t]) => `<button type="button" data-quick-wave="${n.id}" data-wave-value="${v}" aria-pressed="${n.p.wave === v}"><b>${waveIcons[v]}</b>${t}</button>`).join('')}</div>` : '';
+  const remove = n.type !== 'out' ? `<button type="button" class="chain-remove" data-chain-remove="${n.id}" aria-label="${nodeName(n)} entfernen">×</button>` : '';
+  return `<article class="chain-card chain-${n.type}" data-chain-id="${n.id}"><header class="chain-head"><span class="chain-sym" aria-hidden="true">${d.symbol}</span><div class="chain-title"><h3>${d.title}</h3><span>${d.kind}</span></div>${remove}</header><p class="chain-result" data-chain-result="${n.id}">${chainResult(n)}</p>${waves}${Object.keys(d.params).map(k => bigControl(n, k)).join('')}<details class="chain-info"><summary>Was passiert hier?</summary><p>${d.text}</p><div class="formula">${d.formula}</div><p><strong>Probier:</strong> ${d.nudge}</p></details></article>`;
+}
+function chainLink(index) {
+  const open = pickerAt === index;
+  const options = EFFECT_TYPES.map(t => `<button type="button" data-insert-type="${t}" data-insert-at="${index}"><b>${DEFINITIONS[t].symbol}</b>${DEFINITIONS[t].title}<small>${DEFINITIONS[t].kind}</small></button>`).join('');
+  return `<div class="chain-link${open ? ' open' : ''}"><button type="button" class="chain-add" data-picker="${index}" aria-expanded="${open}">${open ? '× Abbrechen' : '+ Baustein einfügen'}</button>${open ? `<div class="chain-picker">${options}</div>` : ''}</div>`;
+}
+function renderChain() {
+  const el = $('chain');
+  if (view !== 'kette') return;
+  const m = chainModel();
+  const presets = `<div class="chain-presets" aria-label="Starter-Patches"><span class="eyebrow">Starter</span>${PRESETS.map(p => `<button type="button" class="tag" data-preset="${p.id}">${p.label}</button>`).join('')}</div>`;
+  if (!m.ok) {
+    el.innerHTML = `${presets}<div class="chain-warn"><b>Dieser Patch hat Abzweigungen.</b><p>Er wurde im freien Pult gebaut und lässt sich nicht als einfache Kette zeigen.</p><div><button type="button" class="button small" id="chain-linearize">Als Kette ordnen</button><button type="button" class="button small" data-view-switch="frei">Im freien Pult öffnen</button></div></div>`;
+    return;
+  }
+  let html = `${presets}<p class="chain-intro">Das Signal fließt von oben nach unten. Zieh an den Reglern oder tippe <b>÷2</b> / <b>×2</b>.</p>`;
+  html += `<section class="chain-sources${m.sources.length > 1 ? ' multi' : ''}" aria-label="Klangquellen">${m.sources.length > 1 ? '<span class="eyebrow chain-group-label">Klangquellen · werden gemischt</span>' : ''}${m.sources.map(chainCard).join('')}${m.sources.length < 4 ? `<button type="button" class="chain-ghost" id="chain-add-source">${m.sources.length ? '+ Weiterer Ton' : '+ Klangquelle hinzufügen'}</button>` : ''}</section>`;
+  html += chainLink(0);
+  m.effects.forEach((n, i) => { html += chainCard(n) + chainLink(i + 1); });
+  html += chainCard(m.out);
+  el.innerHTML = html;
+}
+function setView(next, persist = true) {
+  view = next;
+  if (persist) { try { localStorage.setItem(VIEW_KEY, view); } catch { /* egal */ } }
+  document.querySelector('.sound-computer').dataset.view = view;
+  document.querySelectorAll('[data-view-switch]').forEach(b => { if (b.closest('.view-switch')) b.setAttribute('aria-pressed', String(b.dataset.viewSwitch === view)); });
+  pending = null; pickerAt = null;
+  if (view === 'kette') renderChain();
+  else { renderNodes(); fitView(); }
+}
+$('lab').addEventListener('click', event => {
+  const t = event.target;
+  const sw = t.closest('[data-view-switch]');
+  if (sw) { setView(sw.dataset.viewSwitch); if (sw.dataset.viewSwitch === 'frei' && !sw.closest('.view-switch')) message('Freies Pult: Zieh Kabel von OUT ● auf einen Baustein.'); return; }
+  const chain = t.closest('#chain');
+  if (!chain) return;
+  const preset = t.closest('[data-preset]');
+  if (preset) { loadPreset(preset.dataset.preset); return; }
+  const wave = t.closest('[data-quick-wave]');
+  if (wave) { setWave(getNode(wave.dataset.quickWave), wave.dataset.waveValue); return; }
+  const step = t.closest('[data-step]');
+  if (step) { stepParam(getNode(step.dataset.step), step.dataset.key, Number(step.dataset.dir)); return; }
+  const remove = t.closest('[data-chain-remove]');
+  if (remove) { chainRemove(remove.dataset.chainRemove); return; }
+  const type = t.closest('[data-insert-type]');
+  if (type) { chainInsert(Number(type.dataset.insertAt), type.dataset.insertType); return; }
+  const picker = t.closest('[data-picker]');
+  if (picker) { const i = Number(picker.dataset.picker); pickerAt = pickerAt === i ? null : i; renderChain(); return; }
+  if (t.closest('#chain-add-source')) { chainAddSource(); return; }
+  if (t.closest('#chain-linearize')) { chainLinearize(); return; }
+  const card = t.closest('[data-chain-id]');
+  if (card && state.selected !== card.dataset.chainId) { state.selected = card.dataset.chainId; renderInspector(); save(); }
+});
+
 /* ---------- Start ---------- */
+setView(view, false);
 render(); renderLesson(); updateHistoryButtons();
-if (scrollArea.clientWidth < 760) fitView(); else setZoom(1, {x: 0, y: 0});
+if (view === 'frei') { if (scrollArea.clientWidth < 760) fitView(); else setZoom(1, {x: 0, y: 0}); }
 drawScope();
 if (shared) {
   if (saved) history.past.push(JSON.stringify(saved));
