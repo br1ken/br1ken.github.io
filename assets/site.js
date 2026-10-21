@@ -138,7 +138,7 @@ const OSCI = (() => {
   }
   function projektKarte(p) {
     const href = !p.link ? '' : /^https?:/.test(p.link) ? p.link : url(p.link);
-    const repo = p.repo ? `<a class="text-link" href="${escape(p.repo)}" rel="noopener">Quellcode ↗</a>` : '';
+    const repo = p.repo ? `<a class="text-link" href="${escape(p.repo)}" rel="noopener">Quellcode ↗︎</a>` : '';
     return `<article class="card"><div class="card-cover">${p.bild ? `<img src="${url(escape(p.bild))}" alt="" loading="lazy">` : cover(p.titel, p.welle)}</div><div class="card-body"><div class="card-kicker"><span>${escape(p.status || 'Projekt')}</span><span>${p.datum ? date(p.datum) : ''}</span></div><h3>${href ? `<a class="card-link" href="${escape(href)}">${escape(p.titel)}</a>` : escape(p.titel)}</h3><p>${escape(p.text || '')}</p>${p.tags?.length ? `<div class="tags">${p.tags.map(t => `<span class="tag">${escape(t)}</span>`).join('')}</div>` : ''}${repo ? `<div class="card-actions">${repo}</div>` : ''}</div></article>`;
   }
 

@@ -25,7 +25,7 @@ const OSCIMarkdown = (() => {
     s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, label, href) => {
       const url = safeUrl(href.replace(/&amp;/g, '&'));
       const external = /^https?:/.test(url);
-      return hold(`<a href="${esc(url)}"${external ? ' target="_blank" rel="noopener noreferrer"' : ''}>`) + label + hold(external ? ' ↗</a>' : '</a>');
+      return hold(`<a href="${esc(url)}"${external ? ' target="_blank" rel="noopener noreferrer"' : ''}>`) + label + hold(external ? ' ↗︎</a>' : '</a>');
     });
     s = s.replace(/\*\*([^*]+?)\*\*/g, '<strong>$1</strong>')
       .replace(/(^|[^\w*])\*([^*\s][^*]*?)\*(?!\w)/g, '$1<em>$2</em>')

@@ -55,6 +55,16 @@ Mit `entwurf: ja` im Kopf bleibt eine Notiz aus allen Listen raus. Über ihren L
 
 Projekte können auch nur auf etwas anderes verlinken (z. B. ein anderes GitHub-Repo): `link: 'https://…'`.
 
+## Wenn Design oder Code geändert wurde
+
+Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer, z. B. `assets/labor.css?v=2`. Nach Änderungen in `assets/` diese Zahl in allen HTML-Dateien um eins erhöhen. Das geht im Projektordner mit einem Befehl (Beispiel: von 2 auf 3):
+
+```bash
+grep -rl '?v=2"' --include='*.html' . | xargs sed -i '' 's/?v=2"/?v=3"/g'
+```
+
+Für neue Notizen oder Projekte ist das nicht nötig.
+
 ## Persönliche Links
 
 In `assets/site.js` ganz oben `instagram`, `github` und `email` eintragen. Sie erscheinen dann in der Fußzeile jeder Seite.

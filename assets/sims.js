@@ -75,7 +75,7 @@ const OSCISims = (() => {
     const step = plot(ui.plots, 'Sprungantwort: Kondensatorspannung nach dem Einschalten');
     const fMin = 10, fMax = 100e3, dbMin = -40;
     const listen = document.createElement('a');
-    listen.className = 'button small'; listen.textContent = 'Im Labor anhören ↗';
+    listen.className = 'button small'; listen.textContent = 'Im Labor anhören ↗︎';
     ui.actions.append(listen);
     function update() {
       const r = R.value, c = C.value, fc = 1 / (2 * Math.PI * r * c), tau = r * c;

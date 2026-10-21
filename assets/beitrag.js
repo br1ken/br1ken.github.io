@@ -3,7 +3,7 @@
 (async () => {
   const main = document.getElementById('beitrag');
   const slug = new URLSearchParams(location.search).get('b') || '';
-  const fail = (text) => { main.innerHTML = `<div class="post-error"><span class="eyebrow">Signal verloren</span><h1 style="font-weight:300;letter-spacing:-.05em">${text}</h1><a class="button" href="./">Alle Notizen ↗</a></div>`; };
+  const fail = (text) => { main.innerHTML = `<div class="post-error"><span class="eyebrow">Signal verloren</span><h1 style="font-weight:300;letter-spacing:-.05em">${text}</h1><a class="button" href="./">Alle Notizen ↗︎</a></div>`; };
   if (!/^[\w-]+$/.test(slug)) { fail('Diese Notiz gibt es nicht.'); return; }
 
   let source;
@@ -54,7 +54,7 @@
       <article class="prose" id="text">${doc.html}</article>
     </div>
     <footer class="post-end">
-      <div class="post-share"><span>Gefallen? Teil die Notiz mit jemandem, der gerade dasselbe lernt.</span><button class="button small" id="teilen" type="button">Link teilen ↗</button><a class="button small" href="./">Alle Notizen</a></div>
+      <div class="post-share"><span>Gefallen? Teil die Notiz mit jemandem, der gerade dasselbe lernt.</span><button class="button small" id="teilen" type="button">Link teilen ↗︎</button><a class="button small" href="./">Alle Notizen</a></div>
       <nav class="post-nav" aria-label="Weitere Notizen">
         ${older ? `<a class="prev" href="?b=${encodeURIComponent(older.slug)}"><span>← Vorherige Notiz</span><b>${e(older.titel)}</b></a>` : '<span></span>'}
         ${newer ? `<a class="next" href="?b=${encodeURIComponent(newer.slug)}"><span>Nächste Notiz →</span><b>${e(newer.titel)}</b></a>` : ''}

@@ -47,7 +47,7 @@ const DEFINITIONS = {
     params: {rate: {label: 'Tempo', unit: 'Hz', min: .2, max: 15, initial: 4, log: true}, depth: {label: 'Tiefe', unit: '%', min: 0, max: 100, initial: 45, log: false}}
   },
   out: {
-    title: 'Ausgang', symbol: '↗', kind: 'Abhören', unit: 'Pegel / relative Lautstärke [%]',
+    title: 'Ausgang', symbol: '↗︎', kind: 'Abhören', unit: 'Pegel / relative Lautstärke [%]',
     text: 'Hier endet dein Signalweg. Ein angeschlossener Oszillator wird hörbar, sobald du den Ton startest. Mehrere Quellen können hier zusammenkommen.',
     formula: 'Quelle → Verarbeitung → Ausgang', detail: p => `${number(p.volume)} % · Ausgang`,
     result: () => 'Der Limiter im Ausgang fängt Pegelspitzen ab.',
@@ -222,7 +222,7 @@ function renderInspector() {
   const n = getNode(state.selected); if (!n) return;
   const d = DEFINITIONS[n.type];
   const cables = state.edges.map((e, i) => e.from === n.id || e.to === n.id ? `<button type="button" data-unlink="${i}">${nodeName(getNode(e.from))} → ${nodeName(getNode(e.to))} <span aria-hidden="true">×</span></button>` : '').join('');
-  $('inspector').innerHTML = `<div class="inspector-main"><span class="inspector-kicker">Baustein ${n.id.slice(1).padStart(2, '0')} / Verstehen</span><h3>${d.title}</h3><div class="unit">${d.unit}</div><p>${d.text}</p><div class="formula">${d.formula}</div><p id="model-result">${d.result(n.p)}</p></div><div class="inspector-settings">${n.type === 'osc' ? `<label class="control" for="edit-wave">Wellenform<select id="edit-wave" data-wave="${n.id}">${Object.entries(waveNames).map(([v, t]) => `<option value="${v}" ${n.p.wave === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>` : ''}${Object.keys(d.params).map(k => parameterControl(n, k)).join('')}<div class="learn-nudge"><strong>Probier das</strong><p>${d.nudge}</p></div><div class="inspector-actions">${n.type !== 'out' ? '<button class="button small" id="auto-connect" type="button">In Patch einsetzen ↗</button><button class="button small" id="remove-node" type="button">Entfernen ×</button>' : ''}</div><div class="edge-list"><span class="inspector-kicker">Kabel dieses Bausteins</span>${cables || '<p>Noch keine Verbindung. Zieh von OUT ● zu einem IN ●.</p>'}</div></div>`;
+  $('inspector').innerHTML = `<div class="inspector-main"><span class="inspector-kicker">Baustein ${n.id.slice(1).padStart(2, '0')} / Verstehen</span><h3>${d.title}</h3><div class="unit">${d.unit}</div><p>${d.text}</p><div class="formula">${d.formula}</div><p id="model-result">${d.result(n.p)}</p></div><div class="inspector-settings">${n.type === 'osc' ? `<label class="control" for="edit-wave">Wellenform<select id="edit-wave" data-wave="${n.id}">${Object.entries(waveNames).map(([v, t]) => `<option value="${v}" ${n.p.wave === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>` : ''}${Object.keys(d.params).map(k => parameterControl(n, k)).join('')}<div class="learn-nudge"><strong>Probier das</strong><p>${d.nudge}</p></div><div class="inspector-actions">${n.type !== 'out' ? '<button class="button small" id="auto-connect" type="button">In Patch einsetzen ↗︎</button><button class="button small" id="remove-node" type="button">Entfernen ×</button>' : ''}</div><div class="edge-list"><span class="inspector-kicker">Kabel dieses Bausteins</span>${cables || '<p>Noch keine Verbindung. Zieh von OUT ● zu einem IN ●.</p>'}</div></div>`;
 }
 function selectNode(id) {
   if (state.selected === id) return;
@@ -490,7 +490,7 @@ function updateParam(node, key, value, source) {
   if (result) result.textContent = nodeResult(node);
   document.querySelectorAll(`[data-chain-result="${node.id}"]`).forEach(el => { el.textContent = chainResult(node); });
   if (node.id === state.selected && $('model-result')) $('model-result').textContent = d.result(node.p);
-  if (!audio && !playHintShown) { playHintShown = true; message('Tipp: Drück oben auf ▶ Ton starten — dann hörst du jede Änderung sofort.'); }
+  if (!audio && !playHintShown) { playHintShown = true; message('Tipp: Drück oben auf ▶︎ Ton starten — dann hörst du jede Änderung sofort.'); }
   document.querySelectorAll(`[data-exact="${node.id}"][data-key="${key}"]`).forEach(input => { if (input !== source) input.value = value; });
   if (node.type === 'out') $('master').value = value;
   save(); liveUpdate(node, key) || scheduleAudio();
@@ -632,7 +632,7 @@ function loadPreset(kind) {
   remember();
   state = starter(kind); pending = null; pickerAt = null; render(); if (view === 'frei') fitView(); scheduleAudio(true);
   $('preset').value = kind;
-  message(`Starter-Patch geladen. Alle Kabel stecken schon.${audio ? '' : ' Drück ▶ und verändere einen Wert.'}`);
+  message(`Starter-Patch geladen. Alle Kabel stecken schon.${audio ? '' : ' Drück ▶︎ und verändere einen Wert.'}`);
 }
 $('load-preset').addEventListener('click', () => loadPreset($('preset').value));
 
@@ -755,7 +755,7 @@ function stopAudio(text = 'Ton ist aus.') {
     old.master.gain.cancelScheduledValues(old.ctx.currentTime); old.master.gain.setTargetAtTime(0, old.ctx.currentTime, .008);
     setTimeout(() => old.ctx.close().catch(() => {}), 90);
   }
-  $('audio-toggle').textContent = '▶ Ton starten'; $('audio-toggle').setAttribute('aria-pressed', 'false'); $('audio-status').textContent = text;
+  $('audio-toggle').textContent = '▶︎ Ton starten'; $('audio-toggle').setAttribute('aria-pressed', 'false'); $('audio-status').textContent = text;
   document.querySelector('.sound-computer').classList.remove('is-playing');
   drawScope();
 }
@@ -809,7 +809,7 @@ try {
 } catch { /* ohne Speicher immer Frage 1 */ }
 function renderLesson() {
   const lesson = LESSONS[lessonIndex];
-  $('lesson').innerHTML = `<span class="eyebrow">${String(lessonIndex + 1).padStart(2, '0')} / ${LESSONS.length} · Grundlagen</span><h4>${lesson.question}</h4><div class="answers">${lesson.answers.map((answer, i) => `<button type="button" data-answer="${i}">${answer}</button>`).join('')}</div><p id="lesson-feedback">Deine Vermutung?</p><button type="button" class="next-lesson" id="next-lesson">Nächste Frage ↗</button>`;
+  $('lesson').innerHTML = `<span class="eyebrow">${String(lessonIndex + 1).padStart(2, '0')} / ${LESSONS.length} · Grundlagen</span><h4>${lesson.question}</h4><div class="answers">${lesson.answers.map((answer, i) => `<button type="button" data-answer="${i}">${answer}</button>`).join('')}</div><p id="lesson-feedback">Deine Vermutung?</p><button type="button" class="next-lesson" id="next-lesson">Nächste Frage ↗︎</button>`;
 }
 $('lesson').addEventListener('click', event => {
   const answer = event.target.closest('[data-answer]');
@@ -1002,7 +1002,7 @@ if (shared) {
   if (saved) history.past.push(JSON.stringify(saved));
   updateHistoryButtons();
   window.history.replaceState(null, '', location.pathname + location.search + '#labor');
-  message(saved ? 'Geteilter Patch geladen. ↶ bringt deinen eigenen Patch zurück.' : 'Geteilter Patch geladen. Drück ▶ und hör rein.');
+  message(saved ? 'Geteilter Patch geladen. ↶ bringt deinen eigenen Patch zurück.' : 'Geteilter Patch geladen. Drück ▶︎ und hör rein.');
   requestAnimationFrame(() => $('labor').scrollIntoView());
 }
 })();
