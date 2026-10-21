@@ -153,6 +153,16 @@
 .sim svg .bar-bg { fill: var(--paper); stroke: var(--ink); }
 .sim svg .bar-top { fill: #d8d8cf; }
 .sim svg .bar-low { fill: var(--accent); stroke: var(--ink); }
+.sim svg .res.heat { fill: var(--accent); stroke: var(--ink); stroke-width: 1.6; }
+.sim svg .cur { fill: var(--ink); }
+.sim svg .node { fill: var(--ink); }
+.sim svg .tick.strong { fill: var(--ink); }
+.sim svg .ul { stroke: var(--ink); stroke-width: 6; stroke-opacity: .25; }
+.sim svg .dot.dot-2 { fill: #fff; }
+.sim-control.is-locked { opacity: .55; }
+.sim-badge { margin: 4px 0 0; padding: 8px 10px; font-size: 12px; line-height: 1.45; background: var(--accent); border: 1px solid var(--ink); }
+.sim-badge[hidden] { display: none; }
+
 
 /* ---------- Schreibstube ---------- */
 .writer { max-width: 1600px; margin: 0 auto; padding: 0 var(--gutter) 40px; }

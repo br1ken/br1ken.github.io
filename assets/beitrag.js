@@ -50,7 +50,7 @@
       </div>
     </header>
     <div class="post-layout">
-      <nav class="toc" aria-label="Inhalt">${doc.toc.length > 1 ? `<span class="eyebrow">Inhalt</span><ol>${doc.toc.map(t => `<li><a href="#${t.id}">${e(t.text)}</a></li>`).join('')}</ol>` : ''}</nav>
+      <nav class="toc" aria-label="Inhalt">${doc.toc.length > 1 ? `<span class="eyebrow">Inhalt</span><ol>${doc.toc.map(t => `<li><a href="#${t.id}">${t.html}</a></li>`).join('')}</ol>` : ''}</nav>
       <article class="prose" id="text">${doc.html}</article>
     </div>
     <footer class="post-end">

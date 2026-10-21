@@ -2,7 +2,8 @@
    Unterstützt: Überschriften, Absätze, **fett**, *kursiv*, ~~durch~~, ==markiert==, `Code`, Links, Bilder,
    Listen (auch verschachtelt und - [x] Aufgaben), Zitate, Tabellen, Codeblöcke, Trennlinien,
    Formeln ($…$ und $$…$$ mit KaTeX), Kästen (::: merke / info / tipp / achtung / aufgabe … :::)
-   und Simulationen (::: sim rc r=10k c=22n). Die vollständige Anleitung steht in SCHREIBEN.md. */
+   Simulationen (::: sim rc r=10k c=22n) und Lexikon-Links ([[Leistung]] oder [[Text|leistung]]).
+   Die vollständige Anleitung steht in SCHREIBEN.md. */
 'use strict';
 const OSCIMarkdown = (() => {
   const esc = (t) => String(t).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
@@ -19,6 +20,7 @@ const OSCIMarkdown = (() => {
     let s = String(text);
     s = s.replace(/(`+)([\s\S]*?[^`])\1(?!`)/g, (_, __, code) => hold(`<code>${esc(code.trim())}</code>`));
     s = s.replace(/\\\$/g, () => hold('$'));
+    s = s.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_, text, id) => hold(`<a class="lex-link" href="#lexikon-${esc(slugify(id || text))}" data-lex="${esc(slugify(id || text))}">${esc(text.trim())}</a>`));
     s = s.replace(/\$([^\s$](?:[^$]*?[^\s$])?)\$(?!\d)/g, (_, tex) => hold(`<span class="math math-inline">${esc(tex)}</span>`));
     s = esc(s);
     s = s.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+&quot;([^&]*)&quot;)?\)/g, (_, alt, src, title) => hold(`<img src="${esc(safeUrl(src))}" alt="${alt}"${title ? ` title="${title}"` : ''} loading="lazy">`));
@@ -104,7 +106,7 @@ const OSCIMarkdown = (() => {
         let id = slugify(h[2]), n = 2;
         while (ctx.ids.has(id)) id = `${slugify(h[2])}-${n++}`;
         ctx.ids.add(id);
-        if (level === 2) ctx.toc.push({id, text: html.replace(/<[^>]+>/g, '')});
+        if (level === 2) ctx.toc.push({id, text: html.replace(/<[^>]+>/g, ''), html});
         out.push(`<h${level} id="${id}"><a class="anchor" href="#${id}" aria-hidden="true" tabindex="-1">#</a>${html}</h${level}>`);
         i++;
         continue;
@@ -211,26 +213,10 @@ const OSCIMarkdown = (() => {
     return {html, meta, toc: ctx.toc, hasMath: ctx.math, hasSims: ctx.sims, minutes: Math.max(1, Math.round(words / 190))};
   }
 
-  /* KaTeX nur laden, wenn eine Seite wirklich Formeln enthält. */
-  let katexLoading = null;
-  function loadKatex() {
-    if (window.katex) return Promise.resolve();
-    if (katexLoading) return katexLoading;
-    const base = OSCI.url('assets/vendor/katex/');
-    const css = document.createElement('link');
-    css.rel = 'stylesheet'; css.href = base + 'katex.min.css';
-    document.head.append(css);
-    katexLoading = new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = base + 'katex.min.js'; s.onload = resolve; s.onerror = reject;
-      document.head.append(s);
-    });
-    return katexLoading;
-  }
   async function typeset(root) {
     const nodes = root.querySelectorAll('.math:not([data-done])');
     if (!nodes.length) return;
-    try { await loadKatex(); } catch { return; /* Formeln bleiben als lesbarer TeX-Text stehen */ }
+    try { await OSCI.loadKatex(); } catch { return; /* Formeln bleiben als lesbarer TeX-Text stehen */ }
     nodes.forEach(el => {
       const tex = el.textContent;
       el.dataset.done = '1'; el.dataset.tex = tex;

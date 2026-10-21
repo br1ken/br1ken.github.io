@@ -114,11 +114,23 @@ Optionaler Satz unter der Simulation.
 | `rc` | RC-Tiefpass: Bode-Diagramm + Sprungantwort, mit Knopf „Im Labor anhören“ | `r=10k c=22n` |
 | `welle` | Sinus mit Amplitude, Frequenz und Phase, Effektivwert | `u=5 f=2 phi=0` |
 | `teiler` | Spannungsteiler mit Schaltplan, optional belastet | `u=12 r1=10k r2=10k rl=10k last` |
+| `bruecke` | Brückenschaltung (R₂ = R₃ gekoppelt) mit Potentialen, Strömen, Wirkungsgrad und Lastleistungs-Kurve | `x=30 u=30 rl=15 r1=10 anpassen` |
 
 Einheiten-Kürzel für Werte: `p n u µ m k M` (z. B. `4.7u` = 4,7 µF, `2k2` geht nicht, nimm `2.2k`).
 Neue Simulationen kommen in `assets/sims.js`. Jede Funktion dort bekommt ein Element und die Startwerte.
 
-## 6. Bilder und Tabellen
+## 6. Lexikon-Links
+
+Hinter den drei Punkten ⋮ oben rechts steckt ein Lexikon der elektrischen Größen. Aus einer Notiz verlinkst du hinein mit doppelten eckigen Klammern:
+
+```
+[[Leistung]]                    öffnet den Eintrag „Leistung“
+[[Potentiale|potential]]        anderer Text, Eintrag „potential“
+```
+
+Einträge ergänzt oder änderst du in `assets/lexikon.js`.
+
+## 7. Bilder und Tabellen
 
 Bilder nach `notizen/bilder/` legen:
 
@@ -136,6 +148,6 @@ Am besten JPG oder WebP mit höchstens etwa 1600 px Breite, damit die Seite auf 
 
 Doppelpunkte in der Trennzeile richten die Spalte aus: `:---:` mittig, `---:` rechts.
 
-## 7. Eigenes HTML
+## 8. Eigenes HTML
 
 Eine Zeile, die mit einem HTML-Tag wie `<div`, `<iframe`, `<video` oder `<figure` beginnt, wird bis zur nächsten Leerzeile unverändert übernommen. Zum Beispiel für ein eingebettetes Video oder eine eigene kleine Grafik.

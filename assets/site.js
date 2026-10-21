@@ -31,7 +31,7 @@ const OSCI = (() => {
     if (!slot) return;
     const links = NAV.map(n => `<a class="nav-link" href="${url(n.href)}"${n.id === page ? ' aria-current="page"' : ''}>${n.title}</a>`).join('');
     const items = NAV.map(n => `<a class="menu-item" href="${url(n.href)}"><b>${n.title}</b><span>${n.text}</span></a>`).join('');
-    slot.outerHTML = `<header class="chrome"><a class="brand-mini" href="${page === 'home' ? '#top' : root}" aria-label="osci//log Startseite"><span class="brand-top">osci//log</span><span class="brand-line"></span></a><nav class="nav" aria-label="Hauptnavigation">${links}<button class="menu-pill" id="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-panel">Menü</button></nav></header><div class="menu-panel" id="menu-panel" inert>${items}</div>`;
+    slot.outerHTML = `<header class="chrome"><a class="brand-mini" href="${page === 'home' ? '#top' : root}" aria-label="osci//log Startseite"><span class="brand-top">osci//log</span><span class="brand-line"></span></a><nav class="nav" aria-label="Hauptnavigation">${links}<button class="menu-pill" id="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-panel">Menü</button><button class="lex-toggle" type="button" data-lex="" aria-label="Lexikon der elektrischen Größen öffnen" title="Lexikon: elektrische Größen nachschlagen"><span></span><span></span><span></span></button></nav></header><div class="menu-panel" id="menu-panel" inert>${items}</div>`;
     const toggle = document.getElementById('menu-toggle'), panel = document.getElementById('menu-panel');
     const setMenu = (open, focus = false) => {
       panel.classList.toggle('is-open', open); panel.inert = !open;
@@ -142,10 +142,51 @@ const OSCI = (() => {
     return `<article class="card"><div class="card-cover">${p.bild ? `<img src="${url(escape(p.bild))}" alt="" loading="lazy">` : cover(p.titel, p.welle)}</div><div class="card-body"><div class="card-kicker"><span>${escape(p.status || 'Projekt')}</span><span>${p.datum ? date(p.datum) : ''}</span></div><h3>${href ? `<a class="card-link" href="${escape(href)}">${escape(p.titel)}</a>` : escape(p.titel)}</h3><p>${escape(p.text || '')}</p>${p.tags?.length ? `<div class="tags">${p.tags.map(t => `<span class="tag">${escape(t)}</span>`).join('')}</div>` : ''}${repo ? `<div class="card-actions">${repo}</div>` : ''}</div></article>`;
   }
 
+  /* KaTeX (Formelsatz) nur laden, wenn eine Seite wirklich Formeln zeigt. */
+  let katexLoading = null;
+  function loadKatex() {
+    if (window.katex) return Promise.resolve();
+    if (katexLoading) return katexLoading;
+    const css = document.createElement('link');
+    css.rel = 'stylesheet'; css.href = url('assets/vendor/katex/katex.min.css');
+    document.head.append(css);
+    katexLoading = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = url('assets/vendor/katex/katex.min.js'); s.onload = resolve; s.onerror = () => { katexLoading = null; reject(); };
+      document.head.append(s);
+    });
+    return katexLoading;
+  }
+
+  /* Lexikon der elektrischen Größen: ⋮ oben rechts, [[Begriff]]-Links in Notizen oder #lexikon in der Adresse.
+     lexikon.js wird erst beim ersten Öffnen geladen. */
+  let lexLoading = null;
+  function lexikon(id) {
+    if (!lexLoading) {
+      lexLoading = new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = url(`assets/lexikon.js?v=${LEX_VERSION}`); s.onload = resolve; s.onerror = () => { lexLoading = null; reject(); };
+        document.head.append(s);
+      });
+    }
+    return lexLoading.then(() => OSCILexikon.open(id));
+  }
+  const LEX_VERSION = 1;
+  document.addEventListener('click', e => {
+    const link = e.target.closest('[data-lex]');
+    if (link) { e.preventDefault(); lexikon(link.dataset.lex); }
+  });
+  function lexFromHash() {
+    const m = location.hash.match(/^#lexikon(?:-([\w-]+))?$/);
+    if (m) lexikon(m[1]);
+  }
+  addEventListener('hashchange', lexFromHash);
+
   header();
   footer();
+  lexFromHash();
   return {
-    url, escape, cover, date, frontMatter, notizenLaden, notizKarte, projektKarte,
+    url, escape, cover, date, frontMatter, notizenLaden, notizKarte, projektKarte, loadKatex, lexikon,
     projekte: () => store.projekte.slice(),
     /* Wird von notizen/beitraege.js und projekte/projekte.js aufgerufen. */
     beitraege: list => { store.notizen = Array.isArray(list) ? list.map(x => String(x).replace(/\.md$/, '')) : []; },

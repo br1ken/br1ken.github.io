@@ -132,6 +132,52 @@ footer.site-footer { max-width: var(--max); margin: 0 auto; padding: 22px var(--
 .site-footer-inner nav { display: flex; gap: 18px; flex-wrap: wrap; }
 .site-footer a { text-underline-offset: 3px; }
 
+/* ---------- Lexikon (⋮ oben rechts) ---------- */
+.lex-toggle { display: inline-grid; grid-auto-flow: row; gap: 3px; place-content: center; width: 40px; height: 40px; margin-left: 4px; padding: 0; border: 1px solid transparent; border-radius: 50%; background: transparent; cursor: pointer; }
+.lex-toggle span { width: 4px; height: 4px; border-radius: 50%; background: var(--fg); }
+.lex-toggle:hover, .lex-toggle:focus-visible { border-color: var(--ink); background: #fff; }
+a.lex-link { text-decoration: underline dotted; text-underline-offset: 3px; cursor: help; }
+a.lex-link::after { content: "ⓘ"; font-size: .7em; margin-left: 2px; vertical-align: super; color: var(--muted); }
+html.lex-open { overflow: hidden; }
+.lex { position: fixed; inset: 0; z-index: 70; }
+.lex[hidden] { display: none; }
+.lex-backdrop { position: absolute; inset: 0; background: rgba(10,10,10,.28); opacity: 0; transition: opacity .2s ease; }
+.lex-panel { position: absolute; top: 0; right: 0; bottom: 0; width: min(520px, 100%); display: flex; flex-direction: column; background: var(--bg); border-left: 1px solid var(--ink); box-shadow: -10px 0 40px rgba(0,0,0,.12); transform: translateX(30px); opacity: 0; transition: transform .2s ease, opacity .2s ease; }
+.lex.is-open .lex-backdrop { opacity: 1; }
+.lex.is-open .lex-panel { transform: none; opacity: 1; }
+.lex-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 20px 20px 12px; border-bottom: 1px solid var(--hairline); }
+.lex-head h2 { margin: 6px 0 0; font-weight: 300; font-size: 32px; letter-spacing: -.05em; }
+.lex-close { flex: none; width: 44px; height: 44px; border: 1px solid var(--ink); border-radius: 50%; background: #fff; font-size: 22px; cursor: pointer; }
+.lex-search { margin: 14px 20px 8px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--ink); border-radius: 0; background: #fff; font: inherit; font-size: 15px; }
+.lex-chips { display: flex; gap: 6px; padding: 0 20px 12px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--hairline); }
+.lex-chips .tag { flex: none; }
+.lex-list { flex: 1; overflow-y: auto; padding: 4px 20px 20px; overscroll-behavior: contain; }
+.lex-cat { font: 10px var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin: 18px 0 6px; }
+.lex-entry { border: 1px solid var(--hairline); background: #fff; margin-bottom: 6px; }
+.lex-entry[open] { border-color: var(--ink); box-shadow: 4px 4px 0 rgba(0,0,0,.06); }
+.lex-entry summary { list-style: none; display: grid; grid-template-columns: 78px 1fr auto; align-items: center; gap: 10px; padding: 10px 12px; cursor: pointer; min-height: 52px; }
+.lex-entry summary::-webkit-details-marker { display: none; }
+.lex-entry summary::after { content: "+"; font: 16px var(--mono); }
+.lex-entry[open] summary::after { content: "−"; }
+.lex-sym { font-size: 16px; text-align: center; overflow: hidden; white-space: nowrap; }
+.lex-name { display: grid; gap: 2px; font-size: 15px; letter-spacing: -.01em; }
+.lex-name small { font: 11px var(--mono); color: var(--muted); }
+.lex-body { padding: 0 14px 14px; border-top: 1px dashed var(--hairline); }
+.lex-body h4 { margin: 14px 0 6px; font: 10px var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+.lex-body p { margin: 0; font-size: 14px; line-height: 1.6; }
+.lex-body .math-display { margin: 4px 0; padding: 8px 6px; overflow-x: auto; overflow-y: hidden; background: var(--paper); text-align: center; }
+.lex-body .lex-unit { background: var(--accent); }
+.lex .math:not([data-done]) { font-family: var(--mono); font-size: .85em; color: var(--muted); }
+.lex-empty { color: var(--muted); font-size: 14px; padding: 20px 0; }
+.lex-foot { margin: 0; padding: 10px 20px 14px; border-top: 1px solid var(--hairline); font-size: 11px; line-height: 1.5; color: var(--muted); }
+@media (max-width: 760px) {
+  .lex-panel { width: 100%; border-left: 0; }
+  .lex-head { padding: 16px 16px 10px; }
+  .lex-search { margin: 12px 16px 8px; }
+  .lex-chips, .lex-list { padding-left: 16px; padding-right: 16px; }
+  .lex-toggle { margin-left: 0; }
+}
+
 @media (max-width: 760px) {
   :root { --gutter: 20px; }
   .chrome { padding: 16px var(--gutter); }

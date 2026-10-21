@@ -1,6 +1,6 @@
 /* Kleine Simulationen zum Einbetten in Notizen und Projekte.
    Einbinden: <div data-sim="rc"></div>  ·  in Markdown:  ::: sim rc  (optional mit Startwerten: ::: sim rc r=10k c=22n)
-   Verfügbare Simulationen: rc (RC-Tiefpass), welle (Sinusgrößen), teiler (Spannungsteiler). */
+   Verfügbare Simulationen: rc (RC-Tiefpass), welle (Sinusgrößen), teiler (Spannungsteiler), bruecke (Brückenschaltung). */
 'use strict';
 const OSCISims = (() => {
   const PREFIX = [[1e6, 'M'], [1e3, 'k'], [1, ''], [1e-3, 'm'], [1e-6, 'µ'], [1e-9, 'n'], [1e-12, 'p']];
@@ -184,7 +184,113 @@ const OSCISims = (() => {
     [U, R1, R2, RL].forEach(s => s.on(update)); load.querySelector('input').addEventListener('change', update); update();
   }
 
-  const SIMS = {rc, welle, teiler};
+  /* ---------- Brückenschaltung (ET1 A2.3) ----------
+     Quelle Uq oben/unten, links R1 (oben) und R2 (unten) mit Mittelpunkt P1, rechts R3 (oben) und R4 (unten) mit P2,
+     Last RL zwischen P1 und P2. R2 und R3 sind gekoppelt (R2 = R3 = x). Gelöst über die Ersatzspannungsquelle. */
+  function brueckeRechnen(Uq, R1, x, R4, RL) {
+    const par = (a, b) => (a + b === 0 ? 0 : a * b / (a + b));
+    const R2 = x, R3 = x;
+    const phi10 = Uq * R2 / (R1 + R2), phi20 = Uq * R4 / (R3 + R4);
+    const U0 = phi10 - phi20, Ri = par(R1, R2) + par(R3, R4);
+    const IL = Ri + RL > 0 ? U0 / (Ri + RL) : 0;
+    const phi1 = phi10 - IL * par(R1, R2), phi2 = phi20 + IL * par(R3, R4);
+    const I1 = (Uq - phi1) / R1, I4 = phi2 / R4, I2 = I1 - IL, I3 = I4 - IL; // Knotenregel an P1 und P2
+    const Iq = I1 + I3, PL = RL * IL * IL, Pq = Uq * Iq;
+    return {R2, R3, phi10, phi20, U0, Ri, IL, phi1, phi2, UL: phi1 - phi2, I1, I2, I3, I4, Iq, PL, Pq, eta: Pq > 0 ? PL / Pq : 0,
+      P: [R1 * I1 * I1, R2 * I2 * I2, R3 * I3 * I3, R4 * I4 * I4]};
+  }
+  function bruecke(el, opts) {
+    const ui = shell(el, 'Brückenschaltung', 'R<sub>2</sub> = R<sub>3</sub> gekoppelt · R<sub>L</sub> zwischen P<sub>1</sub> und P<sub>2</sub>');
+    const R1 = parseSI(opts.r1, 10), R4 = parseSI(opts.r4, R1);
+    const fmtOhm = v => `${new Intl.NumberFormat('de-DE', {maximumFractionDigits: 1}).format(v)} Ω`;
+    const X = slider({label: 'R<sub>2</sub> = R<sub>3</sub>', min: 0, max: 50, value: parseSI(opts.x, 30), unit: 'Ω', format: fmtOhm});
+    const U = slider({label: 'Quellenspannung U<sub>q</sub>', min: 0, max: 60, value: parseSI(opts.u, 30), unit: 'V', format: v => `${new Intl.NumberFormat('de-DE', {maximumFractionDigits: 1}).format(v)} V`});
+    const RL = slider({label: 'Last R<sub>L</sub>', min: 1, max: 200, value: parseSI(opts.rl, 15), log: true, unit: 'Ω', format: fmtOhm});
+    const match = document.createElement('label');
+    match.className = 'sim-check';
+    match.innerHTML = `<input type="checkbox"${'anpassen' in opts ? ' checked' : ''}> R<sub>L</sub> = R<sub>i</sub> (Leistungsanpassung)`;
+    ui.controls.append(X.el, U.el, match, RL.el);
+    const fig = document.createElement('figure');
+    fig.className = 'sim-plot sim-schematic sim-bridge';
+    ui.plots.append(fig);
+    const curve = plot(ui.plots, 'Lastleistung P_L über R2 = R3 bei fester Last — der Punkt ist die aktuelle Einstellung');
+    const badge = document.createElement('p');
+    badge.className = 'sim-badge';
+    ui.actions.append(badge);
+    const fmt = (v, unit) => si(Math.abs(v) < 1e-12 ? 0 : v, unit, 4);
+    const sub = (b, i) => `${b}<tspan dy="3" font-size="9">${i}</tspan><tspan dy="-3">`;
+    function update() {
+      const x = X.value, Uq = U.value, matched = match.querySelector('input').checked;
+      const Ri0 = brueckeRechnen(Uq, R1, x, R4, 1).Ri;
+      if (matched) RL.value = Math.max(1, Ri0);
+      RL.el.classList.toggle('is-locked', matched);
+      RL.el.querySelector('input').disabled = matched;
+      const rl = RL.value, r = brueckeRechnen(Uq, R1, x, R4, rl);
+      // Schaltplan: Widerstände leuchten je nach Anteil an der umgesetzten Leistung
+      const pmax = Math.max(r.PL, ...r.P, 1e-9);
+      const heat = p => `style="fill-opacity:${(0.12 + 0.88 * p / pmax).toFixed(2)}"`;
+      const arrowV = (xPos, y, I) => Math.abs(I) < 1e-9 ? '' : `<path class="cur" d="M${xPos},${I > 0 ? y - 7 : y + 7} l-5,${I > 0 ? -8 : 8} h10 z"/>`;
+      const lab = (xPos, y, name, R, I, anchor) => `<text class="tick" x="${xPos}" y="${y}" text-anchor="${anchor}">${name} = ${fmtOhm(R)}</text><text class="tick strong" x="${xPos}" y="${y + 16}" text-anchor="${anchor}">${fmt(Math.abs(I), 'A')} ${I >= 0 ? '↓' : '↑'}</text>`;
+      const scaleY = v => 250 - (Uq > 0 ? v / Uq : 0) * 200; // Potentialskala rechts: 0 V unten, Uq oben
+      const balanced = Math.abs(r.U0) < 1e-6 * Math.max(1, Uq);
+      const y1 = scaleY(r.phi1), y2 = scaleY(r.phi2), close = Math.abs(y1 - y2) < 16;
+      // Layout: Quelle x=40, linker Zweig x=210, rechter Zweig x=370, Potentialskala x=462
+      fig.innerHTML = `<svg viewBox="0 0 560 300" role="img" aria-label="Brückenschaltung mit Potentialen und Strömen">
+        <g class="wire-lines"><path d="M40,50 H370 M40,250 H370 M40,50 V128 M40,172 V250 M210,50 V70 M210,120 V180 M210,230 V250 M370,50 V70 M370,120 V180 M370,230 V250 M210,150 H255 M325,150 H370"/></g>
+        <circle class="src" cx="40" cy="150" r="22"/><path class="wire-lines" d="M30,144 H50 M30,156 H50"/>
+        <text class="tick" x="70" y="138">${sub('U', 'q')}</tspan></text><text class="tag-label" x="70" y="160">${fmt(Uq, 'V')}</text>
+        <rect class="res heat" ${heat(r.P[0])} x="198" y="70" width="24" height="50"/>${lab(190, 90, 'R₁', R1, r.I1, 'end')}
+        <rect class="res heat" ${heat(r.P[1])} x="198" y="180" width="24" height="50"/>${lab(190, 200, 'R₂', r.R2, r.I2, 'end')}
+        <rect class="res heat" ${heat(r.P[2])} x="358" y="70" width="24" height="50"/>${lab(390, 90, 'R₃', r.R3, r.I3, 'start')}
+        <rect class="res heat" ${heat(r.P[3])} x="358" y="180" width="24" height="50"/>${lab(390, 200, 'R₄', R4, r.I4, 'start')}
+        ${arrowV(210, 70, r.I1)}${arrowV(210, 180, r.I2)}${arrowV(370, 70, r.I3)}${arrowV(370, 180, r.I4)}
+        <rect class="res heat load" ${heat(r.PL)} x="255" y="140" width="70" height="20"/>
+        <text class="tick" x="290" y="132" text-anchor="middle">${sub('R', 'L')} = ${fmtOhm(rl)}</tspan></text>
+        <text class="tick strong" x="290" y="178" text-anchor="middle">${balanced ? 'kein Strom' : `${fmt(Math.abs(r.IL), 'A')} ${r.IL > 0 ? '→' : '←'}`}</text>
+        <circle class="node" cx="210" cy="150" r="5"/><circle class="node" cx="370" cy="150" r="5"/><circle class="node" cx="210" cy="50" r="3.5"/><circle class="node" cx="210" cy="250" r="3.5"/>
+        <text class="tag-label" x="200" y="146" text-anchor="end">${sub('P', '1')}</tspan></text><text class="tag-label" x="380" y="146">${sub('P', '2')}</tspan></text>
+        <text class="tick" x="290" y="40" text-anchor="middle">φ = ${fmt(Uq, 'V')}</text><text class="tick" x="290" y="268" text-anchor="middle">φ = 0 V (Bezug)</text>
+        <g class="phi-scale"><path class="wire-lines" d="M462,50 V250"/><path class="grid major" d="M456,50 H468 M456,250 H468"/>
+          <text class="tick" x="452" y="54" text-anchor="end">${fmt(Uq, 'V')}</text><text class="tick" x="452" y="254" text-anchor="end">0 V</text>
+          <path class="ul" d="M462,${y1} V${y2}"/>
+          <circle class="dot" cx="462" cy="${y1}" r="5"/><text class="tick strong" x="472" y="${close ? (y1 <= y2 ? y1 - 6 : y1 + 14) : y1 + 4}">${sub('φ', '1')} ${fmt(r.phi1, 'V')}</tspan></text>
+          <circle class="dot dot-2" cx="462" cy="${y2}" r="5"/><text class="tick strong" x="472" y="${close ? (y1 <= y2 ? y2 + 14 : y2 - 6) : y2 + 4}">${sub('φ', '2')} ${fmt(r.phi2, 'V')}</tspan></text>
+        </g>
+      </svg><figcaption>Potentiale bezogen auf den unteren Knoten. Je kräftiger ein Widerstand gefärbt ist, desto mehr Leistung setzt er um.</figcaption>`;
+      // Lastleistung über x bei fester Last rl
+      const {W, H, pad, svg} = curve, iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
+      const pts = [];
+      let ymax = 0;
+      for (let i = 0; i <= 200; i++) { const xv = i / 200 * 50, p = brueckeRechnen(Uq, R1, xv, R4, rl).PL; ymax = Math.max(ymax, p); pts.push([xv, p]); }
+      ymax = ymax > 0 ? ymax * 1.08 : 1;
+      const px = v => pad.l + v / 50 * iw, py = v => pad.t + (1 - v / ymax) * ih;
+      const parts = [];
+      for (let v = 0; v <= 50; v += 5) parts.push(`<path class="grid${v % 10 ? '' : ' major'}" d="M${px(v)},${pad.t}V${pad.t + ih}"/>${v % 10 ? '' : `<text class="tick" x="${px(v)}" y="${H - 10}" text-anchor="${v === 50 ? 'end' : 'middle'}">${v}${v === 50 ? ' Ω' : ''}</text>`}`);
+      const step = ymax > 40 ? 20 : ymax > 15 ? 5 : ymax > 4 ? 1 : ymax > 1 ? .5 : .1;
+      for (let v = 0; v <= ymax; v += step) parts.push(`<path class="grid major" d="M${pad.l},${py(v)}H${pad.l + iw}"/><text class="tick" x="${pad.l - 6}" y="${py(v) + 3}" text-anchor="end">${new Intl.NumberFormat('de-DE').format(Number(v.toPrecision(3)))}</text>`);
+      parts.push(`<text class="axis" x="${pad.l + 4}" y="${pad.t + 10}">W</text>`);
+      parts.push(`<path class="trace" d="${line(pts.map(([a, b]) => [px(a), py(b)]))}"/>`);
+      const xb = Math.sqrt(R1 * R4);
+      if (xb <= 50) parts.push(`<path class="marker" d="M${px(xb)},${pad.t}V${pad.t + ih}"/><text class="tick" x="${px(xb) + 5}" y="${pad.t + ih - 6}">Abgleich</text>`);
+      parts.push(`<circle class="dot" cx="${px(x)}" cy="${py(r.PL)}" r="5"/><text class="tag-label" x="${px(x) + (px(x) > W - 140 ? -9 : 9)}" y="${py(r.PL) - 9}" text-anchor="${px(x) > W - 140 ? 'end' : 'start'}">${fmt(r.PL, 'W')}</text>`);
+      curve.draw(parts);
+      readout(ui.readout, [
+        ['Innenwiderstand R<sub>i</sub>', fmt(r.Ri, 'Ω')],
+        ['Leerlaufspannung U<sub>0</sub>', fmt(r.U0, 'V')],
+        ['Potentiale φ<sub>1</sub> / φ<sub>2</sub>', `${fmt(r.phi1, 'V')} / ${fmt(r.phi2, 'V')}`],
+        ['Laststrom I<sub>L</sub>', fmt(r.IL, 'A')],
+        ['Lastleistung P<sub>L</sub>', fmt(r.PL, 'W')],
+        ['Quellenstrom I<sub>q</sub>', fmt(r.Iq, 'A')],
+        ['Quellenleistung P<sub>q</sub>', fmt(r.Pq, 'W')],
+        ['Wirkungsgrad η', `${new Intl.NumberFormat('de-DE', {maximumFractionDigits: 2}).format(r.eta * 100)} %`]
+      ]);
+      badge.textContent = balanced ? 'Brücke abgeglichen: φ₁ = φ₂, durch die Last fließt kein Strom.' : r.IL < 0 ? 'U₀ < 0: Der Laststrom fließt von P₂ nach P₁.' : matched ? 'Leistungsanpassung: R_L = R_i, die Last bekommt das Maximum, das diese Brücke liefern kann.' : '';
+      badge.hidden = !badge.textContent;
+    }
+    [X, U, RL].forEach(sl => sl.on(update)); match.querySelector('input').addEventListener('change', update); update();
+  }
+
+  const SIMS = {rc, welle, teiler, bruecke};
   /* Alle [data-sim]-Platzhalter in einem Bereich starten. */
   function mount(root = document) {
     root.querySelectorAll('[data-sim]').forEach(el => {
