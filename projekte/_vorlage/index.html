@@ -1,0 +1,43 @@
+<!doctype html>
+<!-- Vorlage für ein neues Projekt:
+     1. Diesen Ordner kopieren und umbenennen, z. B. projekte/mein-projekt/
+     2. Titel, Text und Inhalt unten anpassen (eigene .js/.css-Dateien einfach in den Ordner legen)
+     3. In projekte/projekte.js einen Eintrag mit link: 'projekte/mein-projekt/' ergänzen
+     Ein komplett eigenes Projekt (z. B. ein exportierter Build) kann den Ordner auch ganz frei füllen —
+     dann einfach nur den Eintrag in projekte.js ergänzen. -->
+<html lang="de" data-root="../../">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Projektname — osci//log</title>
+<meta name="description" content="Ein Satz, worum es in diesem Projekt geht.">
+<meta name="theme-color" content="#fbfbfa">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<link rel="stylesheet" href="../../assets/notizen.css">
+<script src="../../assets/site.js" defer></script>
+<script src="../../assets/models.js" defer></script>
+<script src="../../assets/sims.js" defer></script>
+<script src="../../assets/projekt.js" defer></script>
+</head>
+<body id="top" data-page="projekte">
+<div data-site-header></div>
+<main class="page">
+  <header class="page-hero">
+    <span class="eyebrow"><a href="../">Projekte</a> / In Arbeit</span>
+    <h1>Projekt<span>//</span>name</h1>
+    <p class="intro">Worum geht es? Was kann man hier ausprobieren?</p>
+  </header>
+  <section class="section" style="padding-top:0">
+    <div class="prose" style="max-width:720px">
+      <h2>Idee</h2>
+      <p>Normaler Text. Formeln gehen auch hier: $U = R \cdot I$.</p>
+      <p>Eine eingebaute Simulation (rc, welle oder teiler):</p>
+    </div>
+    <div data-sim="welle"></div>
+  </section>
+</main>
+<div data-site-footer></div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="de" data-root="../../">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RC-Filter-Explorer — osci//log</title>
+<meta name="description" content="Bode-Diagramm und Sprungantwort eines RC-Tiefpasses interaktiv erkunden.">
+<meta name="theme-color" content="#fbfbfa">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<link rel="stylesheet" href="../../assets/notizen.css">
+<script src="../../assets/site.js" defer></script>
+<script src="../../assets/models.js" defer></script>
+<script src="../../assets/sims.js" defer></script>
+<script src="../../assets/projekt.js" defer></script>
+</head>
+<body id="top" data-page="projekte">
+<div data-site-header></div>
+<main class="page">
+  <header class="page-hero">
+    <span class="eyebrow"><a href="../">Projekte</a> / Simulation</span>
+    <h1>RC<span>//</span>Filter</h1>
+    <p class="intro">Ein Widerstand, ein Kondensator. Verschiebe R und C und beobachte gleichzeitig zwei Seiten derselben Physik: oben, welche Frequenzen durchkommen; unten, wie schnell sich der Kondensator lädt.</p>
+  </header>
+  <section class="section" style="padding-top:0">
+    <div data-sim="rc" data-r="10k" data-c="22n"></div>
+    <div class="prose" style="max-width:720px;margin-top:34px">
+      <h2>Was du hier siehst</h2>
+      <p>Die Grenzfrequenz $f_c = 1/(2\pi RC)$ markiert den Punkt, an dem nur noch rund 71 % der Spannung ankommen (−3 dB). Die Zeitkonstante $\tau = RC$ sagt, wie lange der Kondensator für 63 % seiner Endspannung braucht. Beide hängen vom selben Produkt $RC$ ab.</p>
+      <p>Die ausführliche Erklärung steht in der Notiz <a href="../../notizen/beitrag.html?b=rc-tiefpass">Warum doppeltes C die Grenzfrequenz halbiert</a>.</p>
+    </div>
+  </section>
+</main>
+<div data-site-footer></div>
+</body>
+</html>

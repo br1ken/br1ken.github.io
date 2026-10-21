@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="de" data-root="../">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Notizen — osci//log</title>
+<meta name="description" content="Notizen aus dem Elektrotechnik-Studium: Grundlagen verständlich erklärt, mit Formeln, Simulationen und Aufgaben.">
+<meta name="theme-color" content="#fbfbfa">
+<meta property="og:title" content="Notizen aus dem E-Technik-Studium — osci//log">
+<meta property="og:description" content="Grundlagen verständlich erklärt, mit Simulationen zum Anfassen.">
+<meta property="og:image" content="../assets/og-bild.png">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/touch-icon.png">
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/notizen.css">
+<script src="../assets/site.js" defer></script>
+<script src="beitraege.js" defer></script>
+<script src="../assets/notizen-liste.js" defer></script>
+</head>
+<body id="top" data-page="notizen">
+<a class="skip-link" href="#liste">Zur Liste springen</a>
+<div data-site-header></div>
+<main class="page">
+  <header class="page-hero">
+    <span class="eyebrow">002 / Notizen aus dem Studium</span>
+    <h1>Noti<span>//</span>zen</h1>
+    <p class="intro">Was ich im Elektrotechnik-Studium lerne — so erklärt, dass man es auch ohne Vorlesung versteht. Mit Formeln, Simulationen zum Anfassen und Aufgaben zum Mitdenken.</p>
+  </header>
+  <div class="filter-bar">
+    <input class="search" id="suche" type="search" placeholder="Suchen: z. B. Kondensator, Filter …" aria-label="Notizen durchsuchen">
+    <div class="filter-row" id="filter" aria-label="Nach Thema filtern"></div>
+    <span class="notes-count" id="anzahl" role="status"></span>
+  </div>
+  <section class="section" id="liste" aria-label="Alle Notizen" style="padding-top:0">
+    <div id="featured"></div>
+    <div class="card-grid" id="notes"></div>
+  </section>
+</main>
+<div data-site-footer></div>
+</body>
+</html>

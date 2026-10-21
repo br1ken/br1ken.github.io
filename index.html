@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="de" data-root="./">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>osci//log — Schaltungen, Klang & Experimente</title>
+<meta name="description" content="Brikens persönliches Labor für Schaltungen, Klang und Notizen aus dem E-Technik-Studium. Bausteine verbinden, Signale hören, Dinge ausprobieren.">
+<meta name="theme-color" content="#fbfbfa">
+<meta property="og:type" content="website">
+<meta property="og:title" content="osci//log — Ideen verschalten. Signale hören.">
+<meta property="og:description" content="Ein Klanglabor zum Herumprobieren und Notizen aus dem E-Technik-Studium.">
+<meta property="og:image" content="assets/og-bild.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/touch-icon.png">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/labor.css">
+<script src="assets/site.js" defer></script>
+<script src="notizen/beitraege.js" defer></script>
+<script src="projekte/projekte.js" defer></script>
+<script src="assets/models.js" defer></script>
+<script src="assets/labor.js" defer></script>
+<script src="assets/start.js" defer></script>
+</head>
+<body id="top" data-page="home">
+<a class="skip-link" href="#labor">Zum Labor springen</a>
+<div data-site-header></div>
+<main>
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-inner">
+    <div class="sub">Schaltung · Klang · Studium</div>
+    <div class="wave-field" aria-hidden="true">
+      <svg viewBox="0 0 1800 260" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><g class="wave-track"><path class="wave-back" d="M0,130 C100,23 200,23 300,130 C400,237 500,237 600,130 C700,23 800,23 900,130 C1000,237 1100,237 1200,130 C1300,23 1400,23 1500,130 C1600,237 1700,237 1800,130 C1900,23 2000,23 2100,130 C2200,237 2300,237 2400,130 C2500,23 2600,23 2700,130 C2800,237 2900,237 3000,130 C3100,23 3200,23 3300,130 C3400,237 3500,237 3600,130"/><path class="wave-front" d="M0,130 C100,237 200,237 300,130 C400,23 500,23 600,130 C700,237 800,237 900,130 C1000,23 1100,23 1200,130 C1300,237 1400,237 1500,130 C1600,23 1700,23 1800,130 C1900,237 2000,237 2100,130 C2200,23 2300,23 2400,130 C2500,237 2600,237 2700,130 C2800,23 2900,23 3000,130 C3100,237 3200,237 3300,130 C3400,23 3500,23 3600,130"/></g></svg>
+    </div>
+    <h1 id="hero-title">osci<span>//</span>log</h1>
+    <p class="headline">Ideen verschalten.<br>Signale hören. Dinge ausprobieren.</p>
+    <div class="meta">Ein persönliches Labor von Briken</div>
+    <div class="hero-links"><a class="button primary" href="#labor">Klang bauen ↓</a><a class="button" href="notizen/">Notizen lesen</a></div>
+  </div>
+  <a class="hero-scroll" href="#labor" aria-hidden="true" tabindex="-1">scroll ↓</a>
+</section>
+
+<section class="section playground" id="labor" aria-labelledby="play-title">
+  <span id="playground"></span>
+  <div class="section-heading"><div><span class="eyebrow">001 / Interaktives Klanglabor</span><h2 id="play-title">Kleine Teile.<br>Große Ideen.</h2></div><span class="lab-stamp">SOUND<br>COMPUTER<br>01—BASIC</span></div>
+  <p class="intro">Greifen. Verbinden. Hören. Drück auf ▶, zieh an den Reglern und steck Kabel um. Nebenbei erfährst du, was in Widerständen, Kondensatoren und Spulen steckt. Kaputt machen kannst du nichts — ↶ macht alles rückgängig.</p>
+
+  <div class="sound-computer" id="lab">
+    <div class="computer-bar">
+      <span class="computer-name"><span class="live-dot" aria-hidden="true"></span>osci//lab <small>— patch desk</small></span>
+      <div class="transport">
+        <label class="master-label" for="master">Pegel <input id="master" type="range" min="0" max="25" value="10" aria-label="Ausgangspegel"></label>
+        <button class="button primary" id="audio-toggle" type="button" aria-pressed="false">▶ Ton starten</button>
+      </div>
+    </div>
+    <div class="toolbar">
+      <div class="palette" aria-label="Bausteine hinzufügen">
+        <span class="palette-label">+ Baustein</span>
+        <button type="button" data-add="osc"><b>∿</b> Oszillator</button>
+        <button type="button" data-add="resistor"><b>R</b> Widerstand</button>
+        <button type="button" data-add="capacitor"><b>C</b> Kondensator</button>
+        <button type="button" data-add="inductor"><b>L</b> Spule</button>
+        <button type="button" data-add="tremolo"><b>↝</b> Tremolo</button>
+      </div>
+      <div class="tools" aria-label="Werkzeuge">
+        <button type="button" id="undo" title="Rückgängig (⌘Z / Strg+Z)">↶ <span>Zurück</span></button>
+        <button type="button" id="redo" title="Wiederholen (⇧⌘Z / Strg+Y)">↷ <span>Vor</span></button>
+        <button type="button" id="tidy" title="Bausteine nach Signalfluss anordnen">⌗ <span>Aufräumen</span></button>
+        <button type="button" id="share" title="Link zu diesem Patch teilen">↗ <span>Teilen</span></button>
+      </div>
+    </div>
+    <div class="desk-layout">
+      <div class="patch-area">
+        <div class="desk-instructions"><span><b>01</b> ▶ Ton starten</span><span><b>02</b> Regler ziehen</span><span><b>03</b> Kabel von OUT ● auf einen Baustein ziehen</span><span><b>04</b> × auf dem Kabel trennt</span></div>
+        <div class="board-scroll" id="board-scroll" tabindex="0" aria-label="Laborfläche; auf kleinen Bildschirmen wischen oder zoomen">
+          <div class="board-sizer" id="board-sizer">
+            <div class="patch-board" id="patch-board">
+              <svg id="wires" class="wires" aria-hidden="true"></svg>
+              <div class="board-watermark" aria-hidden="true">SIGNAL<br>IS MATERIAL.</div>
+              <div id="nodes"></div>
+              <div id="wire-handles"></div>
+            </div>
+          </div>
+        </div>
+        <div class="board-footer"><span id="patch-summary">3 Bausteine · 2 Kabel</span><div class="zoom-tools" role="group" aria-label="Zoom"><button type="button" id="zoom-out" aria-label="Verkleinern">−</button><span id="zoom-value">100 %</span><button type="button" id="zoom-in" aria-label="Vergrößern">+</button><button type="button" id="zoom-fit">Alles zeigen</button></div></div>
+      </div>
+      <aside class="inspector" id="inspector" aria-label="Baustein verstehen und einstellen"></aside>
+    </div>
+    <div class="computer-bottom">
+      <div class="scope-wrap"><span class="eyebrow">Ausgang / Oszilloskop</span><canvas class="scope" id="scope" role="img" aria-label="Zeitlicher Verlauf des hörbaren Ausgangssignals"></canvas></div>
+      <div class="patch-status">
+        <p id="audio-status" role="status">Ton ist aus. Dein erster Patch ist schon verbunden.</p>
+        <p id="patch-message" role="status">Tippe einen Baustein an — darunter bzw. rechts erfährst du, was er macht.</p>
+        <div class="preset-tools"><label for="preset">Starter-Patch<select id="preset"><option value="rc">01 / Weicher werden · RC</option><option value="rl">02 / Strom in Bewegung · RL</option><option value="pulse">03 / Rhythmus fühlen · Tremolo</option><option value="beat">04 / Schwebung · zwei Töne</option></select></label><button class="button small" id="load-preset" type="button">Patch laden</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="learning-strip"><div><span class="eyebrow">Eine kleine Wiederholung pro Besuch</span><h3>Ein Gedanke bleibt.</h3><p>Erst vermuten, dann ausprobieren. Bei jedem Öffnen wartet eine andere Grundlagenfrage auf dich.</p></div><div class="lesson" id="lesson" aria-live="polite"></div></div>
+  <p class="model-note">Labor-Modell: Die Kabel führen Audiosignale zwischen idealisierten, gepufferten Modulen. R ist ein Spannungsteiler, C ein RC-Tiefpass, L ein RL-Tiefpass. Du hörst ihre Grundwirkung; eine vollständige elektrische Schaltungssimulation ist das nicht. Dein Patch bleibt lokal in diesem Browser gespeichert.</p>
+  <details class="learning-sources"><summary>Zum Nachlesen / Grundlagenquellen</summary><a href="https://www.mathworks.com/help/simscape/ref/resistor.html" target="_blank" rel="noopener noreferrer">Widerstand · MathWorks ↗</a><a href="https://www.mathworks.com/help/simscape/ref/capacitor.html" target="_blank" rel="noopener noreferrer">Kondensator · MathWorks ↗</a><a href="https://www.mathworks.com/help/simscape/ref/inductor.html" target="_blank" rel="noopener noreferrer">Spule · MathWorks ↗</a><a href="https://www.ti.com/content/dam/videos/external-videos/en-us/4/3816841626001/6119035031001.mp4/subassets/passive_components_and_circuits_2.pdf" target="_blank" rel="noopener noreferrer">RC-Filter · TI Precision Labs ↗</a></details>
+  <noscript><p>Für das interaktive Labor aktiviere bitte JavaScript.</p></noscript>
+</section>
+
+<section class="section" id="notizen" aria-labelledby="notes-title">
+  <div class="section-heading"><h2 id="notes-title">Notizen aus dem Studium.</h2><span class="eyebrow">002 / Elektrotechnik, verständlich</span></div>
+  <p class="intro">Was ich im E-Technik-Studium lerne — so aufgeschrieben, dass man es auch ohne Vorlesung versteht. Mit Formeln, kleinen Simulationen zum Anfassen und Aufgaben zum Mitdenken.</p>
+  <div class="card-grid" id="latest-notes"></div>
+  <a class="button teaser-more" href="notizen/">Alle Notizen ↗</a>
+</section>
+
+<section class="section" id="projekte" aria-labelledby="projects-title">
+  <div class="section-heading"><h2 id="projects-title">Das Labor wächst.</h2><span class="eyebrow">003 / Projekte & Simulationen</span></div>
+  <div class="card-grid" id="latest-projects"></div>
+  <a class="button teaser-more" href="projekte/">Alle Projekte ↗</a>
+</section>
+
+<section class="section" id="about">
+  <div class="about"><h2>Über osci//log.</h2><div><p class="intro">Ich bin Briken und studiere Elektrotechnik. osci//log ist mein persönlicher Ort für Schaltungssimulationen, Klang und interaktive Ideen. Mich interessiert, wie aus einem technischen Prinzip etwas wird, das man sehen, anfassen und hören kann.</p><p class="intro">Ein offenes Labor zum Ausprobieren — Schritt für Schritt, Signal für Signal.</p></div></div>
+</section>
+</main>
+<div data-site-footer></div>
+</body>
+</html>

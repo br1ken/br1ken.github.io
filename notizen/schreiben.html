@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="de" data-root="../">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Schreibstube — osci//log</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#fbfbfa">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/notizen.css">
+<script src="../assets/site.js" defer></script>
+<script src="beitraege.js" defer></script>
+<script src="../assets/models.js" defer></script>
+<script src="../assets/markdown.js" defer></script>
+<script src="../assets/sims.js" defer></script>
+<script src="../assets/schreiben.js" defer></script>
+</head>
+<body id="top" data-page="notizen">
+<div data-site-header></div>
+<main class="page">
+  <header class="page-hero" style="padding-bottom:22px">
+    <span class="eyebrow">Nur für dich · nicht verlinkt</span>
+    <h1>Schreib<span>//</span>stube</h1>
+    <p class="intro">Links schreiben, rechts sofort sehen, wie es auf der Seite aussieht. Dein Entwurf wird automatisch in diesem Browser gespeichert. Wenn die Notiz fertig ist: herunterladen und den drei Schritten unten folgen.</p>
+  </header>
+  <div class="writer">
+    <div class="writer-meta">
+      <label>Titel<input type="text" id="w-titel" placeholder="Warum … ?"></label>
+      <label>Datum<input type="date" id="w-datum"></label>
+      <label>Fach / Rubrik<input type="text" id="w-fach" list="w-faecher" placeholder="Grundlagen der E-Technik"><datalist id="w-faecher"></datalist></label>
+      <label>Titelbild-Welle<select id="w-welle"><option value="">zufällig</option><option value="sinus">Sinus</option><option value="rechteck">Rechteck</option><option value="dreieck">Dreieck</option><option value="saege">Sägezahn</option><option value="gedaempft">gedämpft</option><option value="lade">Ladekurve</option><option value="am">Modulation</option></select></label>
+    </div>
+    <div class="writer-meta2">
+      <label>Teaser (erscheint auf der Karte)<input type="text" id="w-teaser" placeholder="Ein, zwei Sätze, die neugierig machen."></label>
+      <label>Tags, mit Komma getrennt<input type="text" id="w-tags" placeholder="RC, Filter"></label>
+      <label class="check"><input type="checkbox" id="w-entwurf"> Entwurf</label>
+    </div>
+    <div class="writer-tools" role="toolbar" aria-label="Einfügen">
+      <button type="button" data-insert="h2">## Überschrift</button>
+      <button type="button" data-insert="bold"><b>F</b>ett</button>
+      <button type="button" data-insert="italic"><i>K</i>ursiv</button>
+      <button type="button" data-insert="mark">==Markiert==</button>
+      <button type="button" data-insert="math">$x$</button>
+      <button type="button" data-insert="mathblock">$$ Formel $$</button>
+      <button type="button" data-insert="merke">Merke</button>
+      <button type="button" data-insert="aufgabe">Aufgabe</button>
+      <button type="button" data-insert="herleitung">Herleitung</button>
+      <button type="button" data-insert="achtung">Achtung</button>
+      <button type="button" data-insert="sim-rc">Sim: RC</button>
+      <button type="button" data-insert="sim-welle">Sim: Welle</button>
+      <button type="button" data-insert="sim-teiler">Sim: Teiler</button>
+      <button type="button" data-insert="table">Tabelle</button>
+      <button type="button" data-insert="image">Bild</button>
+      <button type="button" data-insert="link">Link</button>
+    </div>
+    <div class="writer-tabs" role="group" aria-label="Ansicht"><button type="button" data-view="text" aria-pressed="true">Text</button><button type="button" data-view="preview" aria-pressed="false">Vorschau</button></div>
+    <div class="writer-panes" id="w-panes" data-view="text">
+      <textarea id="w-text" spellcheck="true" aria-label="Text der Notiz in Markdown"></textarea>
+      <div class="writer-preview" id="w-preview" aria-live="off"></div>
+    </div>
+    <div class="writer-actions">
+      <span class="writer-status" id="w-status">Bereit.</span>
+      <button class="button small" type="button" id="w-neu">Neu aus Vorlage</button>
+      <label class="button small" style="cursor:pointer">.md öffnen …<input type="file" id="w-datei" accept=".md,text/markdown,text/plain" hidden></label>
+      <button class="button small" type="button" id="w-kopieren">Ganzen Text kopieren</button>
+      <button class="button primary" type="button" id="w-download">.md herunterladen ↓</button>
+    </div>
+    <div class="writer-steps" id="w-steps"></div>
+  </div>
+</main>
+<div data-site-footer></div>
+</body>
+</html>
