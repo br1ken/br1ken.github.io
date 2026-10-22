@@ -178,7 +178,7 @@ const OSCISims = (() => {
         <g transform="translate(470,${top})"><rect class="bar-bg" width="34" height="${barH}"/><rect class="bar-top" width="34" height="${barH * (1 - share)}"/><rect class="bar-low" y="${barH * (1 - share)}" width="34" height="${barH * share}"/><text class="tick" x="-6" y="${barH * (1 - share) / 2 + 3}" text-anchor="end">U₁</text><text class="tick" x="-6" y="${barH * (1 - share) + barH * share / 2 + 3}" text-anchor="end">U₂</text><text class="tick" x="17" y="${barH + 18}" text-anchor="middle">${Math.round(share * 100)} %</text></g>
       </svg><figcaption>Schaltung und Aufteilung der Quellspannung</figcaption>`;
       const rows = [['U₂ am Ausgang', si(u2, 'V')], ['U₁ über R₁', si(u - u2, 'V')], ['Strom durch R₁', si(i, 'A')]];
-      if (loaded) rows.push(['ohne Last wären es', `${si(u2free, 'V')} (${u2free ? Math.round((u2free - u2) / u2free * 100) : 0} % mehr)`]);
+      if (loaded) rows.push(['ohne Last wären es', `${si(u2free, 'V')} — die Last senkt U₂ um ${u2free ? Math.round((u2free - u2) / u2free * 100) : 0} %`]);
       readout(ui.readout, rows);
     }
     [U, R1, R2, RL].forEach(s => s.on(update)); load.querySelector('input').addEventListener('change', update); update();

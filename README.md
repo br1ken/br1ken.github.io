@@ -93,10 +93,10 @@ Wichtig: Die versteckte Datei **`.nojekyll`** muss im Repo bleiben. Ohne sie ble
 
 ### Wenn Design oder Code geändert wurde
 
-Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer (aktuell `?v=13`). Nach Änderungen in `assets/` diese Zahl in allen HTML-Dateien um eins erhöhen, zum Beispiel von 13 auf 14:
+Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer (aktuell `?v=14`). Nach Änderungen in `assets/` diese Zahl in allen HTML-Dateien um eins erhöhen, zum Beispiel von 14 auf 15:
 
 ```bash
-grep -rl '?v=13"' --include='*.html' . | xargs sed -i '' 's/?v=13"/?v=14"/g'
+grep -rl '?v=14"' --include='*.html' . | xargs sed -i '' 's/?v=14"/?v=15"/g'
 ```
 
 Für `assets/lexikon.js` gilt stattdessen `LEX_VERSION` in `assets/site.js`. Für neue Notizen oder Projekte ist beides nicht nötig.
@@ -200,6 +200,7 @@ Die Brücken-Simulation (`bruecke`) rechnet dagegen exakt über die Ersatzspannu
 - Behoben: das × auf schwingenden Kabeln ließ sich nicht treffen (die Knöpfe wurden in jedem Bild neu gebaut).
 - Notiz *Von Newton bis Ohm*: acht Schritte von Kraft und Arbeit über Ladung, Feld, Potential, Spannung und Strom bis zum Drude-Modell, mit SVG-Diagrammen und Feynman-Momenten.
 - Lexikon: lange Formeln auf mehrere Zeilen verteilt, zu breite Formelzeichen werden verkleinert statt abgeschnitten; Formeln passen auf dem Handy ohne Seitwärtsscrollen.
+- Fachlicher Check aller Notizen, Lexikon-Einträge, Labor-Texte und Missionen: präzisere Formulierungen (Impedanz vs. Blindwiderstand, technische Stromrichtung, Ladungsquantelung, Echo bei g = 1, antiparallele Dioden u. a.), Rechenfehler in der Teiler-Simulation („% mehr“) behoben, breite Formeln der Brückenschaltung mehrzeilig.
 - Lautstärke: Belohnungs-Töne laufen über den Pegel (waren vorher am Pegel vorbei und viel zu laut), Wellenformen, Verzerrer und Echo-Rückkopplung gleichen sich aus; jede Mission startet mit eigener Sequencer-Melodie statt Dauerton.
 
 **Inhalte**

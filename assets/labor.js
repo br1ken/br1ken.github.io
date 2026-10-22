@@ -59,7 +59,7 @@ const DEFINITIONS = {
     lex: 'hochpass', title: 'Hochpass', symbol: 'CR', kind: 'CR / Hochpass', unit: 'C / Kapazität [nF] · R / Widerstand [kΩ]',
     text: 'Gleiche Bauteile wie beim Tiefpass, nur vertauscht: Der Kondensator sitzt in Serie, der Widerstand gegen Masse. Für tiefe Frequenzen ist C ein großer Widerstand und sperrt — durch kommen nur die Höhen.',
     formula: 'fᶜ = 1 / (2πRC)   /   |H| = 1 / √(1 + (fᶜ/f)²)', detail: p => `${number(p.c)} nF · ${number(p.r)} kΩ`,
-    result: p => `Grenzfrequenz: ${hz(LabModels.rcCutoff(p.r * 1000, p.c * 1e-9))}. Darunter wird es leiser, darüber bleibt alles.`,
+    result: p => `Grenzfrequenz: ${hz(LabModels.rcCutoff(p.r * 1000, p.c * 1e-9))}. Darunter wird es leiser, weit darüber kommt fast alles durch.`,
     nudge: 'Mach C kleiner: Die Grenzfrequenz steigt, der Klang wird dünner und blechern — wie aus einem alten Telefon.',
     params: {c: {label: 'Kapazität C', unit: 'nF', min: 1, max: 2200, initial: 47, log: true}, r: {label: 'Widerstand R', unit: 'kΩ', min: 1, max: 100, initial: 10, log: true}}
   },
@@ -73,7 +73,7 @@ const DEFINITIONS = {
   },
   distortion: {
     lex: 'verzerrung', title: 'Verzerrer', symbol: '⊣⊢', kind: 'Diodenbegrenzer', unit: 'k / Übersteuerung (Faktor)',
-    text: 'Zwei Dioden gegeneinander lassen die Spannung nur bis etwa ±0,7 V durch. Alles darüber wird weich abgeschnitten — aus runden Wellen werden fast eckige, voller Obertöne. So entsteht der Klang einer verzerrten E-Gitarre.',
+    text: 'Zwei antiparallel geschaltete Siliziumdioden lassen die Spannung nur bis etwa ±0,7 V steigen. Alles darüber wird weich begrenzt — aus runden Wellen werden fast eckige, voller Obertöne. So entsteht der Klang einer verzerrten E-Gitarre.',
     formula: 'y = tanh(k · x) / tanh(k)', detail: p => `Übersteuerung × ${number(p.drive)}`,
     result: p => p.drive < 3 ? 'Kaum Begrenzung: Das Signal bleibt fast unverändert.' : p.drive < 15 ? 'Die Spitzen werden abgerundet. Es kommen hörbar Obertöne dazu.' : 'Starke Begrenzung: Aus dem Sinus wird fast ein Rechteck. Schau aufs Oszilloskop!',
     nudge: 'Nimm einen Sinus als Quelle und dreh die Übersteuerung langsam hoch. Auf dem Oszilloskop siehst du, wie die Kuppen flach werden.',
@@ -81,7 +81,7 @@ const DEFINITIONS = {
   },
   out: {
     lex: 'limiter', title: 'Ausgang', symbol: '↗︎', kind: 'Abhören', unit: 'Pegel / relative Lautstärke [%]',
-    text: 'Hier endet dein Signalweg. Ein angeschlossener Oszillator wird hörbar, sobald du den Ton startest. Mehrere Quellen können hier zusammenkommen.',
+    text: 'Hier endet dein Signalweg. Eine angeschlossene Klangquelle wird hörbar, sobald du den Ton startest. Mehrere Quellen können hier zusammenkommen.',
     formula: 'Quelle → Verarbeitung → Ausgang', detail: p => `${number(p.volume)} % · Ausgang`,
     result: () => 'Der Limiter im Ausgang fängt Pegelspitzen ab.',
     nudge: 'Vergleiche den direkten Weg vom Oszillator zum Ausgang mit dem Weg durch einen Filter. Trenne dazu ein Kabel mit dem × in seiner Mitte; parallele Wege werden zusammengemischt.',
@@ -1211,8 +1211,8 @@ const STEP_HINTS = {
   'tremolo.rate': ['Halbes Tempo: langsameres Pulsieren.', 'Doppeltes Tempo: schnelleres Pulsieren.'],
   'highpass.c': ['Halbes C → doppelte Grenzfrequenz: noch dünner.', 'Doppeltes C → halbe Grenzfrequenz: mehr Bass kommt durch.'],
   'highpass.r': ['Halbes R → doppelte Grenzfrequenz: noch dünner.', 'Doppeltes R → halbe Grenzfrequenz: mehr Bass kommt durch.'],
-  'delay.time': ['Halbe Verzögerung: Die Echos rücken näher zusammen.', 'Doppelte Verzögerung: Das Echo kommt später — eine größere Wand, weiter weg.'],
-  'distortion.drive': ['Weniger Übersteuerung: Die Welle wird wieder runder.', 'Mehr Übersteuerung: Die Dioden schneiden mehr ab — mehr Obertöne.'],
+  'delay.time': ['Halbe Verzögerung: Die Echos rücken näher zusammen.', 'Doppelte Verzögerung: Das Echo kommt später — wie von einer Wand, die doppelt so weit weg ist.'],
+  'distortion.drive': ['Weniger Übersteuerung: Die Welle wird wieder runder.', 'Mehr Übersteuerung: Die Dioden begrenzen stärker — mehr Obertöne.'],
   'seq.tempo': ['Langsamer: Jeder Schritt dauert länger.', 'Schneller: mehr Schritte pro Sekunde.']
 };
 const NOTE_NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'H'];

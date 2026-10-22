@@ -7,9 +7,9 @@ teaser: Kraft, Arbeit, Ladung, Feld, Potential, Spannung, Strom, Widerstand — 
 welle: lade
 ---
 
-In der ersten ET-Vorlesung stehen $U$, $I$ und $R$ an der Tafel, als wären sie vom Himmel gefallen. Sind sie aber nicht. Alles, was man für Gleichstromkreise braucht, folgt aus der Mechanik — plus einer einzigen neuen Eigenschaft der Materie: der **Ladung**.
+In der ersten ET-Vorlesung stehen $U$, $I$ und $R$ an der Tafel, als wären sie vom Himmel gefallen. Sind sie aber nicht. Die Begriffe dahinter bauen auf der Mechanik auf — Kraft, Arbeit, Energie. Neu dazu kommt eine Eigenschaft der Materie mit ihrem eigenen Kraftgesetz: die **Ladung**.
 
-Diese Notiz baut die Kette in acht Schritten auf. Jeder Schritt kommt viermal: **physikalisch** (was passiert), **mathematisch** (die Herleitung), **symbolisch** (stimmen die Einheiten?) und als **Feynman-Moment** (ohne Formeln, mit einem Bild im Kopf).
+Diese Notiz baut die Kette in acht Schritten auf. Jeder Schritt kommt dreimal: **physikalisch** (was passiert), **mathematisch** (die Herleitung) und **symbolisch** (stimmen die Einheiten?). Wo es hilft, kommt ein **Feynman-Moment** dazu: ohne Formeln, mit einem Bild im Kopf.
 
 <figure class="dia"><svg viewBox="0 0 360 368" role="img" aria-label="Landkarte: Kraft und Ladung führen über Arbeit, Feld, Spannung und Strom zum Widerstand und zum ohmschen Gesetz">
 <defs><marker id="dia-p1" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" class="f"/></marker></defs>
@@ -35,7 +35,7 @@ Diese Notiz baut die Kette in acht Schritten auf. Jeder Schritt kommt viermal: *
 
 ## 1. Newton: Kraft ändert Bewegung
 
-**Physikalisch.** Ein Körper bleibt, wie er ist — in Ruhe oder in gleichförmiger Bewegung —, bis eine Kraft ihn stört. Die Kraft bestimmt nicht die Geschwindigkeit, sondern wie schnell sie sich ändert.
+**Physikalisch.** Ein Körper bleibt, wie er ist — in Ruhe oder in gleichförmiger Bewegung —, solange keine resultierende Kraft auf ihn wirkt. Die Kraft bestimmt nicht die Geschwindigkeit, sondern wie schnell sie sich ändert.
 
 **Mathematisch.**
 
@@ -45,13 +45,13 @@ $$\vec{F} = \frac{\mathrm{d}\vec{p}}{\mathrm{d}t} = m\,\vec{a} \qquad (\text{bei
 
 ## 2. Arbeit: Kraft mal Weg
 
-**Physikalisch.** Wer eine Kraft entlang eines Weges wirken lässt, verrichtet Arbeit. Die steckt danach als [[Energie|energie]] im Körper: als Bewegung oder als Lage, zum Beispiel als Höhe. Es zählt nur der Teil der Kraft, der in Wegrichtung zeigt.
+**Physikalisch.** Wirkt eine Kraft entlang eines Weges, verrichtet sie Arbeit: Sie überträgt [[Energie|energie]]. Die steckt danach als Bewegung im Körper, als Lage (zum Beispiel Höhe) oder — bei Reibung — als Wärme in der Umgebung. Es zählt nur der Teil der Kraft, der in Wegrichtung zeigt.
 
 **Mathematisch.**
 
 $$W_{12} = \int_1^2 \vec{F} \cdot \mathrm{d}\vec{s}$$
 
-Setzt man Newton ein, kommt der Arbeitssatz heraus: Arbeit ändert die Bewegungsenergie.
+Für die resultierende Kraft eingesetzt, folgt mit Newton der Arbeitssatz: Ihre Arbeit ändert die Bewegungsenergie.
 
 $$W_{12} = \tfrac{1}{2} m v_2^2 - \tfrac{1}{2} m v_1^2$$
 
@@ -69,33 +69,33 @@ Bei manchen Kräften hängt die Arbeit nur von Start und Ziel ab, nicht vom Weg 
 
 $$W_{12} = E_\text{pot}(1) - E_\text{pot}(2)$$
 
-Bei der Schwerkraft ist das $E_\text{pot} = m\,g\,h$. Einmal im Kreis herum ist die Arbeit dann null: $\oint \vec{F} \cdot \mathrm{d}\vec{s} = 0$. Diese Zeile wird in Schritt 6 zur Maschenregel.
+Bei der Schwerkraft nahe der Erdoberfläche ist das $E_\text{pot} = m\,g\,h$. Einmal im Kreis herum ist die Arbeit dann null: $\oint \vec{F} \cdot \mathrm{d}\vec{s} = 0$. Diese Zeile wird in Schritt 6 zur Maschenregel.
 
 **Symbolisch.** $[W] = \mathrm{N\,m} = \mathrm{J} = \mathrm{kg\,m^2/s^2}$
 
 ::: tipp Feynman-Moment
-Energie ist Buchhaltung. Es gibt eine Zahl, die bei allem, was passiert, gleich bleibt — man muss nur alle Konten kennen: Bewegung, Höhe, Wärme und gleich auch die elektrische Lage. Feynman erklärt das mit einem Kind, das Bauklötze im Zimmer versteckt: Wer klug genug nachzählt, findet immer alle wieder.
+Energie ist Buchhaltung. Es gibt eine Zahl, die bei allem, was passiert, gleich bleibt — man muss nur alle Konten kennen: Bewegung, Höhe, Wärme und gleich auch die elektrische Lage. Feynman erzählt das mit Bauklötzen, die ein Kind im Zimmer versteckt: Man sieht nicht mehr alle, aber wer geschickt nachrechnet, kommt immer auf dieselbe Zahl.
 :::
 
 ## 3. Ladung: die neue Eigenschaft
 
-**Physikalisch.** Elektronen und Protonen haben eine Eigenschaft, die mit Masse nichts zu tun hat: [[Ladung|ladung]], positiv oder negativ. Gleiche Ladungen stoßen sich ab, ungleiche ziehen sich an. Ladung gibt es nur in Vielfachen der Elementarladung, und sie geht nie verloren — sie wird nur verschoben.
+**Physikalisch.** Elektronen und Protonen haben eine Eigenschaft, die mit Masse nichts zu tun hat: [[Ladung|ladung]], positiv oder negativ. Gleiche Ladungen stoßen sich ab, ungleiche ziehen sich an. Frei vorkommende Ladung gibt es nur in ganzzahligen Vielfachen der Elementarladung $e$, und die Gesamtladung bleibt immer erhalten: Entsteht irgendwo positive Ladung, entsteht gleichzeitig genauso viel negative.
 
-**Mathematisch.** Das Coulomb-Gesetz ist gebaut wie Newtons Gravitationsgesetz:
+**Mathematisch.** Das Coulomb-Gesetz für zwei Punktladungen im Vakuum ist gebaut wie Newtons Gravitationsgesetz:
 
 $$F = \frac{1}{4\pi\varepsilon_0} \cdot \frac{Q_1\,Q_2}{r^2}$$
 
-Jede Ladung ist ein ganzzahliges Vielfaches der Elementarladung: $Q = n \cdot e$ mit $e = 1{,}602 \cdot 10^{-19}\,\mathrm{C}$.
+Für frei vorkommende Ladungen gilt $Q = n \cdot e$ mit $e = 1{,}602 \cdot 10^{-19}\,\mathrm{C}$. (Quarks tragen Drittel davon, kommen aber nie einzeln vor.)
 
 **Symbolisch.** $[Q] = \mathrm{C} = \mathrm{A\,s}$. Im SI ist nicht die Ladung Basiseinheit, sondern die Stromstärke: Ein Coulomb ist „ein Ampere, eine Sekunde lang“.
 
 ::: tipp Feynman-Moment
-Zwei Elektronen stoßen sich elektrisch etwa $4 \cdot 10^{42}$-mal stärker ab, als sie sich durch ihre Masse anziehen. Dass wir davon im Alltag nichts merken, liegt nur daran, dass Materie fast perfekt neutral ist: Plus und Minus heben sich auf, bis auf winzige Reste. Diese winzigen Reste sind alles, worum es in der Elektrotechnik geht.
+Zwei Elektronen stoßen sich elektrisch etwa $4 \cdot 10^{42}$-mal stärker ab, als sie sich durch ihre Masse anziehen. Dass wir davon im Alltag nichts merken, liegt nur daran, dass Materie fast perfekt neutral ist: Plus und Minus heben sich auf, bis auf winzige Reste. Schon winzige Abweichungen davon erzeugen die Felder, die in jedem Stromkreis die Elektronen antreiben.
 :::
 
 ## 4. Das Feld: Kraft pro Ladung
 
-**Physikalisch.** Die Kraft auf eine Probeladung $q$ ist proportional zu $q$. Teilt man durch $q$, bleibt eine Größe übrig, die nur noch vom Ort abhängt: das [[elektrische Feld|e-feld]]. Es beschreibt den Raum, nicht die Probeladung.
+**Physikalisch.** Die Kraft auf eine kleine Probeladung $q$ ist proportional zu $q$. Teilt man durch $q$, bleibt eine Größe übrig, die nur noch vom Ort abhängt: das [[elektrische Feld|e-feld]]. Es beschreibt den Raum, nicht die Probeladung.
 
 **Mathematisch.**
 
@@ -105,7 +105,7 @@ $$\vec{E} = \frac{\vec{F}}{q} \qquad\Leftrightarrow\qquad \vec{F} = q\,\vec{E}$$
 
 ## 5. Potential: Energie pro Ladung
 
-**Physikalisch.** Das elektrostatische Feld ist konservativ, genau wie die Schwerkraft. Also hat eine Ladung an jedem Ort eine potentielle Energie. Teilt man auch die durch $q$, bekommt man das [[Potential|potential]] $\varphi$: eine „Höhe“ für Ladungen. Positive Ladungen rollen von hohem zu niedrigem Potential, wie Kugeln bergab.
+**Physikalisch.** Das elektrostatische Feld ist konservativ, genau wie die Schwerkraft. Also hat eine Ladung an jedem Ort eine potentielle Energie. Teilt man auch die durch $q$, bekommt man das [[Potential|potential]] $\varphi$: eine „Höhe“ für Ladungen. Auf positive Ladungen wirkt die Kraft in Richtung des niedrigeren Potentials, wie auf Kugeln am Hang. Negative Ladungen wie Elektronen zieht es umgekehrt zum höheren Potential.
 
 <figure class="dia"><svg viewBox="0 0 360 220" role="img" aria-label="Analogie: Eine Masse fällt von Höhe h1 auf h2, eine Ladung wandert im Feld zwischen zwei Platten von Potential phi1 zu phi2">
 <defs><marker id="dia-p2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" class="f"/></marker><marker id="dia-p2m" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 8 4 0 8z" class="fm"/></marker></defs>
@@ -124,7 +124,7 @@ $$\vec{E} = \frac{\vec{F}}{q} \qquad\Leftrightarrow\qquad \vec{F} = q\,\vec{E}$$
 <circle class="a" cx="278" cy="74" r="9"/><text class="c ai" x="278" y="78">+</text>
 <path class="s" d="M278 86V146" marker-end="url(#dia-p2)"/><text x="286" y="118">F = q·E</text>
 <text class="c" x="272" y="212">W = q (φ₁ − φ₂) = q U</text>
-</svg><figcaption>Gleiche Rechnung, andere Kraft: Höhe wird zu Potential, Höhenunterschied zu Spannung, das Gewicht m·g zur Kraft q·E.</figcaption></figure>
+</svg><figcaption>Gleiche Rechnung, andere Kraft: Lageenergie pro Masse (g·h) wird zu Lageenergie pro Ladung (φ), der Unterschied zur Spannung, das Gewicht m·g zur Kraft q·E.</figcaption></figure>
 
 **Mathematisch.** Mit einem Bezugspunkt $P_0$, an dem $\varphi = 0$ gilt:
 
@@ -153,12 +153,12 @@ Streng genommen gilt das nur, solange sich durch die Masche kein Magnetfluss än
 **Symbolisch.** $[U] = \mathrm{V} = \mathrm{J/C} = \mathrm{W/A} = \mathrm{kg\,m^2/(A\,s^3)}$
 
 ::: tipp Feynman-Moment
-Eine Batterie ist ein Aufzug. Innen hebt die Chemie jede Ladung auf das hohe Potential, außen rollt sie durch den Stromkreis wieder hinunter und gibt dabei ihre Energie ab — an Lampe, Motor oder Widerstand. 9 Volt heißt: Jedes Coulomb, das einmal herumkommt, liefert 9 Joule ab.
+Eine Batterie ist ein Aufzug. Innen hebt die Chemie jede (gedacht positive) Ladung auf das hohe Potential, außen rollt sie durch den Stromkreis wieder hinunter und gibt dabei ihre Energie ab — an Lampe, Motor oder Widerstand. 9 Volt heißt: Jedes Coulomb bekommt 9 Joule mit auf den Weg. Ein kleiner Teil davon bleibt schon in der Batterie selbst hängen, an ihrem Innenwiderstand. Die Elektronen laufen übrigens andersherum — für die Energiebilanz ist das egal.
 :::
 
 ## 7. Strom: Ladung pro Zeit
 
-**Physikalisch.** [[Strom|strom]] ist bewegte Ladung. Gezählt wird, wie viel Ladung pro Sekunde durch einen Querschnitt des Leiters fließt.
+**Physikalisch.** [[Strom|strom]] ist gerichtet bewegte Ladung. Die Elektronen flitzen zwar ohnehin wild durcheinander, aber das hebt sich auf. Gezählt wird nur die gemeinsame Drift: wie viel Ladung pro Sekunde netto durch einen Querschnitt des Leiters fließt.
 
 <figure class="dia"><svg viewBox="0 0 360 156" role="img" aria-label="Ein Leiterstück mit Ladungsträgern; markiert ist ein Zylinder der Länge v_d mal dt vor der Querschnittsfläche A">
 <defs><marker id="dia-p3" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" class="f"/></marker></defs>
@@ -188,12 +188,12 @@ $$\begin{aligned} n\,e &= 8{,}5 \cdot 10^{28}\,\mathrm{m^{-3}} \cdot 1{,}602 \cd
 $$\begin{aligned} v_d &= \frac{I}{n\,e\,A} = \frac{1\,\mathrm{A}}{1{,}36 \cdot 10^{10}\,\mathrm{C/m^3} \cdot 10^{-6}\,\mathrm{m^2}} \\ &\approx 7{,}3 \cdot 10^{-5}\,\mathrm{m/s} \approx 0{,}07\,\mathrm{mm/s} \end{aligned}$$
 
 ::: tipp Feynman-Moment
-Die Elektronen kriechen langsamer als eine Schnecke. Trotzdem geht das Licht sofort an, wenn du den Schalter drückst. Denk an ein Rohr voller Murmeln: Schiebst du vorne eine hinein, fällt hinten sofort eine heraus — obwohl jede einzelne kaum vorankommt. Schnell ist nicht das Elektron, sondern der Schubs: das Feld, das sich fast mit Lichtgeschwindigkeit im ganzen Draht aufbaut.
+Die Elektronen kriechen langsamer als eine Schnecke. Trotzdem geht das Licht sofort an, wenn du den Schalter drückst. Denk an ein Rohr voller Murmeln: Schiebst du vorne eine hinein, fällt hinten sofort eine heraus — obwohl jede einzelne kaum vorankommt. Schnell ist nicht das Elektron, sondern der Schubs: das Feld, das sich mit einem guten Teil der Lichtgeschwindigkeit entlang der Leitung aufbaut.
 :::
 
 ## 8. Widerstand: Newton im Draht
 
-**Physikalisch.** Im Vakuum würde ein Feld ein Elektron immer schneller machen. Im Metall nicht: Das Elektron wird beschleunigt, stößt gegen das Kristallgitter, verliert seine Richtung und fängt von vorne an. Im Mittel bleibt eine konstante Driftgeschwindigkeit — wie bei einer Kugel, die im Flipper durch einen Wald aus Pins springt. Die Energie aus jedem Stoß landet im Gitter: Der Draht wird warm.
+**Physikalisch.** Im Vakuum würde ein Feld ein Elektron immer schneller machen. Im Metall nicht: Das Elektron wird beschleunigt, stößt — im einfachen klassischen Bild — gegen das Kristallgitter, verliert seine Richtung und fängt von vorne an. Im Mittel bleibt eine konstante Driftgeschwindigkeit — wie bei einer Kugel, die im Flipper durch einen Wald aus Pins springt. Die Energie aus jedem Stoß landet im Gitter: Der Draht wird warm.
 
 <figure class="dia"><svg viewBox="0 0 360 200" role="img" aria-label="Drude-Modell: Ein Elektron springt im Zickzack zwischen Gitter-Ionen und driftet entgegen der Feldrichtung">
 <defs><marker id="dia-p4" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" class="f"/></marker></defs>
@@ -215,7 +215,7 @@ $$\vec{v}_d = -\frac{e\,\tau}{m}\,\vec{E}$$
 
 $$\vec{j} = -n\,e\,\vec{v}_d = \underbrace{\frac{n\,e^2\,\tau}{m}}_{\sigma}\,\vec{E}$$
 
-Das ist das ohmsche Gesetz im Kleinen: Stromdichte proportional zum Feld, mit der [[Leitfähigkeit|leitfaehigkeit]] $\sigma$ als Faktor. Für einen Draht der Länge $l$ mit Querschnitt $A$ gilt $U = E\,l$ und $I = j\,A$:
+Das ist das ohmsche Gesetz im Kleinen: Stromdichte proportional zum Feld, mit der [[Leitfähigkeit|leitfaehigkeit]] $\sigma$ als Faktor (in der E-Technik oft $\kappa$ geschrieben). In einem gleichförmigen Draht der Länge $l$ mit Querschnitt $A$ ist das Feld überall gleich, also $U = E\,l$ und $I = j\,A$:
 
 $$I = j\,A = \sigma\,\frac{U}{l}\,A$$
 
@@ -229,7 +229,7 @@ $$\begin{aligned} \tau &= \frac{m\,\sigma}{n\,e^2} \\ &= \frac{9{,}11 \cdot 10^{
 Etwa alle 25 Femtosekunden — rund 40 Billionen Stöße pro Sekunde.
 :::
 
-**Leistung.** Jedes Coulomb verliert auf dem Weg durch den Widerstand die Energie $U$, und pro Sekunde kommen $I$ Coulomb durch. Das ist die [[Leistung|leistung]], die als Wärme im Draht bleibt:
+**Leistung.** Jedes Coulomb verliert auf dem Weg durch den Widerstand die Energie $U$, und pro Sekunde kommen $I$ Coulomb durch. Das ist die [[Leistung|leistung]], die im Widerstand in Wärme umgesetzt wird:
 
 $$P = \frac{\mathrm{d}W}{\mathrm{d}t} = U\,\frac{\mathrm{d}Q}{\mathrm{d}t} = U \cdot I = I^2 R = \frac{U^2}{R}$$
 
@@ -238,7 +238,7 @@ $$P = \frac{\mathrm{d}W}{\mathrm{d}t} = U\,\frac{\mathrm{d}Q}{\mathrm{d}t} = U \
 $$\left[\frac{n\,e^2\,\tau}{m}\right] = \frac{\mathrm{m^{-3}} \cdot \mathrm{A^2\,s^2} \cdot \mathrm{s}}{\mathrm{kg}} = \frac{\mathrm{A^2\,s^3}}{\mathrm{kg\,m^3}} = \frac{1}{\Omega\,\mathrm{m}} \;\checkmark$$
 
 ::: tipp Feynman-Moment
-Das ohmsche Gesetz ist kein Naturgesetz wie Newtons Gesetze, sondern eine Aussage über Materialien: Bei vielen Metallen ist der Strom zum Feld proportional, solange die Temperatur gleich bleibt. Eine Diode hält sich gar nicht daran, eine Glühlampe nur bei fester Temperatur — kalt hat ihr Draht etwa ein Zehntel des Widerstands im Betrieb. Und das Drude-Modell selbst ist klassisch: Warum Elektronen nicht an jedem Atom abprallen, erklärt erst die Quantenmechanik. Die Form $j = \sigma E$ stimmt trotzdem.
+Das ohmsche Gesetz ist kein Naturgesetz wie Newtons Gesetze, sondern eine Aussage über Materialien: Bei vielen Metallen ist der Strom zum Feld proportional, solange die Temperatur gleich bleibt. Eine Diode hält sich gar nicht daran, eine Glühlampe nur bei fester Temperatur — kalt hat ihr Draht etwa ein Zehntel des Widerstands im Betrieb. Und das Drude-Modell selbst ist klassisch: In Wirklichkeit streuen die Elektronen nicht an jedem Atom, sondern an Gitterschwingungen und Fehlstellen — das erklärt erst die Quantenmechanik. Die Form $j = \sigma E$ und die Größenordnung von $\tau$ stimmen trotzdem.
 :::
 
 ## Alles auf einen Blick
@@ -280,7 +280,7 @@ Mit $n\,e \approx 1{,}36 \cdot 10^{10}\,\mathrm{C/m^3}$ von oben:
 
 $$\begin{aligned} v_d &= \frac{I}{n\,e\,A} = \frac{16\,\mathrm{A}}{1{,}36 \cdot 10^{10}\,\mathrm{C/m^3} \cdot 2{,}5 \cdot 10^{-6}\,\mathrm{m^2}} \\ &\approx 4{,}7 \cdot 10^{-4}\,\mathrm{m/s} \approx 0{,}47\,\mathrm{mm/s} \end{aligned}$$
 
-Für einen Meter: $t = 1\,\mathrm{m} / v_d \approx 2100\,\mathrm{s}$, also gut eine halbe Stunde. Bei Wechselstrom mit $50\,\mathrm{Hz}$ kommt es gar nicht erst voran: Es zittert nur um etwa zwei Mikrometer hin und her.
+Bei Gleichstrom bräuchte es für einen Meter $t = 1\,\mathrm{m} / v_d \approx 2100\,\mathrm{s}$, also gut eine halbe Stunde. Am Herd fließt aber Wechselstrom mit $50\,\mathrm{Hz}$: Da kommt das Elektron gar nicht voran, sondern zittert mit einer Amplitude von etwa zwei Mikrometern hin und her.
 :::
 
 ::: aufgabe Das Verlängerungskabel
@@ -309,4 +309,4 @@ Im Kupferdraht kriechen die Elektronen dagegen mit Bruchteilen eines Millimeters
 
 Zwei Widerstände in Reihe und das ohmsche Gesetz zweimal angewendet: [Der Spannungsteiler](beitrag.html?b=spannungsteiler). Im [Labor](../labor/) steckt dieselbe Formel im Baustein Widerstand.
 
-**Zum Weiterlesen:** die Feynman Lectures, frei online — [Band I, Kapitel 13](https://www.feynmanlectures.caltech.edu/I_13.html) und [14](https://www.feynmanlectures.caltech.edu/I_14.html) über Arbeit und potentielle Energie, [Band II, Kapitel 1](https://www.feynmanlectures.caltech.edu/II_01.html) über Elektromagnetismus.
+**Zum Weiterlesen:** die Feynman Lectures, frei online — [Band I, Kapitel 4](https://www.feynmanlectures.caltech.edu/I_04.html) über Energieerhaltung (mit den Bauklötzen), [Kapitel 13](https://www.feynmanlectures.caltech.edu/I_13.html) und [14](https://www.feynmanlectures.caltech.edu/I_14.html) über Arbeit und potentielle Energie, [Band II, Kapitel 1](https://www.feynmanlectures.caltech.edu/II_01.html) über Elektromagnetismus.

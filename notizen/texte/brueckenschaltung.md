@@ -38,9 +38,9 @@ $$R_L = R_i$$
 
 **Innenwiderstand:** $R_L$ entfernen, die ideale Quelle $U_q$ durch einen Kurzschluss ersetzen und den Widerstand zwischen $P_1$ und $P_2$ bestimmen. Durch den Kurzschluss werden der obere und der untere Knoten zu **einem** Knoten.
 
-$$R_1 \parallel R_2 = \frac{10 \cdot 30}{10 + 30}\,\Omega = 7{,}5\,\Omega \qquad R_3 \parallel R_4 = \frac{30 \cdot 10}{30 + 10}\,\Omega = 7{,}5\,\Omega$$
+$$\begin{aligned} R_1 \parallel R_2 &= \frac{10 \cdot 30}{10 + 30}\,\Omega = 7{,}5\,\Omega \\ R_3 \parallel R_4 &= \frac{30 \cdot 10}{30 + 10}\,\Omega = 7{,}5\,\Omega \end{aligned}$$
 
-$$R_i = (R_1 \parallel R_2) + (R_3 \parallel R_4) = 15\,\Omega \qquad\Rightarrow\qquad \boxed{R_L = 15\,\Omega}$$
+$$\begin{aligned} R_i &= (R_1 \parallel R_2) + (R_3 \parallel R_4) = 15\,\Omega \\ &\Rightarrow\quad \boxed{R_L = 15\,\Omega} \end{aligned}$$
 
 ::: herleitung Warum parallel und dann in Reihe?
 Nach dem Kurzschluss gibt es nur noch drei Knoten: $P_1$, $P_2$ und den zusammengelegten Knoten $K$ (oben = unten).
@@ -70,7 +70,7 @@ $$U_0 = \varphi_{1,0} - \varphi_{2,0} = 15\,\mathrm{V}$$
 
 Im Ersatzkreis liegen $R_i$ und $R_L$ einfach in Reihe:
 
-$$I_L = \frac{U_0}{R_i + R_L} = \frac{15\,\mathrm{V}}{30\,\Omega} = 0{,}5\,\mathrm{A} \qquad P_L = R_L\, I_L^2 = 15\,\Omega \cdot (0{,}5\,\mathrm{A})^2 = 3{,}75\,\mathrm{W}$$
+$$\begin{aligned} I_L &= \frac{U_0}{R_i + R_L} = \frac{15\,\mathrm{V}}{30\,\Omega} = 0{,}5\,\mathrm{A} \\ P_L &= R_L\, I_L^2 = 15\,\Omega \cdot (0{,}5\,\mathrm{A})^2 = 3{,}75\,\mathrm{W} \end{aligned}$$
 
 Probe mit der Formel für Leistungsanpassung: $P_{L,\max} = \frac{U_0^2}{4 R_i} = \frac{225}{60}\,\mathrm{W} = 3{,}75\,\mathrm{W}$ ✓
 
@@ -81,16 +81,14 @@ Jetzt fließt $I_L$ aus $P_1$ ab und in $P_2$ hinein. [[Knotenregel]] an $P_1$:
 $$\frac{U_q - \varphi_1}{R_1} = \frac{\varphi_1}{R_2} + I_L$$
 
 ::: herleitung Nach $\varphi_1$ umstellen
-$$\varphi_1 \left(\frac{1}{R_1} + \frac{1}{R_2}\right) = \frac{U_q}{R_1} - I_L
-\quad\Rightarrow\quad
-\varphi_1 = (R_1 \parallel R_2) \left(\frac{U_q}{R_1} - I_L\right) = \underbrace{U_q \frac{R_2}{R_1 + R_2}}_{\varphi_{1,0}} - I_L\,(R_1 \parallel R_2)$$
+$$\begin{aligned} \varphi_1 \left(\frac{1}{R_1} + \frac{1}{R_2}\right) &= \frac{U_q}{R_1} - I_L \\ \Rightarrow\quad \varphi_1 &= (R_1 \parallel R_2) \left(\frac{U_q}{R_1} - I_L\right) \\ &= \underbrace{U_q \frac{R_2}{R_1 + R_2}}_{\varphi_{1,0}} - I_L\,(R_1 \parallel R_2) \end{aligned}$$
 
 An $P_2$ fließt $I_L$ hinein statt hinaus, deshalb steht dort ein Plus.
 :::
 
-$$\varphi_1 = \varphi_{1,0} - I_L\,(R_1 \parallel R_2) = 22{,}5\,\mathrm{V} - 0{,}5\,\mathrm{A} \cdot 7{,}5\,\Omega = 18{,}75\,\mathrm{V}$$
+$$\begin{aligned} \varphi_1 &= \varphi_{1,0} - I_L\,(R_1 \parallel R_2) \\ &= 22{,}5\,\mathrm{V} - 0{,}5\,\mathrm{A} \cdot 7{,}5\,\Omega = 18{,}75\,\mathrm{V} \end{aligned}$$
 
-$$\varphi_2 = \varphi_{2,0} + I_L\,(R_3 \parallel R_4) = 7{,}5\,\mathrm{V} + 0{,}5\,\mathrm{A} \cdot 7{,}5\,\Omega = 11{,}25\,\mathrm{V}$$
+$$\begin{aligned} \varphi_2 &= \varphi_{2,0} + I_L\,(R_3 \parallel R_4) \\ &= 7{,}5\,\mathrm{V} + 0{,}5\,\mathrm{A} \cdot 7{,}5\,\Omega = 11{,}25\,\mathrm{V} \end{aligned}$$
 
 Probe: $U_L = \varphi_1 - \varphi_2 = 7{,}5\,\mathrm{V} = R_L\, I_L$ ✓
 
@@ -98,7 +96,7 @@ Probe: $U_L = \varphi_1 - \varphi_2 = 7{,}5\,\mathrm{V} = R_L\, I_L$ ✓
 
 Der Quellenstrom teilt sich oben auf $R_1$ und $R_3$ auf. Mit der Knotenregel an $P_2$ ($I_{R_3} = I_{R_4} - I_L$) braucht man nur die festen Widerstände im Nenner. Das ist praktisch, weil $R_3$ auch $0\,\Omega$ sein darf:
 
-$$I_q = \frac{U_q - \varphi_1}{R_1} + \frac{\varphi_2}{R_4} - I_L = 1{,}125\,\mathrm{A} + 1{,}125\,\mathrm{A} - 0{,}5\,\mathrm{A} = 1{,}75\,\mathrm{A}$$
+$$\begin{aligned} I_q &= \frac{U_q - \varphi_1}{R_1} + \frac{\varphi_2}{R_4} - I_L \\ &= 1{,}125\,\mathrm{A} + 1{,}125\,\mathrm{A} - 0{,}5\,\mathrm{A} = 1{,}75\,\mathrm{A} \end{aligned}$$
 
 $$P_q = U_q\, I_q = 30\,\mathrm{V} \cdot 1{,}75\,\mathrm{A} = 52{,}5\,\mathrm{W}$$
 
@@ -125,7 +123,7 @@ Leistungsanpassung maximiert die Leistung **an der Last**, nicht den [[Wirkungsg
 
 Jetzt bleibt $R_L = 15\,\Omega$ fest, und $R_2 = R_3 = x$ läuft von $0$ bis $50\,\Omega$. Mit $a = R_1 = R_4 = 10\,\Omega$ lassen sich alle Größen als Funktion von $x$ schreiben:
 
-$$U_0(x) = U_q \left(\frac{x}{a + x} - \frac{a}{x + a}\right) = U_q\, \frac{x - a}{x + a} \qquad R_i(x) = 2 \cdot \frac{a\,x}{a + x}$$
+$$\begin{aligned} U_0(x) &= U_q \left(\frac{x}{a + x} - \frac{a}{x + a}\right) = U_q\, \frac{x - a}{x + a} \\ R_i(x) &= 2 \cdot \frac{a\,x}{a + x} \end{aligned}$$
 
 $$P_L(x) = R_L \left(\frac{U_0}{R_i + R_L}\right)^2 = \frac{R_L\, U_q^2\, (x - a)^2}{\big(2 a x + R_L (x + a)\big)^2}$$
 
@@ -142,7 +140,9 @@ Drei Stellen sind besonders:
 ::: herleitung Allgemeine Abgleichbedingung
 $U_0 = 0$ heißt, beide Teiler liefern dasselbe Potential:
 
-$$\frac{R_2}{R_1 + R_2} = \frac{R_4}{R_3 + R_4} \quad\Leftrightarrow\quad R_2 (R_3 + R_4) = R_4 (R_1 + R_2) \quad\Leftrightarrow\quad \boxed{R_1 R_4 = R_2 R_3}$$
+$$\begin{aligned} \frac{R_2}{R_1 + R_2} &= \frac{R_4}{R_3 + R_4} \\ \Leftrightarrow\quad R_2 (R_3 + R_4) &= R_4 (R_1 + R_2) \end{aligned}$$
+
+$$\Leftrightarrow\quad \boxed{R_1 R_4 = R_2 R_3}$$
 
 Mit $R_2 = R_3 = x$ und $R_1 = R_4 = a$ folgt $x^2 = a^2$, also $x = 10\,\Omega$. Genau so funktioniert die Wheatstone-Brücke zum Messen unbekannter Widerstände.
 :::
@@ -156,7 +156,7 @@ Der Punkt im Diagramm sitzt auf der Nullstelle. Beide Potentiale auf der Skala r
 ::: aufgabe Selbst rechnen
 Gleiche Schaltung, aber $R_2 = R_3 = 20\,\Omega$ und die Last wieder angepasst. Berechne $R_i$, $U_0$, $P_L$ und $\eta$.
 ???
-$$R_i = 2 \cdot \frac{10 \cdot 20}{30}\,\Omega \approx 13{,}33\,\Omega \qquad U_0 = 30\,\mathrm{V} \cdot \frac{20 - 10}{20 + 10} = 10\,\mathrm{V}$$
+$$\begin{aligned} R_i &= 2 \cdot \frac{10 \cdot 20}{30}\,\Omega \approx 13{,}33\,\Omega \\ U_0 &= 30\,\mathrm{V} \cdot \frac{20 - 10}{20 + 10} = 10\,\mathrm{V} \end{aligned}$$
 
 $$P_L = \frac{U_0^2}{4 R_i} = \frac{100}{53{,}33}\,\mathrm{W} = 1{,}875\,\mathrm{W}$$
 

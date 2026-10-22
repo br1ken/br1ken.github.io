@@ -24,7 +24,7 @@ Eine Formel ist erst verstanden, wenn man vorhersagen kann, was passiert, wenn m
 
 ## Die erste Welle
 
-Fast alles in der Elektrotechnik beginnt mit einer Sinusschwingung:
+Ein großer Teil der Elektrotechnik dreht sich um eine einzige Kurvenform, die Sinusschwingung:
 
 $$u(t) = \hat{u} \cdot \sin(2\pi f t + \varphi)$$
 
@@ -34,7 +34,7 @@ Drei Zahlen beschreiben sie vollständig: die **Amplitude** $\hat{u}$ (wie hoch)
 Die gestrichelte Linie zeigt den Effektivwert. Er hängt nur von der Amplitude ab, nicht von Frequenz oder Phase.
 :::
 
-Der **Effektivwert** ist die Gleichspannung, die in einem Widerstand dieselbe Wärme erzeugen würde. Für einen Sinus gilt $U_\text{eff} = \hat{u} / \sqrt{2}$.
+Der **Effektivwert** ist die Gleichspannung, die in einem ohmschen Widerstand im Mittel dieselbe Leistung umsetzen würde — also dieselbe Wärme erzeugt. Für einen Sinus gilt $U_\text{eff} = \hat{u} / \sqrt{2}$.
 
 ::: aufgabe Steckdose
 Aus der Steckdose kommen „230 V, 50 Hz“. Gemeint ist der Effektivwert. Wie groß ist die Amplitude $\hat{u}$, und wie lange dauert eine Periode?
@@ -46,4 +46,4 @@ Die Periodendauer ist $T = 1/f = 1/50\,\text{Hz} = 20\,\text{ms}$.
 
 ## Was als Nächstes kommt
 
-Grundlagen der E-Technik, Mathe, später Signale und Systeme. Und alles, was sich davon *hören* lässt, landet im [Klanglabor](../labor/).
+Grundlagen der E-Technik, Mathe, später Signale und Systeme. Und alles, was sich davon *hören* lässt, landet im [Crashtest-Labor](../labor/).

@@ -50,6 +50,6 @@ $$U_2 = 12\,\text{V} \cdot \frac{500\,\Omega}{1\,000\,\Omega + 500\,\Omega} = 4\
 Statt der erwarteten 6 V nur noch 4 V — ein Drittel weniger.
 :::
 
-## Im Klanglabor
+## Im Labor
 
 Der Baustein **Widerstand** im [Labor](../labor/) ist genau so ein Teiler: Dein $R$ sitzt in Reihe vor einer festen Last von 10 kΩ. Bei $R = 10\,\text{k}\Omega$ kommt die halbe Spannung an — das hörst du als leiseren Ton.
