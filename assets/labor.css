@@ -182,9 +182,19 @@ select { width: 100%; min-height: 40px; font: inherit; font-size: 12px; padding:
 /* Startseiten-Abschnitte für Notizen und Projekte */
 .teaser-head { display: flex; justify-content: space-between; align-items: baseline; gap: 18px; flex-wrap: wrap; }
 .teaser-more { margin-top: 22px; }
-.about { display: grid; grid-template-columns: 1fr 2fr; gap: 45px; border-top: 1px solid var(--hairline); padding-top: 30px; }
-.about h2 { font-size: 30px; letter-spacing: -.04em; font-weight: 400; margin: 0; }
-.about p { margin-top: 0; }
+.about { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr); gap: 56px; align-items: start; }
+.about-lead { margin: 0 0 22px; font-size: clamp(24px, 2.6vw, 34px); line-height: 1.2; letter-spacing: -.04em; font-weight: 400; text-wrap: balance; }
+.about .intro { margin: 0 0 14px; }
+/* Datenblatt wie bei einem Bauteil */
+.datasheet { border: 1px solid var(--ink); background: #fff; box-shadow: 5px 5px 0 var(--ink); font-family: var(--mono); }
+.datasheet-head { display: flex; justify-content: space-between; padding: 10px 14px; background: var(--ink); color: #fff; font-size: 11px; text-transform: uppercase; letter-spacing: .12em; }
+.datasheet dl { margin: 0; }
+.datasheet dl div { display: grid; grid-template-columns: 112px 1fr; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--hairline); font-size: 12.5px; }
+.datasheet dt { color: var(--muted); text-transform: uppercase; font-size: 10px; letter-spacing: .08em; padding-top: 2px; }
+.datasheet dd { margin: 0; }
+.datasheet-sub { padding: 12px 14px 6px; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.datasheet-tags { list-style: none; margin: 0; padding: 0 14px 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+.datasheet-tags li { padding: 5px 8px; border: 1px solid var(--ink); font-size: 11px; background: var(--accent); }
 
 @media (max-width: 1100px) {
   .desk-layout { grid-template-columns: minmax(0, 1fr) 270px; }
@@ -204,7 +214,7 @@ select { width: 100%; min-height: 40px; font: inherit; font-size: 12px; padding:
   .computer-bottom { grid-template-columns: 1fr; }
   .scope-wrap { border-right: 0; border-bottom: 1px solid var(--hairline); }
   .learning-strip { grid-template-columns: 1fr; gap: 16px; }
-  .about { grid-template-columns: 1fr; gap: 15px; }
+  .about { grid-template-columns: 1fr; gap: 30px; }
   .toolbar .tools { border-left: 0; border-top: 1px solid var(--hairline); width: 100%; }
   .tools button { flex: 1; justify-content: center; }
 }
