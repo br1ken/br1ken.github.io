@@ -3,6 +3,7 @@
    Neue Notiz: Datei in texte/ anlegen (oder in schreiben.html erstellen) und den Namen hier ergänzen.
    Reihenfolge egal — sortiert wird automatisch nach Datum. */
 OSCI.beitraege([
+  'von-newton-zu-ohm',
   'brueckenschaltung',
   'rc-tiefpass',
   'spannungsteiler',

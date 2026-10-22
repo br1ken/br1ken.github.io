@@ -62,6 +62,22 @@
 .prose figure { margin: 2em 0; }
 .prose figure img { display: block; width: 100%; border: 1px solid var(--hairline); }
 .prose figcaption { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 8px; }
+/* Diagramme als SVG direkt in der Notiz: Farben aus den Variablen, damit sie hell und dunkel passen */
+.prose figure.dia { padding: 18px 12px 14px; border: 1px solid var(--hairline); background: var(--paper); }
+.prose figure.dia figcaption { text-align: center; }
+.dia svg { display: block; width: 100%; max-width: 480px; height: auto; margin: 0 auto; color: var(--fg); font-family: var(--mono); overflow: visible; }
+.dia text { fill: currentColor; font-size: 13px; }
+.dia text.k { fill: var(--muted); font-size: 10px; letter-spacing: .03em; }
+.dia text.c { text-anchor: middle; }
+.dia text.ai { fill: var(--accent-ink); }
+.dia .s { fill: none; stroke: currentColor; stroke-width: 1.4; }
+.dia .m { fill: none; stroke: var(--muted); stroke-width: 1; }
+.dia .d { stroke-dasharray: 4 4; }
+.dia .b { fill: var(--card); stroke: currentColor; stroke-width: 1.2; }
+.dia .a { fill: var(--accent); stroke: currentColor; stroke-width: 1.2; }
+.dia .hl { fill: var(--accent); fill-opacity: .35; stroke: none; }
+.dia .f { fill: currentColor; stroke: none; }
+.dia .fm { fill: var(--muted); stroke: none; }
 .prose img { height: auto; }
 .table-wrap { overflow-x: auto; margin: 1.6em 0; border: 1px solid var(--ink); }
 .prose table { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -224,4 +240,10 @@
   .writer-panes { grid-template-columns: 1fr; }
   .writer-panes textarea { border-right: 0; }
   .writer-panes[data-view="text"] .writer-preview, .writer-panes[data-view="preview"] textarea { display: none; }
+}
+
+/* Abgesetzte Formeln auf dem Handy etwas kleiner, damit lange Zeilen ohne Seitwärtsscrollen passen */
+@media (max-width: 520px) {
+  .math-display { padding-left: 4px; padding-right: 4px; }
+  .math-display .katex { font-size: 1.04em; }
 }

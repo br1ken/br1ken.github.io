@@ -151,3 +151,13 @@ Doppelpunkte in der Trennzeile richten die Spalte aus: `:---:` mittig, `---:` re
 ## 8. Eigenes HTML
 
 Eine Zeile, die mit einem HTML-Tag wie `<div`, `<iframe`, `<video` oder `<figure` beginnt, wird bis zur nächsten Leerzeile unverändert übernommen. Zum Beispiel für ein eingebettetes Video oder eine eigene kleine Grafik.
+
+**Eigene Diagramme** als SVG direkt in der Notiz (passen sich hell/dunkel an, siehe `von-newton-zu-ohm.md`). Wichtig: keine Leerzeile innerhalb des Blocks.
+
+```
+<figure class="dia"><svg viewBox="0 0 360 200" role="img" aria-label="Was zu sehen ist">
+<rect class="b" x="10" y="20" width="104" height="40"/><text class="c" x="62" y="45">U = R · I</text>
+</svg><figcaption>Bildunterschrift</figcaption></figure>
+```
+
+Klassen: `s` Linie, `m` graue Linie, `d` gestrichelt, `b` Kasten, `a` Akzent-Fläche, `hl` zarte Markierung, `f` gefüllt; bei Text `c` zentriert, `k` kleine graue Beschriftung, `ai` Text auf Akzent. Etwa 360 breit zeichnen, dann bleibt die Schrift auf dem Handy lesbar.

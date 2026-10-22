@@ -13,7 +13,7 @@ const OSCILexikon = (() => {
   const GROESSEN = [
     // ---------- Grundgrößen ----------
     {id: 'ladung', name: 'Elektrische Ladung', sym: 'Q', cat: 'Grundgrößen', unit: 'Coulomb, C', si: R`1\,\mathrm{C} = 1\,\mathrm{A\,s}`,
-      formal: [R`Q = \int_{t_0}^{t_1} i(t)\,\mathrm{d}t`, R`Q = n \cdot e, \qquad e = 1{,}602\,176\,634 \cdot 10^{-19}\,\mathrm{C}`],
+      formal: [R`Q = \int_{t_0}^{t_1} i(t)\,\mathrm{d}t`, R`Q = n \cdot e`, R`e = 1{,}602\,176\,634 \cdot 10^{-19}\,\mathrm{C}`],
       phys: R`Eigenschaft von Teilchen, die elektrische Kräfte erfährt und selbst ein elektrisches Feld erzeugt. Es gibt positive und negative Ladung; gleichnamige stoßen sich ab, ungleichnamige ziehen sich an. Ladung ist gequantelt (Vielfaches der Elementarladung $e$) und bleibt in einem abgeschlossenen System erhalten.`,
       alias: ['coulomb', 'elementarladung']},
     {id: 'strom', name: 'Elektrische Stromstärke', sym: 'I', cat: 'Grundgrößen', unit: 'Ampere, A (SI-Basiseinheit)', si: R`1\,\mathrm{A} = 1\,\mathrm{C/s}`,
@@ -67,7 +67,7 @@ const OSCILexikon = (() => {
       phys: R`Beschreibt die Kraftwirkung des Magnetfelds auf bewegte Ladungen (Lorentzkraft). Die Kraft steht senkrecht auf Bewegung und Feld.`,
       alias: ['flussdichte', 'tesla', 'b']},
     {id: 'h-feld', name: 'Magnetische Feldstärke', sym: R`\vec{H}`, cat: 'Felder', unit: 'Ampere pro Meter, A/m', si: R`1\,\frac{\mathrm{A}}{\mathrm{m}}`,
-      formal: [R`\oint_C \vec{H} \cdot \mathrm{d}\vec{s} = \Theta = \sum I \quad \text{(Durchflutungsgesetz)}`],
+      formal: [R`\underbrace{\oint_C \vec{H} \cdot \mathrm{d}\vec{s} = \Theta = \textstyle\sum I}_{\text{Durchflutungsgesetz}}`],
       phys: R`Die „Ursache“ des Magnetfelds: Ströme erzeugen ein Wirbelfeld $\vec{H}$ um sich herum. Wie stark daraus $\vec{B}$ wird, entscheidet das Material über $\mu_r$.`,
       alias: ['durchflutung', 'h']},
     {id: 'fluss', name: 'Magnetischer Fluss', sym: R`\Phi`, cat: 'Felder', unit: 'Weber, Wb', si: R`1\,\mathrm{Wb} = 1\,\mathrm{V\,s} = 1\,\frac{\mathrm{kg\,m^2}}{\mathrm{A\,s^2}}`,
@@ -117,7 +117,7 @@ const OSCILexikon = (() => {
       phys: R`Bei einem ohmschen Bauteil ist der Strom proportional zur Spannung. Gilt für Metalle bei konstanter Temperatur, nicht für Dioden oder Lampen im Allgemeinen.`,
       alias: ['ohm-gesetz']},
     {id: 'knotenregel', name: 'Knotenregel (1. Kirchhoffsches Gesetz)', sym: R`\sum I = 0`, cat: 'Netzwerke', unit: '—', si: '',
-      formal: [R`\sum_{k} I_k = 0 \quad \text{(zufließend positiv, abfließend negativ)}`],
+      formal: [R`\sum_{k} I_k = 0`, R`\text{zufließend } +, \quad \text{abfließend } -`],
       phys: R`In einem Knoten kann sich keine Ladung ansammeln: Was hineinfließt, fließt auch wieder heraus. Folgt aus der Ladungserhaltung.`,
       alias: ['kirchhoff', 'knoten', 'kcl']},
     {id: 'maschenregel', name: 'Maschenregel (2. Kirchhoffsches Gesetz)', sym: R`\sum U = 0`, cat: 'Netzwerke', unit: '—', si: '',
@@ -125,7 +125,7 @@ const OSCILexikon = (() => {
       phys: R`Wer einmal im Kreis läuft, kommt am selben Potential an — die Spannungen entlang einer geschlossenen Masche heben sich auf. Gilt, solange sich kein magnetischer Fluss durch die Masche ändert.`,
       alias: ['masche', 'kvl']},
     {id: 'reihe-parallel', name: 'Reihen- und Parallelschaltung', sym: R`R_1 \parallel R_2`, cat: 'Netzwerke', unit: '—', si: '',
-      formal: [R`R_\text{Reihe} = R_1 + R_2`, R`R_1 \parallel R_2 = \frac{R_1 R_2}{R_1 + R_2}, \qquad G_\text{parallel} = G_1 + G_2`],
+      formal: [R`R_\text{Reihe} = R_1 + R_2`, R`R_1 \parallel R_2 = \frac{R_1 R_2}{R_1 + R_2}`, R`G_\text{parallel} = G_1 + G_2`],
       phys: R`In Reihe fließt derselbe Strom, die Spannungen teilen sich auf. Parallel liegt dieselbe Spannung an, die Ströme teilen sich auf. Eine Parallelschaltung ist immer kleiner als ihr kleinster Widerstand.`,
       alias: ['parallelschaltung', 'reihenschaltung', 'serienschaltung']},
     {id: 'spannungsteiler', name: 'Spannungsteiler', sym: R`\frac{R_2}{R_1 + R_2}`, cat: 'Netzwerke', unit: '—', si: '',
@@ -149,19 +149,19 @@ const OSCILexikon = (() => {
       phys: R`Die Klangquelle jedes Synthesizers: eine Schaltung oder ein Programm, das periodisch schwingt. In analogen Synthesizern ist er spannungsgesteuert — VCO, „Voltage Controlled Oscillator“: Eine Steuerspannung legt die Frequenz fest.`,
       lab: 'Baustein „∿ Oszillator“. Mit ×2 / ÷2 springst du Oktaven, oben wählst du die Wellenform.', alias: ['vco', 'tongenerator']},
     {id: 'wellenformen', name: 'Wellenformen', sym: R`\sim\ \wedge\ \sqcap`, cat: 'Klang', unit: 'Sinus, Dreieck, Sägezahn, Rechteck',
-      formal: [R`\text{Rechteck: } x(t) = \tfrac{4}{\pi}\textstyle\sum_{k = 1, 3, 5, \dots} \tfrac{1}{k}\sin(2\pi k f t)`, R`\text{Sägezahn: } x(t) = \tfrac{2}{\pi}\textstyle\sum_{k=1}^{\infty} \tfrac{(-1)^{k+1}}{k}\sin(2\pi k f t)`, R`\text{Dreieck: } x(t) = \tfrac{8}{\pi^2}\textstyle\sum_{k = 1, 3, 5, \dots} \tfrac{(-1)^{(k-1)/2}}{k^2}\sin(2\pi k f t)`],
+      formal: [R`\underbrace{x(t) = \tfrac{4}{\pi}\textstyle\sum_{k = 1, 3, 5, \dots} \tfrac{1}{k}\sin(2\pi k f t)}_{\text{Rechteck}}`, R`\underbrace{x(t) = \tfrac{2}{\pi}\textstyle\sum_{k=1}^{\infty} \tfrac{(-1)^{k+1}}{k}\sin(2\pi k f t)}_{\text{Sägezahn}}`, R`\underbrace{x(t) = \tfrac{8}{\pi^2}\textstyle\sum_{k = 1, 3, 5, \dots} \tfrac{(-1)^{(k-1)/2}}{k^2}\sin(2\pi k f t)}_{\text{Dreieck}}`],
       phys: R`Die Form einer Schwingung bestimmt, welche Obertöne darin stecken. Sinus: nur der Grundton, rein und weich. Dreieck: ungerade Obertöne, die schnell leiser werden ($1/k^2$). Rechteck: ungerade Obertöne mit $1/k$ — hohl. Sägezahn: alle Obertöne mit $1/k$ — hell und scharf.`,
       lab: 'Wellenform-Schalter am Oszillator und am Sequencer. Schau dabei aufs Oszilloskop.', alias: ['sinus', 'dreieck', 'saegezahn', 'rechteck', 'fourier']},
-    {id: 'obertoene', name: 'Obertöne & Klangfarbe', sym: R`f_k = k \cdot f_0`, cat: 'Klang', unit: 'Vielfache des Grundtons',
+    {id: 'obertoene', name: 'Obertöne & Klangfarbe', sym: R`k \, f_0`, cat: 'Klang', unit: 'Vielfache des Grundtons',
       formal: [R`x(t) = \sum_{k=1}^{\infty} a_k \sin(2\pi k f_0 t + \varphi_k)`],
       phys: R`Jeder periodische Klang lässt sich als Summe von Sinustönen schreiben (Fourier-Reihe): dem Grundton $f_0$ und seinen Vielfachen. Wie laut die einzelnen Obertöne sind, hören wir als Klangfarbe — darum klingen Geige und Flöte beim selben Ton verschieden.`,
       lab: 'Sägezahn durch einen Tiefpass schicken: Die Obertöne verschwinden, der Grundton bleibt.', alias: ['harmonische', 'spektrum', 'timbre', 'klangfarbe']},
-    {id: 'tonhoehe', name: 'Tonhöhe, Oktave, Halbton', sym: R`f = 440\,\mathrm{Hz}\cdot 2^{(n-69)/12}`, cat: 'Klang', unit: 'Hz bzw. Notenname',
-      formal: [R`f_\text{Oktave} = 2 \cdot f`, R`f_\text{Halbton} = \sqrt[12]{2} \cdot f \approx 1{,}0595 \cdot f`, R`f(n) = 440\,\mathrm{Hz} \cdot 2^{(n - 69)/12} \quad (n = \text{MIDI-Notennummer})`],
+    {id: 'tonhoehe', name: 'Tonhöhe, Oktave, Halbton', sym: R`f(n)`, cat: 'Klang', unit: 'Hz bzw. Notenname',
+      formal: [R`f_\text{Oktave} = 2 \cdot f`, R`f_\text{Halbton} = \sqrt[12]{2} \cdot f \approx 1{,}0595 \cdot f`, R`f(n) = 440\,\mathrm{Hz} \cdot 2^{(n - 69)/12}`, R`n = \text{MIDI-Notennummer}`],
       phys: R`Wir hören Tonhöhen logarithmisch: Gleiche Verhältnisse klingen wie gleiche Abstände. Eine Oktave ist eine Verdopplung der Frequenz, in der gleichstufigen Stimmung aufgeteilt in zwölf gleich große Halbtonschritte. Der Stimmton A4 liegt bei 440 Hz.`,
       lab: 'Der Oszillator zeigt zur Frequenz den Notennamen. ×2 ist genau eine Oktave.', alias: ['oktave', 'halbton', 'midi', 'stimmton', 'note']},
     {id: 'intervalle', name: 'Intervalle & Quinte', sym: R`3 : 2`, cat: 'Klang', unit: 'Frequenzverhältnisse',
-      formal: [R`\text{Oktave } 2 : 1, \quad \text{Quinte } 3 : 2, \quad \text{Quarte } 4 : 3, \quad \text{große Terz } 5 : 4`],
+      formal: [R`\text{Oktave } 2 : 1, \quad \text{Quinte } 3 : 2`, R`\text{Quarte } 4 : 3, \quad \text{große Terz } 5 : 4`],
       phys: R`Zwei Töne klingen besonders ruhig zusammen, wenn ihre Frequenzen in einem Verhältnis kleiner ganzer Zahlen stehen: Dann wiederholt sich das gemeinsame Schwingungsmuster schnell. Die Quinte (3 : 2) ist nach der Oktave das einfachste — Powerchords auf der E-Gitarre bestehen genau daraus.`,
       lab: 'Mission „Zweistimmig“: zwei Oszillatoren am selben Sequencer, einer auf 220 Hz, einer auf 330 Hz.', alias: ['quinte', 'terz', 'quarte', 'akkord', 'powerchord']},
     {id: 'pentatonik', name: 'Tonleiter & Pentatonik', sym: R`5`, cat: 'Klang', unit: 'Töne pro Oktave',
@@ -169,19 +169,19 @@ const OSCILexikon = (() => {
       phys: R`Eine Tonleiter wählt aus den zwölf Halbtönen einer Oktave einige aus. Die Pentatonik nimmt nur fünf und lässt die Halbtonschritte weg — dadurch reiben sich fast keine Töne aneinander. Sie steckt in Volksliedern, Blues und Rock auf der ganzen Welt.`,
       lab: 'Alle Zeilen im Sequencer-Raster gehören zu einer Pentatonik — umschaltbar zwischen Dur und Moll.', alias: ['tonleiter', 'skala', 'dur', 'moll']},
     {id: 'schwebung', name: 'Schwebung', sym: R`|f_1 - f_2|`, cat: 'Klang', unit: 'Hz',
-      formal: [R`\sin(2\pi f_1 t) + \sin(2\pi f_2 t) = 2\cos\!\big(\pi (f_1 - f_2) t\big)\,\sin\!\big(\pi (f_1 + f_2) t\big)`, R`f_\text{Schwebung} = |f_1 - f_2|`],
+      formal: [R`\begin{aligned} &\sin(2\pi f_1 t) + \sin(2\pi f_2 t) \\ &= 2\cos\!\big(\pi (f_1 - f_2) t\big)\,\sin\!\big(\pi (f_1 + f_2) t\big) \end{aligned}`, R`f_\text{Schwebung} = |f_1 - f_2|`],
       phys: R`Zwei fast gleich hohe Töne verstärken und schwächen sich abwechselnd. Man hört einen Ton in der Mitte, dessen Lautstärke mit der Differenzfrequenz pulsiert. So stimmen Musiker ihre Instrumente: Verschwindet das Wabern, sind beide gleich hoch.`,
       lab: 'Starter „Schwebung“ oder Mission „Wabern“: zwei Oszillatoren mit 220 und 223 Hz.', alias: ['wabern', 'interferenz']},
     // Filter & Effekte
     {id: 'filter', name: 'Filter (VCF)', sym: R`|H(f)|`, cat: 'Filter & Effekte', unit: 'Grenzfrequenz in Hz',
-      formal: [R`\text{Tiefpass 1. Ordnung: } |H(f)| = \frac{1}{\sqrt{1 + (f/f_c)^2}}`, R`\text{Flanke: } -6\,\mathrm{dB/Oktave} = -20\,\mathrm{dB/Dekade}`],
+      formal: [R`\underbrace{|H(f)| = \frac{1}{\sqrt{1 + (f/f_c)^2}}}_{\text{Tiefpass 1. Ordnung}}`, R`\underbrace{-6\,\mathrm{dB/Oktave} = -20\,\mathrm{dB/Dekade}}_{\text{Flankensteilheit}}`],
       phys: R`Ein Filter lässt manche Frequenzen durch und dämpft andere. Tiefpass: nur das Tiefe. Hochpass: nur das Hohe. Bandpass: ein Bereich in der Mitte. Je höher die Ordnung, desto steiler die Flanke. In Synthesizern formt der Filter (VCF) den Klang mehr als alles andere.`,
       lab: 'Tiefpass (C), Spule (L) und Hochpass (CR) sind Filter erster Ordnung.', alias: ['vcf', 'grenzfrequenz', 'bandpass']},
-    {id: 'tiefpass', name: 'Tiefpass (RC)', sym: R`f_c = \tfrac{1}{2\pi RC}`, cat: 'Filter & Effekte', unit: 'Hz',
+    {id: 'tiefpass', name: 'Tiefpass (RC)', sym: R`\text{TP}`, cat: 'Filter & Effekte', unit: 'Hz',
       formal: [R`\underline{H}(j\omega) = \frac{1}{1 + j\omega RC}`, R`f_c = \frac{1}{2\pi RC}`],
       phys: R`Ein Widerstand in Serie, ein Kondensator gegen Masse. Für hohe Frequenzen ist der Kondensator fast ein Kurzschluss — sie werden abgeleitet. Klanglich: dumpfer, wärmer, weiter weg.`,
       lab: 'Baustein „C Tiefpass“. Die ausführliche Herleitung steht in der Notiz zum RC-Tiefpass.', alias: ['lowpass', 'rc-filter']},
-    {id: 'hochpass', name: 'Hochpass (CR)', sym: R`f_c = \tfrac{1}{2\pi RC}`, cat: 'Filter & Effekte', unit: 'Hz',
+    {id: 'hochpass', name: 'Hochpass (CR)', sym: R`\text{HP}`, cat: 'Filter & Effekte', unit: 'Hz',
       formal: [R`\underline{H}(j\omega) = \frac{j\omega RC}{1 + j\omega RC}`, R`|H(f)| = \frac{1}{\sqrt{1 + (f_c/f)^2}}`],
       phys: R`Der Kondensator sitzt in Serie, der Widerstand gegen Masse. Tiefe Frequenzen sieht der Kondensator als großen Widerstand — sie kommen kaum durch. Klanglich: dünn, wie aus einem Telefon. In Lautsprecherboxen trennt so ein Filter die Höhen für den Hochtöner ab.`,
       lab: 'Baustein „CR Hochpass“ und Mission „Nur die Höhen“.', alias: ['highpass', 'cr-filter']},
@@ -194,11 +194,11 @@ const OSCILexikon = (() => {
       phys: R`Das Signal wird gespeichert und nach $\Delta t$ noch einmal abgespielt. Mit Rückkopplung $g$ läuft jedes Echo erneut in den Speicher: Es entstehen immer leisere Wiederholungen $g, g^2, g^3, \dots$ — eine geometrische Reihe, die nur für $g < 1$ abklingt.`,
       lab: 'Baustein „Δt Echo“. Stell Δt auf einen Sequencer-Schritt (60 s / 2 / BPM), dann groovt das Echo mit.', alias: ['delay', 'verzoegerung', 'rueckkopplung', 'feedback']},
     {id: 'hall', name: 'Hall (Reverb)', sym: R`T_{60}`, cat: 'Filter & Effekte', unit: 'Nachhallzeit in s',
-      formal: [R`T_{60}: \text{ Zeit, bis der Schall um } 60\,\mathrm{dB} \text{ abgeklungen ist}`],
+      formal: [R`T_{60}: \ \text{Pegel fällt um } 60\,\mathrm{dB}`],
       phys: R`In einem Raum erreicht uns der Schall nicht nur direkt, sondern über tausende Reflexionen an Wänden, Decke und Boden — so dicht, dass man sie nicht mehr einzeln hört. Kleine Räume haben kurzen Hall, Kirchen mehrere Sekunden.`,
       lab: 'Noch nicht im Labor. Ein Echo mit kurzer Zeit und viel Rückkopplung kommt dem schon nahe.', alias: ['reverb', 'nachhall']},
     {id: 'verzerrung', name: 'Verzerrung & Clipping', sym: R`\tanh(kx)`, cat: 'Filter & Effekte', unit: 'Übersteuerung k',
-      formal: [R`y = \frac{\tanh(k\,x)}{\tanh(k)} \quad \text{(weiche Begrenzung)}`, R`y = \max(-1, \min(1, k\,x)) \quad \text{(harte Begrenzung)}`],
+      formal: [R`\underbrace{y = \frac{\tanh(k\,x)}{\tanh(k)}}_{\text{weiche Begrenzung}}`, R`\underbrace{y = \max(-1, \min(1, k\,x))}_{\text{harte Begrenzung}}`],
       phys: R`Wird ein Signal größer, als eine Schaltung verarbeiten kann, wird es abgeschnitten (Clipping). Dioden ab etwa $0{,}7\,\mathrm{V}$, Röhren oder Transistoren begrenzen weich. Dabei entstehen neue Obertöne — der Klang von E-Gitarren-Verzerrern.`,
       lab: 'Baustein „⊣⊢ Verzerrer“ und Mission „Crashtest“: aus dem Sinus wird fast ein Rechteck.', alias: ['distortion', 'clipping', 'overdrive', 'waveshaper']},
     {id: 'tremolo', name: 'Tremolo (Amplitudenmodulation)', sym: R`\text{AM}`, cat: 'Filter & Effekte', unit: 'Tempo in Hz, Tiefe in %',
@@ -210,7 +210,7 @@ const OSCILexikon = (() => {
       phys: R`Wie Tremolo, nur wackelt die Tonhöhe statt der Lautstärke — so wie Sänger einen langen Ton beleben. Wird die Modulation sehr schnell (hörbar), entsteht FM-Synthese: der Klang vieler Synthesizer der 80er.`,
       lab: 'Noch nicht im Labor.', alias: ['fm', 'frequenzmodulation']},
     {id: 'pegel', name: 'Pegel & Dezibel', sym: R`\mathrm{dB}`, cat: 'Filter & Effekte', unit: 'Dezibel (logarithmisch)',
-      formal: [R`L = 20 \cdot \log_{10}\!\left(\frac{U}{U_0}\right)\,\mathrm{dB}`, R`\times 2 \text{ Spannung} \approx +6\,\mathrm{dB}, \qquad \times 10 = +20\,\mathrm{dB}`],
+      formal: [R`L = 20 \cdot \log_{10}\!\left(\frac{U}{U_0}\right)\,\mathrm{dB}`, R`\times 2 \text{ Spannung} \approx +6\,\mathrm{dB}`, R`\times 10 \text{ Spannung} = +20\,\mathrm{dB}`],
       phys: R`Unser Gehör empfindet Lautstärke logarithmisch. Dezibel zählen deshalb Verhältnisse statt Differenzen: Jede Verdopplung der Spannung sind rund 6 dB mehr, egal wie laut es vorher war.`,
       lab: 'Der Pegelregler im Labor und der Widerstand (Spannungsteiler) verändern den Pegel.', alias: ['dezibel', 'db', 'lautstaerke']},
     {id: 'limiter', name: 'Limiter & Kompressor', sym: R`\text{Ratio}`, cat: 'Filter & Effekte', unit: 'Schwelle in dB, Verhältnis',
@@ -230,16 +230,16 @@ const OSCILexikon = (() => {
       formal: [R`\text{Attack} \to \text{Decay} \to \text{Sustain} \to \text{Release}`],
       phys: R`Wie ein Ton beginnt und endet: Attack (Anstieg), Decay (Abfall auf das Haltelevel), Sustain (halten, solange die Taste gedrückt ist), Release (Ausklingen). Ein Klavier hat einen schnellen Attack und lässt sofort nach, eine Orgel hält gleichmäßig.`,
       lab: 'Jede Sequencer-Note hat eine kurze Hüllkurve: etwa 8 ms Anstieg, danach exponentielles Abklingen.', alias: ['adsr', 'envelope', 'attack', 'release']},
-    {id: 'lfo', name: 'LFO', sym: R`f < 20\,\mathrm{Hz}`, cat: 'Steuerung', unit: 'Hz',
+    {id: 'lfo', name: 'LFO', sym: R`f_\text{LFO}`, cat: 'Steuerung', unit: 'Hz',
       formal: [R`p(t) = p_0 + \Delta p \cdot \sin(2\pi f_\text{LFO}\, t)`],
       phys: R`Low Frequency Oscillator: ein Oszillator, der so langsam schwingt, dass man ihn nicht als Ton hört. Er bewegt stattdessen andere Parameter — Lautstärke (Tremolo), Tonhöhe (Vibrato) oder die Grenzfrequenz eines Filters (Wah).`,
       lab: 'Im Tremolo steckt ein LFO, der die Lautstärke bewegt.', alias: ['low-frequency-oscillator', 'modulation']},
     {id: 'cv-gate', name: 'CV & Gate', sym: R`1\,\mathrm{V/Okt}`, cat: 'Steuerung', unit: 'Steuerspannungen in V',
-      formal: [R`f = f_0 \cdot 2^{\,U_\text{CV} / 1\,\mathrm{V}}`, R`\text{Gate: } U \text{ hoch} = \text{Note an}, \quad U = 0 = \text{Note aus}`],
+      formal: [R`f = f_0 \cdot 2^{\,U_\text{CV} / 1\,\mathrm{V}}`, R`U_\text{Gate} > 0 \;\Rightarrow\; \text{Note an}`, R`U_\text{Gate} = 0 \;\Rightarrow\; \text{Note aus}`],
       phys: R`In modularen Synthesizern reden die Module über Spannungen. CV (Control Voltage) stellt die Tonhöhe ein, oft nach der Regel „1 Volt pro Oktave“. Das Gate sagt, wann eine Note an ist. Ein Sequencer gibt beides aus.`,
       lab: 'Ein gestricheltes Steuerkabel vom Sequencer in den SEQ-Eingang eines Oszillators überträgt genau das: Tonhöhe und An/Aus.', alias: ['cv', 'gate', 'steuerspannung', 'volt-pro-oktave']},
-    {id: 'modular', name: 'Modularsynthesizer', sym: R`\text{VCO} \to \text{VCF} \to \text{VCA}`, cat: 'Steuerung', unit: 'Module + Patchkabel',
-      formal: [R`\text{Quelle (VCO)} \to \text{Klangformung (VCF)} \to \text{Lautstärke (VCA)}`],
+    {id: 'modular', name: 'Modularsynthesizer', sym: R`\text{VCx}`, cat: 'Steuerung', unit: 'Module + Patchkabel',
+      formal: [R`\underbrace{\text{VCO}}_{\text{Ton}} \to \underbrace{\text{VCF}}_{\text{Klang}} \to \underbrace{\text{VCA}}_{\text{Lautstärke}}`],
       phys: R`Ein Synthesizer aus einzelnen Modulen, die man mit Patchkabeln frei verbindet: Oszillatoren, Filter, Verstärker, Hüllkurven, Sequencer. Die klassische Kette heißt subtraktive Synthese: ein obertonreicher Ton, aus dem ein Filter etwas wegnimmt.`,
       lab: 'Das freie Pult funktioniert genau so — Bausteine stecken, Kabel ziehen.', alias: ['patchkabel', 'eurorack', 'subtraktive-synthese', 'vca', 'synthesizer']},
     // Digital
@@ -256,17 +256,17 @@ const OSCILexikon = (() => {
       phys: R`Ein Rezept, um ein analoges Filter (RC, RL) in ein digitales umzurechnen. Weil dabei die Frequenzachse verbogen wird, verzerrt man die gewünschte Grenzfrequenz vorher passend — dann stimmt sie im digitalen Filter genau.`,
       lab: 'So rechnen Tiefpass, Spule und Hochpass im Labor.', alias: ['tustin', 'iir', 'digitales-filter']},
     {id: 'oszilloskop', name: 'Oszilloskop', sym: R`u(t)`, cat: 'Digital', unit: 'Spannung über Zeit',
-      formal: [R`\text{Trigger: Bild startet bei steigendem Nulldurchgang}`],
+      formal: [R`\text{Trigger: Start bei } u = 0, \ \dot{u} > 0`],
       phys: R`Ein Messgerät, das den Spannungsverlauf über der Zeit zeichnet. Der Trigger sorgt dafür, dass jedes Bild an derselben Stelle der Schwingung beginnt — dann steht die Kurve still, statt durchzulaufen.`,
       lab: 'Oszilloskop unten im Labor und das kleine in der Play-Leiste.', alias: ['scope', 'trigger']},
-    {id: 'web-audio', name: 'Web Audio', sym: R`\text{AudioNode}`, cat: 'Digital', unit: 'Browser-Schnittstelle',
-      formal: [R`\text{Quelle} \to \text{AudioNode} \to \dots \to \text{destination}`],
+    {id: 'web-audio', name: 'Web Audio', sym: R`\text{Node}`, cat: 'Digital', unit: 'Browser-Schnittstelle',
+      formal: [R`\text{Quelle} \to \text{Node} \to \dots \to \text{Ausgang}`],
       phys: R`Eine Programmierschnittstelle in jedem modernen Browser: Man baut einen Graphen aus Audio-Knoten — Oszillatoren, Filter, Verzögerungen, Verstärker — und der Browser rechnet daraus in Echtzeit Klang.`,
       lab: 'Jeder Baustein im Labor ist ein kleiner Web-Audio-Graph.', alias: ['webaudio', 'audiocontext']}
   ];
   const SETS = {
     elektro: {title: 'Elektrische Größen', items: GROESSEN, placeholder: 'Suchen: Spannung, Ohm, τ …', foot: 'Formal = Definition bzw. Beziehung in Formeln · Physikalisch = was die Größe bedeutet · Einheit zerlegt in SI-Basiseinheiten.'},
-    synth: {title: 'Synthesizer & Klang', items: SYNTH, placeholder: 'Suchen: Filter, Hüllkurve, CV …', foot: 'Formal = Beziehung in Formeln · Physikalisch = was dahintersteckt · Im Labor = wo du es selbst ausprobierst.'}
+    synth: {title: 'Synth & Klang', items: SYNTH, placeholder: 'Suchen: Filter, Hüllkurve, CV …', foot: 'Formal = Beziehung in Formeln · Was dahintersteckt = die Idee in Worten · Im Labor = wo du es selbst ausprobierst.'}
   };
   const ALL = [...GROESSEN, ...SYNTH];
   const esc = (t) => String(t).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
@@ -337,13 +337,17 @@ const OSCILexikon = (() => {
     const other = tab === 'synth' ? 'elektro' : 'synth', elsewhere = q ? SETS[other].items.filter(g => matches({...g, cat: 'Alle'}, q)).length : 0;
     list.innerHTML = byCat.length ? byCat.map(([c, gs]) => `<h3 class="lex-cat">${c}</h3>${gs.map(entry).join('')}`).join('')
       : `<p class="lex-empty">Nichts gefunden.${elsewhere ? ` Unter <button type="button" class="lex-switch" data-tab="${other}">${SETS[other].title}</button> gibt es ${elsewhere} Treffer.` : ' Probier ein anderes Wort oder ein Formelzeichen.'}</p>`;
-    OSCI.loadKatex().then(() => list.querySelectorAll('summary .math').forEach(el => typeOne(el))).catch(() => {});
+    OSCI.loadKatex().then(() => { list.querySelectorAll('summary .math').forEach(el => typeOne(el)); fitSyms(); }).catch(() => {});
   }
   function typeOne(el) {
     if (el.dataset.done) return;
     const tex = el.textContent;
     el.dataset.done = '1';
     try { window.katex.render(tex, el, {displayMode: el.classList.contains('math-display'), throwOnError: false, strict: 'ignore'}); } catch { el.textContent = tex; }
+  }
+  /* Formelzeichen, die breiter als ihre Spalte sind, passend verkleinern statt abschneiden */
+  function fitSyms() {
+    list.querySelectorAll('.lex-sym').forEach(s => { s.style.fontSize = ''; if (s.scrollWidth > s.clientWidth) s.style.fontSize = `${Math.max(9, 16 * s.clientWidth / s.scrollWidth - .5)}px`; });
   }
   function typeset(scope) { scope.querySelectorAll('.math').forEach(typeOne); }
   function find(id) {

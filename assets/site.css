@@ -242,6 +242,9 @@ html.lex-open { overflow: hidden; }
   .lex-tabs { margin: 10px 16px 0; }
   .lex-chips, .lex-list { padding-left: 16px; padding-right: 16px; }
   .lex-toggle { margin-left: 0; }
+  .lex-entry summary { grid-template-columns: 72px 1fr auto; gap: 8px; padding: 10px; }
+  .lex-body .math-display { padding: 10px 4px; }
+  .lex-body .math-display .katex { font-size: 1em; }
 }
 
 @media (max-width: 760px) {

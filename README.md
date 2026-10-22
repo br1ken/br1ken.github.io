@@ -35,7 +35,7 @@ Bewusst minimal: **plain HTML, CSS und JavaScript, ohne Framework und ohne Build
 | Dunkelmodus | ◐ oben rechts | folgt der Systemeinstellung, per Knopf umschaltbar, wird im Browser gemerkt (`osci-log-theme`) |
 
 **Aktuelle Inhalte**
-- Notizen: *Hallo, Labor.* · *Der Spannungsteiler* · *Warum doppeltes C die Grenzfrequenz halbiert* · *Brückenschaltung (ET1, Rechenübung 2, A2.3)*
+- Notizen: *Hallo, Labor.* · *Der Spannungsteiler* · *Warum doppeltes C die Grenzfrequenz halbiert* · *Brückenschaltung (ET1, Rechenübung 2, A2.3)* · *Von Newton bis Ohm*
 - Projekte: RC-Filter-Explorer · Crashtest-Labor · *Schaltungen zum Anfassen* (geplant)
 - Simulationen zum Einbetten: `rc`, `welle`, `teiler`, `bruecke` (siehe SCHREIBEN.md)
 
@@ -93,10 +93,10 @@ Wichtig: Die versteckte Datei **`.nojekyll`** muss im Repo bleiben. Ohne sie ble
 
 ### Wenn Design oder Code geändert wurde
 
-Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer (aktuell `?v=12`). Nach Änderungen in `assets/` diese Zahl in allen HTML-Dateien um eins erhöhen, zum Beispiel von 12 auf 13:
+Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer (aktuell `?v=13`). Nach Änderungen in `assets/` diese Zahl in allen HTML-Dateien um eins erhöhen, zum Beispiel von 13 auf 14:
 
 ```bash
-grep -rl '?v=12"' --include='*.html' . | xargs sed -i '' 's/?v=12"/?v=13"/g'
+grep -rl '?v=13"' --include='*.html' . | xargs sed -i '' 's/?v=13"/?v=14"/g'
 ```
 
 Für `assets/lexikon.js` gilt stattdessen `LEX_VERSION` in `assets/site.js`. Für neue Notizen oder Projekte ist beides nicht nötig.
@@ -198,6 +198,8 @@ Die Brücken-Simulation (`bruecke`) rechnet dagegen exakt über die Ersatzspannu
 - Synth-Lexikon (29 Einträge) neben dem Elektro-Lexikon, erreichbar über ⋮ und über „?“ an jedem Baustein; × zum Entfernen direkt am Baustein.
 - Dunkelmodus für alle Seiten (System oder ◐-Knopf), ohne Aufblitzen beim Laden.
 - Behoben: das × auf schwingenden Kabeln ließ sich nicht treffen (die Knöpfe wurden in jedem Bild neu gebaut).
+- Notiz *Von Newton bis Ohm*: acht Schritte von Kraft und Arbeit über Ladung, Feld, Potential, Spannung und Strom bis zum Drude-Modell, mit SVG-Diagrammen und Feynman-Momenten.
+- Lexikon: lange Formeln auf mehrere Zeilen verteilt, zu breite Formelzeichen werden verkleinert statt abgeschnitten; Formeln passen auf dem Handy ohne Seitwärtsscrollen.
 - Lautstärke: Belohnungs-Töne laufen über den Pegel (waren vorher am Pegel vorbei und viel zu laut), Wellenformen, Verzerrer und Echo-Rückkopplung gleichen sich aus; jede Mission startet mit eigener Sequencer-Melodie statt Dauerton.
 
 **Inhalte**
