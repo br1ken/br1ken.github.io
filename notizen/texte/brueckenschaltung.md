@@ -27,7 +27,7 @@ Eine Widerstandsbrücke hängt an einer idealen Gleichspannungsquelle. $R_2$ und
 Hier ist die Schaltung zum Mitspielen. Die [[Potentiale|potential]] beziehen sich auf den unteren Knoten ($\varphi = 0\,\mathrm{V}$). Je kräftiger ein Widerstand gefärbt ist, desto mehr Leistung verheizt er.
 
 ::: sim bruecke x=30 u=30 rl=15 anpassen
-Starte am Arbeitspunkt (30 Ω, Leistungsanpassung an). Dann den Haken bei „R_L = R_i“ entfernen und $R_2 = R_3$ verschieben: Das ist Teil 3.
+Starte am Arbeitspunkt (30 Ω, Leistungsanpassung an). Dann den Haken bei „$R_L = R_i$“ entfernen und $R_2 = R_3$ verschieben: Das ist Teil 3.
 :::
 
 ## Teil 1: Welches $R_L$ holt das Maximum heraus?

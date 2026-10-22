@@ -55,7 +55,7 @@ const OSCISims = (() => {
     const W = container.clientWidth && container.clientWidth < 500 ? 400 : 560, H = 230, pad = {l: 46, r: 14, t: 14, b: 30};
     const fig = document.createElement('figure');
     fig.className = 'sim-plot';
-    fig.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${caption}"></svg><figcaption>${caption}</figcaption>`;
+    fig.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${caption.replace(/<[^>]+>/g, '')}"></svg><figcaption>${caption}</figcaption>`;
     container.append(fig);
     const svg = fig.querySelector('svg');
     return {
@@ -126,7 +126,7 @@ const OSCISims = (() => {
     const F = slider({label: 'Frequenz f', min: .5, max: 10, value: parseSI(opts.f, 2), log: true, unit: 'Hz'});
     const P = slider({label: 'Nullphase φ', min: -180, max: 180, value: parseSI(opts.phi, 0), unit: '°', format: v => `${Math.round(v)}°`});
     const ghost = document.createElement('label');
-    ghost.className = 'sim-check'; ghost.innerHTML = '<input type="checkbox" checked> Vergleich: 5 V, 2 Hz, 0° einblenden';
+    ghost.className = 'sim-check'; ghost.innerHTML = '<input type="checkbox" checked><span>Vergleich: 5 V, 2 Hz, 0° einblenden</span>';
     ui.controls.append(A.el, F.el, P.el, ghost);
     const graph = plot(ui.plots, 'Zeitverlauf über eine Sekunde');
     function update() {
@@ -155,7 +155,7 @@ const OSCISims = (() => {
     const R2 = slider({label: 'R₂ (unten)', min: 100, max: 100e3, value: parseSI(opts.r2, 10e3), log: true, unit: 'Ω'});
     const RL = slider({label: 'Last R<sub>L</sub>', min: 100, max: 1e6, value: parseSI(opts.rl, 10e3), log: true, unit: 'Ω'});
     const load = document.createElement('label');
-    load.className = 'sim-check'; load.innerHTML = `<input type="checkbox"${'last' in opts ? ' checked' : ''}> Last R<sub>L</sub> parallel zu R₂ anschließen`;
+    load.className = 'sim-check'; load.innerHTML = `<input type="checkbox"${'last' in opts ? ' checked' : ''}><span>Last R<sub>L</sub> parallel zu R₂ anschließen</span>`;
     ui.controls.append(U.el, R1.el, R2.el, load, RL.el);
     const fig = document.createElement('figure');
     fig.className = 'sim-plot sim-schematic';
@@ -208,12 +208,12 @@ const OSCISims = (() => {
     const RL = slider({label: 'Last R<sub>L</sub>', min: 1, max: 200, value: parseSI(opts.rl, 15), log: true, unit: 'Ω', format: fmtOhm});
     const match = document.createElement('label');
     match.className = 'sim-check';
-    match.innerHTML = `<input type="checkbox"${'anpassen' in opts ? ' checked' : ''}> R<sub>L</sub> = R<sub>i</sub> (Leistungsanpassung)`;
+    match.innerHTML = `<input type="checkbox"${'anpassen' in opts ? ' checked' : ''}><span>R<sub>L</sub> = R<sub>i</sub> (Leistungsanpassung)</span>`;
     ui.controls.append(X.el, U.el, match, RL.el);
     const fig = document.createElement('figure');
     fig.className = 'sim-plot sim-schematic sim-bridge';
     ui.plots.append(fig);
-    const curve = plot(ui.plots, 'Lastleistung P_L über R2 = R3 bei fester Last — der Punkt ist die aktuelle Einstellung');
+    const curve = plot(ui.plots, 'Lastleistung P<sub>L</sub> über R<sub>2</sub> = R<sub>3</sub> bei fester Last — der Punkt ist die aktuelle Einstellung');
     const badge = document.createElement('p');
     badge.className = 'sim-badge';
     ui.actions.append(badge);
@@ -230,33 +230,40 @@ const OSCISims = (() => {
       const pmax = Math.max(r.PL, ...r.P, 1e-9);
       const heat = p => `style="fill-opacity:${(0.12 + 0.88 * p / pmax).toFixed(2)}"`;
       const arrowV = (xPos, y, I) => Math.abs(I) < 1e-9 ? '' : `<path class="cur" d="M${xPos},${I > 0 ? y - 7 : y + 7} l-5,${I > 0 ? -8 : 8} h10 z"/>`;
-      const lab = (xPos, y, name, R, I, anchor) => `<text class="tick" x="${xPos}" y="${y}" text-anchor="${anchor}">${name} = ${fmtOhm(R)}</text><text class="tick strong" x="${xPos}" y="${y + 16}" text-anchor="${anchor}">${fmt(Math.abs(I), 'A')} ${I >= 0 ? '↓' : '↑'}</text>`;
-      const scaleY = v => 250 - (Uq > 0 ? v / Uq : 0) * 200; // Potentialskala rechts: 0 V unten, Uq oben
+      const fmt3 = (v, unit) => si(Math.abs(v) < 1e-12 ? 0 : v, unit, 3);
+      const lab = (xPos, y, name, R, anchor) => `<text class="tick" x="${xPos}" y="${y}" text-anchor="${anchor}"><tspan class="strong">${name}</tspan> ${fmtOhm(R)}</text>`;
+      const scaleY = v => 255 - (Uq > 0 ? v / Uq : 0) * 200; // Potentialskala rechts: 0 V unten, Uq oben
       const balanced = Math.abs(r.U0) < 1e-6 * Math.max(1, Uq);
-      const y1 = scaleY(r.phi1), y2 = scaleY(r.phi2), close = Math.abs(y1 - y2) < 16;
-      // Layout: Quelle x=40, linker Zweig x=210, rechter Zweig x=370, Potentialskala x=462
-      fig.innerHTML = `<svg viewBox="0 0 560 300" role="img" aria-label="Brückenschaltung mit Potentialen und Strömen">
-        <g class="wire-lines"><path d="M40,50 H370 M40,250 H370 M40,50 V128 M40,172 V250 M210,50 V70 M210,120 V180 M210,230 V250 M370,50 V70 M370,120 V180 M370,230 V250 M210,150 H255 M325,150 H370"/></g>
-        <circle class="src" cx="40" cy="150" r="22"/><path class="wire-lines" d="M30,144 H50 M30,156 H50"/>
-        <text class="tick" x="70" y="138">${sub('U', 'q')}</tspan></text><text class="tag-label" x="70" y="160">${fmt(Uq, 'V')}</text>
-        <rect class="res heat" ${heat(r.P[0])} x="198" y="70" width="24" height="50"/>${lab(190, 90, 'R₁', R1, r.I1, 'end')}
-        <rect class="res heat" ${heat(r.P[1])} x="198" y="180" width="24" height="50"/>${lab(190, 200, 'R₂', r.R2, r.I2, 'end')}
-        <rect class="res heat" ${heat(r.P[2])} x="358" y="70" width="24" height="50"/>${lab(390, 90, 'R₃', r.R3, r.I3, 'start')}
-        <rect class="res heat" ${heat(r.P[3])} x="358" y="180" width="24" height="50"/>${lab(390, 200, 'R₄', R4, r.I4, 'start')}
-        ${arrowV(210, 70, r.I1)}${arrowV(210, 180, r.I2)}${arrowV(370, 70, r.I3)}${arrowV(370, 180, r.I4)}
-        <rect class="res heat load" ${heat(r.PL)} x="255" y="140" width="70" height="20"/>
-        <text class="tick" x="290" y="132" text-anchor="middle">${sub('R', 'L')} = ${fmtOhm(rl)}</tspan></text>
-        <text class="tick strong" x="290" y="178" text-anchor="middle">${balanced ? 'kein Strom' : `${fmt(Math.abs(r.IL), 'A')} ${r.IL > 0 ? '→' : '←'}`}</text>
-        <circle class="node" cx="210" cy="150" r="5"/><circle class="node" cx="370" cy="150" r="5"/><circle class="node" cx="210" cy="50" r="3.5"/><circle class="node" cx="210" cy="250" r="3.5"/>
-        <text class="tag-label" x="200" y="146" text-anchor="end">${sub('P', '1')}</tspan></text><text class="tag-label" x="380" y="146">${sub('P', '2')}</tspan></text>
-        <text class="tick" x="290" y="40" text-anchor="middle">φ = ${fmt(Uq, 'V')}</text><text class="tick" x="290" y="268" text-anchor="middle">φ = 0 V (Bezug)</text>
-        <g class="phi-scale"><path class="wire-lines" d="M462,50 V250"/><path class="grid major" d="M456,50 H468 M456,250 H468"/>
-          <text class="tick" x="452" y="54" text-anchor="end">${fmt(Uq, 'V')}</text><text class="tick" x="452" y="254" text-anchor="end">0 V</text>
-          <path class="ul" d="M462,${y1} V${y2}"/>
-          <circle class="dot" cx="462" cy="${y1}" r="5"/><text class="tick strong" x="472" y="${close ? (y1 <= y2 ? y1 - 6 : y1 + 14) : y1 + 4}">${sub('φ', '1')} ${fmt(r.phi1, 'V')}</tspan></text>
-          <circle class="dot dot-2" cx="462" cy="${y2}" r="5"/><text class="tick strong" x="472" y="${close ? (y1 <= y2 ? y2 + 14 : y2 - 6) : y2 + 4}">${sub('φ', '2')} ${fmt(r.phi2, 'V')}</tspan></text>
+      const y1 = scaleY(r.phi1), y2 = scaleY(r.phi2), close = Math.abs(y1 - y2) < 18;
+      // Layout (viewBox 600 × 300): Quelle x=40, linker Zweig x=210, rechter Zweig x=370, Potentialskala x=500.
+      // Im Bild nur Namen, Widerstandswerte und Strompfeile — alle Zahlen stehen in der Tabelle darunter.
+      const rows = [
+        ['R₁', R1, r.I1, '↓'], ['R₂', r.R2, r.I2, '↓'], ['R₃', r.R3, r.I3, '↓'], ['R₄', R4, r.I4, '↓'], ['R<sub>L</sub>', rl, r.IL, '→']
+      ].map(([n, R, I, dir]) => `<tr><th>${n}</th><td>${fmtOhm(R)}</td><td>${Math.abs(I) < 1e-9 ? '0 A' : `${fmt3(Math.abs(I), 'A')} ${I >= 0 ? dir : dir === '↓' ? '↑' : '←'}`}</td><td>${fmt3(Math.abs(I) * R, 'V')}</td><td>${fmt3(I * I * R, 'W')}</td></tr>`).join('');
+      fig.innerHTML = `<svg viewBox="0 0 600 300" role="img" aria-label="Brückenschaltung mit Potentialen und Strompfeilen">
+        <g class="wire-lines"><path d="M40,55 H370 M40,255 H370 M40,55 V133 M40,177 V255 M210,55 V75 M210,125 V185 M210,235 V255 M370,55 V75 M370,125 V185 M370,235 V255 M210,155 H255 M325,155 H370"/></g>
+        <circle class="src" cx="40" cy="155" r="22"/><path class="wire-lines" d="M30,149 H50 M30,161 H50"/>
+        <text class="tick strong" x="72" y="150">${sub('U', 'q')}</tspan></text><text class="tick" x="72" y="170">${fmt(Uq, 'V')}</text>
+        <rect class="res heat" ${heat(r.P[0])} x="198" y="75" width="24" height="50"/>${lab(188, 104, 'R₁', R1, 'end')}
+        <rect class="res heat" ${heat(r.P[1])} x="198" y="185" width="24" height="50"/>${lab(188, 214, 'R₂', r.R2, 'end')}
+        <rect class="res heat" ${heat(r.P[2])} x="358" y="75" width="24" height="50"/>${lab(392, 104, 'R₃', r.R3, 'start')}
+        <rect class="res heat" ${heat(r.P[3])} x="358" y="185" width="24" height="50"/>${lab(392, 214, 'R₄', R4, 'start')}
+        ${arrowV(210, 75, r.I1)}${arrowV(210, 185, r.I2)}${arrowV(370, 75, r.I3)}${arrowV(370, 185, r.I4)}
+        <rect class="res heat load" ${heat(r.PL)} x="255" y="145" width="70" height="20"/>
+        <text class="tick" x="290" y="136" text-anchor="middle"><tspan class="strong">${sub('R', 'L')}</tspan></tspan> ${fmtOhm(rl)}</text>
+        ${balanced ? '<text class="tick" x="290" y="184" text-anchor="middle">kein Strom</text>' : `<path class="cur" d="${r.IL > 0 ? 'M300,176 l-9,-5 v10 z' : 'M280,176 l9,-5 v10 z'}"/>`}
+        <circle class="node" cx="210" cy="155" r="5"/><circle class="node" cx="370" cy="155" r="5"/><circle class="node" cx="210" cy="55" r="3.5"/><circle class="node" cx="210" cy="255" r="3.5"/>
+        <text class="tag-label" x="198" y="151" text-anchor="end">${sub('P', '1')}</tspan></text><text class="tag-label" x="382" y="151">${sub('P', '2')}</tspan></text>
+        <text class="tick" x="290" y="44" text-anchor="middle">φ = ${fmt(Uq, 'V')}</text><text class="tick" x="290" y="276" text-anchor="middle">φ = 0 V (Bezug)</text>
+        <g class="phi-scale"><path class="wire-lines" d="M500,55 V255"/><path class="grid major" d="M494,55 H506 M494,255 H506"/>
+          <text class="tick" x="488" y="59" text-anchor="end">${fmt(Uq, 'V')}</text><text class="tick" x="488" y="259" text-anchor="end">0 V</text>
+          <path class="ul" d="M500,${y1} V${y2}"/>
+          <circle class="dot" cx="500" cy="${y1}" r="5"/><text class="tick strong" x="512" y="${close ? (y1 <= y2 ? y1 - 7 : y1 + 16) : y1 + 4}">${sub('φ', '1')} ${fmt3(r.phi1, 'V')}</tspan></text>
+          <circle class="dot dot-2" cx="500" cy="${y2}" r="5"/><text class="tick strong" x="512" y="${close ? (y1 <= y2 ? y2 + 16 : y2 - 7) : y2 + 4}">${sub('φ', '2')} ${fmt3(r.phi2, 'V')}</tspan></text>
         </g>
-      </svg><figcaption>Potentiale bezogen auf den unteren Knoten. Je kräftiger ein Widerstand gefärbt ist, desto mehr Leistung setzt er um.</figcaption>`;
+      </svg>
+      <div class="sim-branches"><table><thead><tr><th>Zweig</th><th>R</th><th>I</th><th>U = R·I</th><th>P = R·I²</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><th colspan="4">Summe = Quellenleistung P<sub>q</sub></th><td>${fmt3(r.P.reduce((a, b) => a + b, 0) + r.PL, 'W')}</td></tr></tfoot></table></div>
+      <figcaption>Potentiale bezogen auf den unteren Knoten. Je kräftiger ein Widerstand gefärbt ist, desto mehr Leistung setzt er um.</figcaption>`;
       // Lastleistung über x bei fester Last rl
       const {W, H, pad, svg} = curve, iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
       const pts = [];
@@ -277,15 +284,16 @@ const OSCISims = (() => {
       readout(ui.readout, [
         ['Innenwiderstand R<sub>i</sub>', fmt(r.Ri, 'Ω')],
         ['Leerlaufspannung U<sub>0</sub>', fmt(r.U0, 'V')],
-        ['Potentiale φ<sub>1</sub> / φ<sub>2</sub>', `${fmt(r.phi1, 'V')} / ${fmt(r.phi2, 'V')}`],
+        ['Potential φ<sub>1</sub>', fmt(r.phi1, 'V')],
+        ['Potential φ<sub>2</sub>', fmt(r.phi2, 'V')],
         ['Laststrom I<sub>L</sub>', fmt(r.IL, 'A')],
         ['Lastleistung P<sub>L</sub>', fmt(r.PL, 'W')],
         ['Quellenstrom I<sub>q</sub>', fmt(r.Iq, 'A')],
         ['Quellenleistung P<sub>q</sub>', fmt(r.Pq, 'W')],
         ['Wirkungsgrad η', `${new Intl.NumberFormat('de-DE', {maximumFractionDigits: 2}).format(r.eta * 100)} %`]
       ]);
-      badge.textContent = balanced ? 'Brücke abgeglichen: φ₁ = φ₂, durch die Last fließt kein Strom.' : r.IL < 0 ? 'U₀ < 0: Der Laststrom fließt von P₂ nach P₁.' : matched ? 'Leistungsanpassung: R_L = R_i, die Last bekommt das Maximum, das diese Brücke liefern kann.' : '';
-      badge.hidden = !badge.textContent;
+      badge.innerHTML = balanced ? 'Brücke abgeglichen: φ<sub>1</sub> = φ<sub>2</sub>, durch die Last fließt kein Strom.' : r.IL < 0 ? 'U<sub>0</sub> &lt; 0: Der Laststrom fließt von P<sub>2</sub> nach P<sub>1</sub>.' : matched ? 'Leistungsanpassung: R<sub>L</sub> = R<sub>i</sub> — die Last bekommt das Maximum, das diese Brücke liefern kann.' : '';
+      badge.hidden = !badge.innerHTML;
     }
     [X, U, RL].forEach(sl => sl.on(update)); match.querySelector('input').addEventListener('change', update); update();
   }

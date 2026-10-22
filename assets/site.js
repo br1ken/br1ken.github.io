@@ -174,11 +174,11 @@ const OSCI = (() => {
   const LEX_VERSION = 2;
   document.addEventListener('click', e => {
     const link = e.target.closest('[data-lex]');
-    if (link) { e.preventDefault(); lexikon(link.dataset.lex); }
+    if (link) { e.preventDefault(); lexikon(link.dataset.lex).catch(() => {}); }
   });
   function lexFromHash() {
     const m = location.hash.match(/^#lexikon(?:-([\w-]+))?$/);
-    if (m) lexikon(m[1]);
+    if (m) lexikon(m[1]).catch(() => {});
   }
   addEventListener('hashchange', lexFromHash);
 

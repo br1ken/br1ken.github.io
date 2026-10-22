@@ -112,22 +112,23 @@
 .sim-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 16px; border-bottom: 1px solid var(--ink); background: var(--paper); }
 .sim-kicker { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
 .sim-formula { font-family: var(--mono); font-size: 12px; }
-.sim-body { display: grid; grid-template-columns: minmax(0, 1fr) 240px; }
+.sim-body { display: grid; grid-template-columns: minmax(0, 1fr) 280px; }
 .sim-plots { min-width: 0; display: grid; }
 .sim-plot { margin: 0; padding: 12px 14px 10px; border-bottom: 1px solid var(--hairline); }
 .sim-plot:last-child { border-bottom: 0; }
 .sim-plot svg { display: block; width: 100%; height: auto; font-family: var(--mono); }
 .sim-plot figcaption { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 4px; }
-.sim-side { border-left: 1px solid var(--ink); padding: 14px 16px; display: grid; align-content: start; gap: 4px; background: #fcfcfa; }
+.sim-side { min-width: 0; border-left: 1px solid var(--ink); padding: 14px 16px; display: grid; align-content: start; gap: 4px; background: #fcfcfa; }
 .sim-control { display: grid; gap: 2px; margin-bottom: 8px; font-size: 12px; }
 .sim-control[hidden] { display: none; }
 .sim-control-row { display: flex; justify-content: space-between; gap: 6px; }
 .sim-control output { font-family: var(--mono); font-size: 12px; white-space: nowrap; }
 .sim-control input { width: 100%; accent-color: var(--ink); min-height: 30px; margin: 0; }
 .sim-check { display: flex; gap: 8px; align-items: flex-start; font-size: 12px; line-height: 1.4; margin: 4px 0 10px; cursor: pointer; }
-.sim-check input { accent-color: var(--ink); margin-top: 2px; }
+.sim-check input { flex: none; accent-color: var(--ink); margin-top: 2px; }
+.sim-check span { min-width: 0; }
 .sim-readout { margin: 8px 0 0; display: grid; border-top: 1px solid var(--ink); }
-.sim-readout div { display: flex; justify-content: space-between; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--hairline); }
+.sim-readout div { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 2px 10px; padding: 7px 0; border-bottom: 1px solid var(--hairline); }
 .sim-readout dt { color: var(--muted); font-size: 11.5px; }
 .sim-readout dd { margin: 0; font-family: var(--mono); font-size: 12px; text-align: right; }
 .sim-actions { margin-top: 12px; }
@@ -146,6 +147,15 @@
 .sim svg .tag-label { fill: var(--ink); font-size: 12px; }
 .sim-schematic svg .tick { font-size: 13px; }
 .sim-schematic svg .tag-label { font-size: 15px; }
+.sim-schematic svg .strong { fill: var(--ink); }
+.sim-branches { overflow-x: auto; margin: 6px 0 8px; }
+.sim-branches table { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
+.sim-branches th, .sim-branches td { padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--hairline); white-space: nowrap; }
+.sim-branches thead th { font-weight: 400; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); border-bottom: 1px solid var(--ink); }
+.sim-branches tbody th, .sim-branches thead th:first-child { text-align: left; font-weight: 400; }
+.sim-branches tbody tr:last-child { background: var(--paper); }
+.sim-branches tfoot th { text-align: left; font-weight: 400; color: var(--muted); }
+.sim-branches tfoot td { font-weight: 700; }
 .sim svg .wire-lines path, .sim svg path.wire-lines { fill: none; stroke: var(--ink); stroke-width: 1.6; }
 .sim svg .res { fill: #fff; stroke: var(--ink); stroke-width: 1.6; }
 .sim svg .res.load { fill: var(--accent); }
