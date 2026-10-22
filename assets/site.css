@@ -173,7 +173,10 @@ html.lex-open { overflow: hidden; }
 .lex-body { padding: 0 14px 14px; border-top: 1px dashed var(--hairline); }
 .lex-body h4 { margin: 14px 0 6px; font: 10px var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
 .lex-body p { margin: 0; font-size: 13px; line-height: 1.65; }
-.lex-body .math-display { margin: 4px 0; padding: 8px 6px; overflow-x: auto; overflow-y: hidden; background: var(--paper); text-align: center; }
+.lex-body .math-display { margin: 4px 0; padding: 10px 8px; border: 0; overflow-x: auto; overflow-y: hidden; background: var(--paper); text-align: center; }
+.lex-body .math-display .katex-display { margin: 0; }
+.lex-body .math-display .katex { font-size: 1.1em; }
+.lex-body p .katex { font-size: 1.05em; }
 .lex-body .lex-unit { background: var(--accent); }
 .lex .math:not([data-done]) { font-family: var(--mono); font-size: .85em; color: var(--muted); }
 .lex-empty { color: var(--muted); font-size: 14px; padding: 20px 0; }
