@@ -2,7 +2,7 @@
    Persönliche Links hier eintragen; leere Felder werden einfach nicht angezeigt. */
 'use strict';
 const OSCI_CONFIG = {
-  name: 'Briken',
+  name: 'Brick',
   instagram: '',   // z. B. 'osci.log' (ohne @)
   github: 'br1ken', // z. B. 'br1ken' oder 'br1ken/osci-log'
   email: ''

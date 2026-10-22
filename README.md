@@ -1,6 +1,6 @@
 # osci//log
 
-Brikens persönliches Labor für Schaltungen, Klang und Notizen aus dem E-Technik-Studium.
+Bricks persönliches Labor für Schaltungen, Klang und Notizen aus dem E-Technik-Studium.
 Reine HTML/CSS/JS-Seite: kein Build, keine Installation. Läuft direkt auf GitHub Pages.
 
 ## Was drin ist
