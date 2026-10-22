@@ -16,7 +16,7 @@ const OSCI = (() => {
   const store = { notizen: [], projekte: [] };
 
   const NAV = [
-    {id: 'labor', href: '#labor', title: 'Labor', text: 'Bausteine verbinden. Klang hören.'},
+    {id: 'labor', href: 'labor/', title: 'Labor', text: 'Missionen, Sequencer, Kabel stecken.'},
     {id: 'notizen', href: 'notizen/', title: 'Notizen', text: 'Gelerntes aus dem E-Technik-Studium.'},
     {id: 'projekte', href: 'projekte/', title: 'Projekte', text: 'Simulationen, Schaltungen, Code.'},
     {id: 'about', href: '#about', title: 'Über mich', text: 'Wer hinter osci//log steckt.'}
@@ -31,7 +31,7 @@ const OSCI = (() => {
     if (!slot) return;
     const links = NAV.map(n => `<a class="nav-link" href="${url(n.href)}"${n.id === page ? ' aria-current="page"' : ''}>${n.title}</a>`).join('');
     const items = NAV.map(n => `<a class="menu-item" href="${url(n.href)}"><b>${n.title}</b><span>${n.text}</span></a>`).join('');
-    slot.outerHTML = `<header class="chrome"><a class="brand-mini" href="${page === 'home' ? '#top' : root}" aria-label="osci//log Startseite"><span class="brand-top">osci//log</span><span class="brand-line"></span></a><nav class="nav" aria-label="Hauptnavigation">${links}<button class="menu-pill" id="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-panel">Menü</button><button class="lex-toggle" type="button" data-lex="" aria-label="Lexikon der elektrischen Größen öffnen" title="Lexikon: elektrische Größen nachschlagen"><span></span><span></span><span></span></button></nav></header><div class="menu-panel" id="menu-panel" inert>${items}</div>`;
+    slot.outerHTML = `<header class="chrome"><a class="brand-mini" href="${page === 'home' ? '#top' : root}" aria-label="osci//log Startseite"><span class="brand-top">osci//log</span><span class="brand-line"></span></a><nav class="nav" aria-label="Hauptnavigation">${links}<button class="menu-pill" id="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-panel">Menü</button><button class="theme-toggle" type="button" id="theme-toggle" aria-label="Hell oder dunkel umschalten" title="Hell / Dunkel"><span></span></button><button class="lex-toggle" type="button" data-lex="" aria-label="Lexikon öffnen: elektrische Größen und Synthesizer" title="Lexikon: nachschlagen"><span></span><span></span><span></span></button></nav></header><div class="menu-panel" id="menu-panel" inert>${items}</div>`;
     const toggle = document.getElementById('menu-toggle'), panel = document.getElementById('menu-panel');
     const setMenu = (open, focus = false) => {
       panel.classList.toggle('is-open', open); panel.inert = !open;
@@ -39,10 +39,24 @@ const OSCI = (() => {
       if (!open && focus) toggle.focus();
     };
     toggle.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
+    document.getElementById('theme-toggle').addEventListener('click', () => setTheme(isDark() ? 'light' : 'dark'));
     panel.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
     document.addEventListener('click', e => { if (!panel.contains(e.target) && !toggle.contains(e.target)) setMenu(false); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && panel.classList.contains('is-open')) setMenu(false, true); });
   }
+
+  /* Hell/Dunkel: ohne Wahl folgt die Seite dem System; die Wahl bleibt im Browser gespeichert.
+     Ein kleines Skript im <head> jeder Seite setzt sie schon vor dem ersten Zeichnen (kein Aufblitzen). */
+  const darkQuery = matchMedia('(prefers-color-scheme: dark)');
+  const isDark = () => document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : darkQuery.matches;
+  function syncThemeColor() { document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isDark() ? '#0e0e0d' : '#fbfbfa'); }
+  function setTheme(theme) {
+    document.documentElement.dataset.theme = theme;
+    try { localStorage.setItem('osci-log-theme', theme); } catch { /* egal */ }
+    syncThemeColor();
+    dispatchEvent(new CustomEvent('osci-theme'));
+  }
+  darkQuery.addEventListener('change', () => { syncThemeColor(); dispatchEvent(new CustomEvent('osci-theme')); });
 
   function footer() {
     const slot = document.querySelector('[data-site-footer]');
@@ -87,7 +101,7 @@ const OSCI = (() => {
     const grid = [];
     for (let x = 0; x <= w; x += 80) grid.push(`<path d="M${x},0V${h}"/>`);
     for (let y = 15; y <= h; y += 80) grid.push(`<path d="M0,${y}H${w}"/>`);
-    return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="${w}" height="${h}" fill="#f6f6f1"/><g stroke="#e0e0d8" stroke-width="1">${grid.join('')}</g><path d="M0,${mid}H${w}" stroke="#c9c9c0" stroke-dasharray="3 5"/><path d="${trace(.9, .55)}" fill="none" stroke="#bdbdb4" stroke-width="2"/><path d="${trace(0, 1)}" fill="none" stroke="#111" stroke-width="3" stroke-linejoin="round"/><text x="22" y="${h - 20}" font-family="ui-monospace, Menlo, monospace" font-size="15" fill="#65655f">CH1 · ${kind.toUpperCase()}</text></svg>`;
+    return `<svg class="cover" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect class="cv-bg" width="${w}" height="${h}"/><g class="cv-grid">${grid.join('')}</g><path class="cv-zero" d="M0,${mid}H${w}"/><path class="cv-ghost" d="${trace(.9, .55)}"/><path class="cv-trace" d="${trace(0, 1)}"/><text class="cv-text" x="22" y="${h - 20}">CH1 · ${kind.toUpperCase()}</text></svg>`;
   }
 
   const dateFormat = new Intl.DateTimeFormat('de-DE', {day: 'numeric', month: 'short', year: 'numeric'});
@@ -171,7 +185,7 @@ const OSCI = (() => {
     }
     return lexLoading.then(() => OSCILexikon.open(id));
   }
-  const LEX_VERSION = 2;
+  const LEX_VERSION = 4;
   document.addEventListener('click', e => {
     const link = e.target.closest('[data-lex]');
     if (link) { e.preventDefault(); lexikon(link.dataset.lex).catch(() => {}); }
@@ -184,9 +198,10 @@ const OSCI = (() => {
 
   header();
   footer();
+  syncThemeColor();
   lexFromHash();
   return {
-    url, escape, cover, date, frontMatter, notizenLaden, notizKarte, projektKarte, loadKatex, lexikon,
+    url, escape, cover, date, frontMatter, notizenLaden, notizKarte, projektKarte, loadKatex, lexikon, isDark,
     projekte: () => store.projekte.slice(),
     /* Wird von notizen/beitraege.js und projekte/projekte.js aufgerufen. */
     beitraege: list => { store.notizen = Array.isArray(list) ? list.map(x => String(x).replace(/\.md$/, '')) : []; },

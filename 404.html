@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
+<script>try{var t=localStorage.getItem("osci-log-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Signal verloren — osci//log</title>
 <meta name="robots" content="noindex">
@@ -12,11 +13,14 @@
   p { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: #65655f; letter-spacing: .06em; }
   a { display: inline-block; margin-top: 18px; padding: 13px 18px; border: 1px solid #0a0a0a; color: #0a0a0a; text-decoration: none; font-size: 13px; }
   a:hover { background: #0a0a0a; color: #fff; }
+  svg path:first-child { stroke: currentColor; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body { background: #0e0e0d; color: #ecece6; } :root:not([data-theme="light"]) a { color: #ecece6; border-color: #ecece6; } :root:not([data-theme="light"]) a:hover { background: #ecece6; color: #111; } :root:not([data-theme="light"]) text { fill: #ecece6; } }
+  :root[data-theme="dark"] body { background: #0e0e0d; color: #ecece6; } :root[data-theme="dark"] a { color: #ecece6; border-color: #ecece6; } :root[data-theme="dark"] a:hover { background: #ecece6; color: #111; } :root[data-theme="dark"] text { fill: #ecece6; }
 </style>
 </head>
 <body>
 <main>
-  <svg viewBox="0 0 520 120" aria-hidden="true"><path d="M0 60 C40 10 80 10 120 60 S200 110 240 60 L260 60" fill="none" stroke="#111" stroke-width="3"/><path d="M300 60 H520" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6 6"/><text x="270" y="66" font-family="monospace" font-size="16" fill="#111">×</text></svg>
+  <svg viewBox="0 0 520 120" aria-hidden="true"><path d="M0 60 C40 10 80 10 120 60 S200 110 240 60 L260 60" fill="none" stroke="currentColor" stroke-width="3"/><path d="M300 60 H520" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6 6"/><text x="270" y="66" font-family="monospace" font-size="16" fill="#111">×</text></svg>
   <p>404 · KEIN SIGNAL AN DIESEM EINGANG</p>
   <h1>Signal verloren.</h1>
   <a id="home" href="/">Zurück zum Labor ↗︎</a>

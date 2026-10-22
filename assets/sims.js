@@ -113,7 +113,7 @@ const OSCISims = (() => {
           {id: 'n2', type: 'capacitor', x: 330, y: 150, p: {c: clamp(+(c * 1e9).toPrecision(4), 1, 2200), r: clamp(+(r / 1e3).toPrecision(4), 1, 100)}},
           {id: 'n3', type: 'out', x: 620, y: 90, p: {volume: 10}}
         ], [{from: 'n1', to: 'n2'}, {from: 'n2', to: 'n3'}]);
-        listen.href = OSCI.url('#patch=' + patch);
+        listen.href = OSCI.url('labor/#patch=' + patch);
       } else listen.hidden = true;
     }
     R.on(update); C.on(update); update();

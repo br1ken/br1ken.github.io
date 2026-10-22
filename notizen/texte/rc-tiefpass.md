@@ -75,5 +75,5 @@ Mit $C = 44\,\text{nF}$ wären es nur noch etwa $362\,\text{Hz}$.
 :::
 
 ::: tipp
-Hör den Unterschied: Im [Labor](../#labor) einen Sägezahn durch den Kondensator schicken und $C$ von 22 auf 100 nF ziehen. Der Klang wird immer dumpfer, weil die Obertöne über $f_c$ wegfallen.
+Hör den Unterschied: Im [Labor](../labor/) einen Sägezahn durch den Kondensator schicken und $C$ von 22 auf 100 nF ziehen. Der Klang wird immer dumpfer, weil die Obertöne über $f_c$ wegfallen.
 :::

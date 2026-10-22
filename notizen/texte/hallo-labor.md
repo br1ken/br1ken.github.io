@@ -46,4 +46,4 @@ Die Periodendauer ist $T = 1/f = 1/50\,\text{Hz} = 20\,\text{ms}$.
 
 ## Was als Nächstes kommt
 
-Grundlagen der E-Technik, Mathe, später Signale und Systeme. Und alles, was sich davon *hören* lässt, landet im [Klanglabor](../#labor).
+Grundlagen der E-Technik, Mathe, später Signale und Systeme. Und alles, was sich davon *hören* lässt, landet im [Klanglabor](../labor/).

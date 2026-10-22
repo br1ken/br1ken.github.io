@@ -21,9 +21,9 @@ OSCI.projekteListe([
     welle: 'lade'
   },
   {
-    titel: 'Klang-Playground',
-    text: 'Bausteine greifen, Kabel stecken, Grundlagen hören. Mit Oszillatoren, Widerstand, Kondensator, Spule und Tremolo.',
-    link: '#labor',
+    titel: 'Crashtest-Labor',
+    text: 'Bausteine stecken, Melodien sequenzieren, Missionen lösen. Mit Oszillator, Sequencer, Filtern, Echo, Verzerrer und baumelnden Kabeln.',
+    link: 'labor/',
     status: 'Spielbar',
     datum: '2026-10-21',
     tags: ['Web Audio', 'Grundlagen'],

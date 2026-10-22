@@ -2,6 +2,7 @@
 <html lang="de" data-root="./">
 <head>
 <meta charset="utf-8">
+<script>try{var t=localStorage.getItem("osci-log-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>osci//log — Schaltungen, Klang & Experimente</title>
 <meta name="description" content="Bricks persönliches Labor für Schaltungen, Klang und Notizen aus dem E-Technik-Studium. Bausteine verbinden, Signale hören, Dinge ausprobieren.">
@@ -13,17 +14,15 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/touch-icon.png">
-<link rel="stylesheet" href="assets/site.css?v=8">
-<link rel="stylesheet" href="assets/labor.css?v=8">
-<script src="assets/site.js?v=8" defer></script>
+<link rel="stylesheet" href="assets/site.css?v=11">
+<link rel="stylesheet" href="assets/labor.css?v=11">
+<script src="assets/site.js?v=11" defer></script>
 <script src="notizen/beitraege.js" defer></script>
 <script src="projekte/projekte.js" defer></script>
-<script src="assets/models.js?v=8" defer></script>
-<script src="assets/labor.js?v=8" defer></script>
-<script src="assets/start.js?v=8" defer></script>
+<script src="assets/start.js?v=11" defer></script>
 </head>
 <body id="top" data-page="home">
-<a class="skip-link" href="#labor">Zum Labor springen</a>
+<a class="skip-link" href="#labor">Zum Labor-Teaser springen</a>
 <div data-site-header></div>
 <main>
 <section class="hero" aria-labelledby="hero-title">
@@ -35,75 +34,42 @@
     <h1 id="hero-title">osci<span>//</span>log</h1>
     <p class="headline">Ideen verschalten.<br>Signale hören. Dinge ausprobieren.</p>
     <div class="meta">Ein persönliches Labor von Brick</div>
-    <div class="hero-links"><a class="button primary" href="#labor">Klang bauen ↓</a><a class="button" href="notizen/">Notizen lesen</a></div>
+    <div class="hero-links"><a class="button primary" href="labor/">Ins Labor ↗︎</a><a class="button" href="notizen/">Notizen lesen</a></div>
   </div>
   <a class="hero-scroll" href="#labor" aria-hidden="true" tabindex="-1">scroll ↓</a>
 </section>
 
-<section class="section playground" id="labor" aria-labelledby="play-title">
-  <span id="playground"></span>
-  <div class="section-heading"><div><span class="eyebrow">001 / Interaktives Klanglabor</span><h2 id="play-title">Kleine Teile.<br>Große Ideen.</h2></div><span class="lab-stamp">SOUND<br>COMPUTER<br>01—BASIC</span></div>
-  <p class="intro">Drück auf ▶︎, zieh an den Reglern, füg Bausteine ein. Nebenbei erfährst du, was in Widerständen, Kondensatoren und Spulen steckt. „Einfach“ zeigt den Signalweg als Liste, „Frei patchen“ als Pult mit Kabeln. Kaputt machen kannst du nichts — ↶ macht alles rückgängig.</p>
-
-  <div class="sound-computer" id="lab" data-view="frei">
-    <div class="computer-bar">
-      <span class="computer-name"><span class="live-dot" aria-hidden="true"></span>osci//lab <small>— patch desk</small></span>
-      <canvas class="scope-mini" id="scope-mini" width="104" height="52" aria-hidden="true"></canvas>
-      <div class="transport">
-        <label class="master-label" for="master">Pegel <input id="master" type="range" min="0" max="25" value="10" aria-label="Ausgangspegel"></label>
-        <button class="button primary" id="audio-toggle" type="button" aria-pressed="false">▶︎ Ton starten</button>
-      </div>
-      <p class="lab-hint" id="lab-hint" aria-hidden="true"></p>
-    </div>
-    <div class="toolbar">
-      <div class="view-switch" role="group" aria-label="Ansicht"><button type="button" data-view-switch="kette" aria-pressed="false">Einfach</button><button type="button" data-view-switch="frei" aria-pressed="true">Frei patchen</button></div>
-      <div class="palette" aria-label="Bausteine hinzufügen">
-        <span class="palette-label">+ Baustein</span>
-        <button type="button" data-add="osc"><b>∿</b> Oszillator</button>
-        <button type="button" data-add="resistor"><b>R</b> Widerstand</button>
-        <button type="button" data-add="capacitor"><b>C</b> Kondensator</button>
-        <button type="button" data-add="inductor"><b>L</b> Spule</button>
-        <button type="button" data-add="tremolo"><b>↝</b> Tremolo</button>
-      </div>
-      <div class="tools" aria-label="Werkzeuge">
-        <button type="button" id="undo" title="Rückgängig (⌘Z / Strg+Z)">↶ <span>Zurück</span></button>
-        <button type="button" id="redo" title="Wiederholen (⇧⌘Z / Strg+Y)">↷ <span>Vor</span></button>
-        <button type="button" id="tidy" title="Bausteine nach Signalfluss anordnen">⌗ <span>Aufräumen</span></button>
-        <button type="button" id="share" title="Link zu diesem Patch teilen">↗︎ <span>Teilen</span></button>
-      </div>
-    </div>
-    <div class="chain" id="chain" aria-label="Signalkette"></div>
-    <div class="desk-layout">
-      <div class="patch-area">
-        <div class="desk-instructions"><span><b>01</b> ▶︎ Ton starten</span><span><b>02</b> Regler ziehen</span><span><b>03</b> Kabel von OUT ● auf einen Baustein ziehen</span><span><b>04</b> × auf dem Kabel trennt</span></div>
-        <div class="board-scroll" id="board-scroll" tabindex="0" aria-label="Laborfläche; auf kleinen Bildschirmen wischen oder zoomen">
-          <div class="board-sizer" id="board-sizer">
-            <div class="patch-board" id="patch-board">
-              <svg id="wires" class="wires" aria-hidden="true"></svg>
-              <div class="board-watermark" aria-hidden="true">SIGNAL<br>IS MATERIAL.</div>
-              <div id="nodes"></div>
-              <div id="wire-handles"></div>
-            </div>
-          </div>
-        </div>
-        <div class="board-footer"><span id="patch-summary">3 Bausteine · 2 Kabel</span><div class="zoom-tools" role="group" aria-label="Zoom"><button type="button" id="zoom-out" aria-label="Verkleinern">−</button><span id="zoom-value">100 %</span><button type="button" id="zoom-in" aria-label="Vergrößern">+</button><button type="button" id="zoom-fit">Alles zeigen</button></div></div>
-      </div>
-      <aside class="inspector" id="inspector" aria-label="Baustein verstehen und einstellen"></aside>
-    </div>
-    <div class="computer-bottom">
-      <div class="scope-wrap"><span class="eyebrow">Ausgang / Oszilloskop</span><canvas class="scope" id="scope" role="img" aria-label="Zeitlicher Verlauf des hörbaren Ausgangssignals"></canvas></div>
-      <div class="patch-status">
-        <p id="audio-status" role="status">Ton ist aus. Dein erster Patch ist schon verbunden.</p>
-        <p id="patch-message" role="status">Tippe einen Baustein an — darunter bzw. rechts erfährst du, was er macht.</p>
-        <div class="preset-tools"><label for="preset">Starter-Patch<select id="preset"><option value="rc">01 / Weicher werden · RC</option><option value="rl">02 / Strom in Bewegung · RL</option><option value="pulse">03 / Rhythmus fühlen · Tremolo</option><option value="beat">04 / Schwebung · zwei Töne</option></select></label><button class="button small" id="load-preset" type="button">Patch laden</button></div>
-      </div>
+<section class="section lab-teaser" id="labor" aria-labelledby="lab-title">
+  <div class="section-heading"><div><span class="eyebrow">001 / Lab 0 · Crashtest-Labor</span><h2 id="lab-title">Bauen. Stecken.<br>Hören.</h2></div><span class="lab-stamp">SOUND<br>COMPUTER<br>02—PLAY</span></div>
+  <div class="teaser-grid">
+    <a class="teaser-visual" href="labor/" aria-label="Zum Crashtest-Labor">
+      <svg viewBox="0 0 520 300" role="img" aria-label="Drei Bausteine — Sequencer, Echo, Ausgang — mit durchhängenden Kabeln">
+        <defs><pattern id="tdots" width="20" height="20" patternUnits="userSpaceOnUse"><circle class="t-dots" cx="1" cy="1" r=".8"/></pattern></defs>
+        <rect width="520" height="300" fill="url(#tdots)"/>
+        <path class="t-cable" d="M182,150 Q205,215 232,150"><animate attributeName="d" dur="3.4s" repeatCount="indefinite" values="M182,150 Q205,215 232,150;M182,150 Q213,202 232,150;M182,150 Q205,215 232,150" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/></path>
+        <path class="t-cable" d="M348,150 Q372,225 398,118"><animate attributeName="d" dur="4.2s" repeatCount="indefinite" values="M348,150 Q372,225 398,118;M348,150 Q364,210 398,118;M348,150 Q372,225 398,118" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/></path>
+        <rect class="t-node" x="30" y="40" width="152" height="190"/><rect class="t-head dark" x="30" y="40" width="152" height="26"/>
+        <text class="t-on-dark" x="40" y="57">♪︎ / SEQUENCER</text><text x="40" y="84">110 BPM · 8 Noten</text>
+        <g class="t-grid"><rect class="" x="44" y="92" width="12" height="10"/><rect class="" x="44" y="105" width="12" height="10"/><rect class="" x="44" y="118" width="12" height="10"/><rect class="" x="44" y="131" width="12" height="10"/><rect class="" x="44" y="144" width="12" height="10"/><rect class="on" x="44" y="157" width="12" height="10"/><rect class="" x="59" y="92" width="12" height="10"/><rect class="" x="59" y="105" width="12" height="10"/><rect class="" x="59" y="118" width="12" height="10"/><rect class="on" x="59" y="131" width="12" height="10"/><rect class="" x="59" y="144" width="12" height="10"/><rect class="" x="59" y="157" width="12" height="10"/><rect class="" x="74" y="92" width="12" height="10"/><rect class="on" x="74" y="105" width="12" height="10"/><rect class="" x="74" y="118" width="12" height="10"/><rect class="" x="74" y="131" width="12" height="10"/><rect class="" x="74" y="144" width="12" height="10"/><rect class="" x="74" y="157" width="12" height="10"/><rect class="" x="89" y="92" width="12" height="10"/><rect class="" x="89" y="105" width="12" height="10"/><rect class="now" x="89" y="118" width="12" height="10"/><rect class="" x="89" y="131" width="12" height="10"/><rect class="" x="89" y="144" width="12" height="10"/><rect class="" x="89" y="157" width="12" height="10"/><rect class="on" x="104" y="92" width="12" height="10"/><rect class="" x="104" y="105" width="12" height="10"/><rect class="" x="104" y="118" width="12" height="10"/><rect class="" x="104" y="131" width="12" height="10"/><rect class="" x="104" y="144" width="12" height="10"/><rect class="" x="104" y="157" width="12" height="10"/><rect class="" x="119" y="92" width="12" height="10"/><rect class="on" x="119" y="105" width="12" height="10"/><rect class="" x="119" y="118" width="12" height="10"/><rect class="" x="119" y="131" width="12" height="10"/><rect class="" x="119" y="144" width="12" height="10"/><rect class="" x="119" y="157" width="12" height="10"/><rect class="" x="134" y="92" width="12" height="10"/><rect class="" x="134" y="105" width="12" height="10"/><rect class="" x="134" y="118" width="12" height="10"/><rect class="on" x="134" y="131" width="12" height="10"/><rect class="" x="134" y="144" width="12" height="10"/><rect class="" x="134" y="157" width="12" height="10"/><rect class="" x="149" y="92" width="12" height="10"/><rect class="" x="149" y="105" width="12" height="10"/><rect class="" x="149" y="118" width="12" height="10"/><rect class="" x="149" y="131" width="12" height="10"/><rect class="on" x="149" y="144" width="12" height="10"/><rect class="" x="149" y="157" width="12" height="10"/></g>
+        <rect class="t-node" x="232" y="88" width="116" height="124"/><rect class="t-head" x="232" y="88" width="116" height="26"/>
+        <text x="242" y="105">Δt / ECHO</text><text x="242" y="140" style="font-size:16px">Echo</text><text x="242" y="160">300 ms · 45 %</text>
+        <rect class="t-node" x="398" y="56" width="96" height="104"/><rect class="t-head" x="398" y="56" width="96" height="26"/>
+        <text x="408" y="73">↗︎ AUSGANG</text><text x="408" y="110" style="font-size:16px">Hören</text>
+        <circle class="t-dot" cx="182" cy="150" r="5"/><circle class="t-dot" cx="232" cy="150" r="5"/><circle class="t-dot" cx="348" cy="150" r="5"/><circle class="t-dot" cx="398" cy="118" r="5"/>
+        <text class="t-muted" x="30" y="270">SIGNAL IS MATERIAL.</text>
+      </svg>
+    </a>
+    <div class="teaser-text">
+      <p class="intro">Ein freies Labor zum Herumprobieren: Bausteine stecken, Kabel ziehen, eigene Melodien bauen — und nebenbei verstehen, was Kondensator, Diode und Rückkopplung mit Klang zu tun haben.</p>
+      <ul class="teaser-features">
+        <li><b>13</b><span>Missionen vom ersten Ton bis zum eigenen Werk — mit XP, Sternen, Stufen, Abzeichen und Tages-Serie.</span></li>
+        <li><b>♪︎</b><span>Sequencer für Melodien — er kann auch Oszillatoren spielen. Dazu Echo, Verzerrer, Hoch- und Tiefpass.</span></li>
+        <li><b>⊣⊢</b><span>Freies Pult mit Kabeln zum Stecken. Kaputt machen kannst du nichts.</span></li>
+      </ul>
+      <div class="teaser-progress" id="teaser-progress" hidden></div>
+      <a class="button primary" href="labor/">Labor betreten ↗︎</a>
     </div>
   </div>
-
-  <div class="learning-strip"><div><span class="eyebrow">Eine kleine Wiederholung pro Besuch</span><h3>Ein Gedanke bleibt.</h3><p>Erst vermuten, dann ausprobieren. Bei jedem Öffnen wartet eine andere Grundlagenfrage auf dich.</p></div><div class="lesson" id="lesson" aria-live="polite"></div></div>
-  <p class="model-note">Labor-Modell: Die Kabel führen Audiosignale zwischen idealisierten, gepufferten Modulen. R ist ein Spannungsteiler, C ein RC-Tiefpass, L ein RL-Tiefpass. Du hörst ihre Grundwirkung; eine vollständige elektrische Schaltungssimulation ist das nicht. Dein Patch bleibt lokal in diesem Browser gespeichert.</p>
-  <details class="learning-sources"><summary>Zum Nachlesen / Grundlagenquellen</summary><a href="https://www.mathworks.com/help/simscape/ref/resistor.html" target="_blank" rel="noopener noreferrer">Widerstand · MathWorks ↗︎</a><a href="https://www.mathworks.com/help/simscape/ref/capacitor.html" target="_blank" rel="noopener noreferrer">Kondensator · MathWorks ↗︎</a><a href="https://www.mathworks.com/help/simscape/ref/inductor.html" target="_blank" rel="noopener noreferrer">Spule · MathWorks ↗︎</a><a href="https://www.ti.com/content/dam/videos/external-videos/en-us/4/3816841626001/6119035031001.mp4/subassets/passive_components_and_circuits_2.pdf" target="_blank" rel="noopener noreferrer">RC-Filter · TI Precision Labs ↗︎</a></details>
-  <noscript><p>Für das interaktive Labor aktiviere bitte JavaScript.</p></noscript>
 </section>
 
 <section class="section" id="notizen" aria-labelledby="notes-title">

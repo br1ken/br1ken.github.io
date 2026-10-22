@@ -45,7 +45,7 @@ Danach in `notizen/beitraege.js` den Dateinamen eintragen, sonst erscheint die N
 **fett**, *kursiv*, ==markiert==, ~~durchgestrichen~~, `Code`
 [Linktext](https://example.com)       externe Links bekommen automatisch ein ↗
 [andere Notiz](beitrag.html?b=spannungsteiler)
-[zum Labor](../#labor)
+[zum Labor](../labor/)
 
 - Aufzählung
   - eingerückt (zwei Leerzeichen)

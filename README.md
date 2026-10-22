@@ -25,20 +25,23 @@ Bewusst minimal: **plain HTML, CSS und JavaScript, ohne Framework und ohne Build
 
 | Bereich | Adresse | Was es ist |
 |---|---|---|
-| Startseite + Klanglabor | `index.html` | Hero, interaktives Klanglabor, neueste Notizen und Projekte, „Hinter dem Signal.“ (Bio mit Datenblatt) |
+| Startseite | `index.html` | Hero, Labor-Teaser, neueste Notizen und Projekte, „Hinter dem Signal.“ (Bio mit Datenblatt) |
+| Crashtest-Labor | `labor/` | Lab 0: Missionen, Sequencer, Effekte, Pult mit baumelnden Kabeln |
 | Notizen | `notizen/` | Blog für Gelerntes aus dem Studium, mit Suche und Themenfilter |
 | Eine Notiz | `notizen/beitrag.html?b=name` | wird aus `notizen/texte/name.md` erzeugt |
 | Schreibstube | `notizen/schreiben.html` | Editor mit Live-Vorschau für neue Notizen (nicht verlinkt) |
 | Projekte | `projekte/` | Simulationen, Schaltungen, Code |
-| Lexikon | ⋮ oben rechts auf jeder Seite, oder `#lexikon` / `#lexikon-spannung` an der Adresse | 30 elektrische Größen und Gesetze: formal, physikalisch, SI-Einheit |
+| Lexikon | ⋮ oben rechts auf jeder Seite, „?“ an jedem Baustein im Labor, oder `#lexikon` / `#lexikon-spannung` / `#lexikon-synth` an der Adresse | zwei Teile: **Elektro** (30 Größen und Gesetze: formal, physikalisch, SI-Einheit) und **Synth** (29 Bausteine und Begriffe eines Synthesizers, mit Verweis auf den passenden Labor-Baustein) |
+| Dunkelmodus | ◐ oben rechts | folgt der Systemeinstellung, per Knopf umschaltbar, wird im Browser gemerkt (`osci-log-theme`) |
 
 **Aktuelle Inhalte**
 - Notizen: *Hallo, Labor.* · *Der Spannungsteiler* · *Warum doppeltes C die Grenzfrequenz halbiert* · *Brückenschaltung (ET1, Rechenübung 2, A2.3)*
-- Projekte: RC-Filter-Explorer · Klang-Playground · *Schaltungen zum Anfassen* (geplant)
+- Projekte: RC-Filter-Explorer · Crashtest-Labor · *Schaltungen zum Anfassen* (geplant)
 - Simulationen zum Einbetten: `rc`, `welle`, `teiler`, `bruecke` (siehe SCHREIBEN.md)
 
 ```
-index.html              Startseite mit Labor und Bio
+index.html              Startseite mit Labor-Teaser und Bio
+labor/index.html        Crashtest-Labor (Lab 0)
 404.html                Seite für falsche Links
 notizen/
   beitraege.js          Liste der Notizen (nur Dateinamen)
@@ -50,12 +53,13 @@ projekte/
   rc-filter/            Beispielprojekt
   _vorlage/             zum Kopieren für neue Projekte
 assets/
-  site.css / site.js    gemeinsames Design, Kopf- und Fußzeile, Menü, ⋮-Lexikon-Knopf, Links (Instagram/GitHub)
-  labor.css / labor.js  Klanglabor (Einfach-Ansicht und freies Pult)
+  site.css / site.js    gemeinsames Design (Farben als Variablen, hell + dunkel), Kopf- und Fußzeile, Menü, ◐-Dunkelmodus, ⋮-Lexikon-Knopf, Links
+  labor.css / labor.js  Labor: Bausteine, Sequencer, Kabelphysik, Einfach-Ansicht und freies Pult
+  missionen.js          Missionen, XP, Stufen, Abzeichen
   models.js             Formeln des Labors, Patch-Links
   markdown.js           Markdown → HTML für Notizen
   sims.js               Simulationen (rc, welle, teiler, bruecke)
-  lexikon.js            Einträge des Lexikons
+  lexikon.js            Einträge des Lexikons (GROESSEN und SYNTH)
   notizen.css           Notizen, Simulationen, Schreibstube
   fonts/                MesloLGS Nerd Font (Web-Versionen) + LIZENZ.md
   vendor/katex/         Formelsatz
@@ -89,10 +93,10 @@ Wichtig: Die versteckte Datei **`.nojekyll`** muss im Repo bleiben. Ohne sie ble
 
 ### Wenn Design oder Code geändert wurde
 
-Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer (aktuell `?v=8`). Nach Änderungen in `assets/` diese Zahl in allen HTML-Dateien um eins erhöhen, zum Beispiel von 8 auf 9:
+Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer (aktuell `?v=11`). Nach Änderungen in `assets/` diese Zahl in allen HTML-Dateien um eins erhöhen, zum Beispiel von 11 auf 12:
 
 ```bash
-grep -rl '?v=8"' --include='*.html' . | xargs sed -i '' 's/?v=8"/?v=9"/g'
+grep -rl '?v=11"' --include='*.html' . | xargs sed -i '' 's/?v=11"/?v=12"/g'
 ```
 
 Für `assets/lexikon.js` gilt stattdessen `LEX_VERSION` in `assets/site.js`. Für neue Notizen oder Projekte ist beides nicht nötig.
@@ -123,16 +127,30 @@ Projekte können auch nur auf etwas anderes verlinken (z. B. ein anderes GitHub-
 
 - **Links in der Fußzeile:** in `assets/site.js` ganz oben (`github: 'br1ken'` ist gesetzt; `instagram` und `email` sind noch leer).
 - **Bio und Datenblatt:** in `index.html` im Abschnitt `id="about"`.
-- **Lexikon-Einträge:** in `assets/lexikon.js`. Texte dort als `R\`…\`` schreiben, damit LaTeX-Backslashes erhalten bleiben.
+- **Lexikon-Einträge:** in `assets/lexikon.js`, elektrische Größen in `GROESSEN`, Synth-Begriffe in `SYNTH` (optional `lab:` = welcher Labor-Baustein dazu passt). Texte dort als `R\`…\`` schreiben, damit LaTeX-Backslashes erhalten bleiben. Nach Änderungen `LEX_VERSION` in `assets/site.js` um eins erhöhen.
+- **Farben:** alle in `assets/site.css` ganz oben als Variablen (`--bg`, `--fg`, `--accent` …), einmal für hell und einmal für dunkel. Neue Farben dort ergänzen statt fest in eine Regel zu schreiben.
 
-## Das Klanglabor
+## Das Crashtest-Labor (`labor/`)
 
-- Bis zu zwölf Bausteine, davon bis zu vier Oszillatoren: Oszillator (Sinus, Dreieck, Sägezahn, Rechteck), Widerstand, Kondensator, Spule, Tremolo, Ausgang.
+**Missionen:** 13 kurze Aufgaben vom ersten Ton bis zum eigenen Werk — Oktave, Rechteck, Tief- und Hochpass, Tremolo, Schwebung, Melodie, Kopplung, Quinte, Echo, Verzerrer. Ziele werden live geprüft. **Jedes erreichte Ziel gibt sofort +20 XP** (aufsteigende Zahl, Ding, auf Android kurzes Vibrieren), eine geschaffte Mission +50 XP, ohne Tipp +30 XP und 3 Sterne. Dazu 5 Stufen, 6 Abzeichen, eine Tages-Serie und ein „Startaufbau“-Knopf. Geschafft heißt: Konfetti-Explosion und eine kurze Einblendung, die nach ein paar Sekunden von selbst zur nächsten Mission springt („Warum funktioniert das?“ aufklappbar). Fortschritt bleibt im Browser (`osci-log-missionen`). „Frei spielen“ blendet die Missionen aus.
+Neue Mission: in `assets/missionen.js` in `MISSIONEN` ergänzen (Ziele = Text + Prüffunktion).
+
+**Bausteine:** Oszillator, Sequencer (8 × 8-Raster in Dur- oder Moll-Pentatonik, Zufall, Tonlage, Tempo), Tiefpass (RC), Hochpass (CR), Spule (RL), Widerstand, Tremolo, Echo (Laufzeit + Rückkopplung), Verzerrer (Diodenbegrenzer, tanh), Ausgang.
+
+**Kopplung:** Ein Sequencer kann Oszillatoren spielen — im Pult per gestricheltem Steuerkabel von OUT des Sequencers in SEQ des Oszillators, in der Einfach-Ansicht per „Gespielt von ♪︎“. Der Oszillator spielt dann die Melodie mit seiner eigenen Wellenform; sein Frequenzregler verschiebt die Tonhöhe relativ zu 220 Hz (×2 = Oktave höher, 330 Hz = Quinte darüber). Mehrere Oszillatoren an einem Sequencer = Akkorde. Ein steuernder Sequencer klingt selbst nur, wenn er zusätzlich per Audiokabel weiterführt.
+
+**Saft:** Bausteine zucken auf jede Note, Kabel werden angezupft, das Pult leuchtet mit der Lautstärke, Stecker machen ein Geräusch. Neue Besucher starten direkt mit „Melodie · Echo“, der Play-Knopf pulsiert, bis man drückt.
+
+**Kabel** hängen mit Schwerkraft durch und schwingen nach (Verlet-Seilsimulation). Mit „Bewegung reduzieren“ hängen sie still.
+
+
+- Bis zu zwölf Bausteine, davon bis zu vier Klangquellen (Oszillator oder Sequencer).
 - **Zwei Ansichten**, umschaltbar über „Einfach“ / „Frei patchen“. Die Wahl wird im Browser gemerkt.
   - **Einfach** (Standard auf Handy und Tablet): der Signalweg als senkrechte Kette mit großen Karten und großen Reglern. **÷2 / ×2** halbiert oder verdoppelt einen Wert und erklärt kurz, was das bewirkt. „+ Baustein einfügen“ zwischen den Karten, „+ Weiterer Ton“ für Akkorde und Schwebungen. Die Play-Leiste mit Mini-Oszilloskop bleibt beim Scrollen oben.
   - **Frei patchen** (Standard am Computer): Pult mit frei verschiebbaren Bausteinen und Kabeln. Ein verzweigter Patch lässt sich in der einfachen Ansicht per Knopf wieder als Kette ordnen.
 - **Verbinden (freies Pult):** vom OUT-Punkt ein Kabel auf einen anderen Baustein ziehen, oder OUT antippen und dann das Ziel. Geht auch rückwärts von IN.
-- **Trennen:** das × in der Mitte eines Kabels.
+- **Trennen:** das × in der Mitte eines Kabels. **Entfernen:** das × oben rechts an einem Baustein.
+- **?** an jedem Baustein (Pult, Kette, Einstellungen) und „? Lexikon“ in der Werkzeugleiste öffnen den passenden Eintrag im Synth-Lexikon. Nach einer geschafften Mission führt „Mehr im Lexikon“ zum Hintergrund.
 - **↶ Zurück / ↷ Vor** (auch ⌘Z / ⇧⌘Z), **Aufräumen** ordnet nach Signalfluss, **Teilen** erzeugt einen Link mit genau diesem Patch.
 - **Zoom** unten rechts, „Alles zeigen“ passt den Patch ein.
 - Entf/Backspace auf einem Baustein-Kopf entfernt ihn, Pfeiltasten verschieben ihn (Shift = größere Schritte).
@@ -172,6 +190,14 @@ Die Brücken-Simulation (`bruecke`) rechnet dagegen exakt über die Ersatzspannu
 **Handy**
 - Einfache Ketten-Ansicht mit großen Reglern, ÷2/×2 und mitlaufender Play-Leiste.
 - iPhone: Versionsnummern gegen alte Dateien im Cache, ▶ und ↗ nicht mehr als Emoji.
+
+**Labor 2.0**
+- Labor auf eigene Seite `labor/` verschoben, Startseite mit animiertem Teaser.
+- Missionen mit XP pro Ziel, Stufen, Sternen, Abzeichen und Tages-Serie; Sequencer, der auch Oszillatoren spielen kann; Echo, Verzerrer, Hochpass; baumelnde Kabel, die im Beat zucken.
+- Alte Patch-Links (`/#patch=…`) leiten automatisch ins Labor um.
+- Synth-Lexikon (29 Einträge) neben dem Elektro-Lexikon, erreichbar über ⋮ und über „?“ an jedem Baustein; × zum Entfernen direkt am Baustein.
+- Dunkelmodus für alle Seiten (System oder ◐-Knopf), ohne Aufblitzen beim Laden.
+- Behoben: das × auf schwingenden Kabeln ließ sich nicht treffen (die Knöpfe wurden in jedem Bild neu gebaut).
 
 **Inhalte**
 - Notiz Brückenschaltung (A2.3) mit Simulation `bruecke`: Schaltplan, Potentialskala, Zweig-Tabelle mit Leistungsbilanz, Lastleistungs-Kurve.

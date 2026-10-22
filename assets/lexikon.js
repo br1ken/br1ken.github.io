@@ -1,5 +1,5 @@
-/* Lexikon der elektrischen Größen — geöffnet über ⋮ oben rechts, über [[Begriff]]-Links in Notizen
-   oder über #lexikon / #lexikon-<id> in der Adresse. Einträge: unten in GROESSEN ergänzen.
+/* Lexikon: elektrische Größen und Synthesizer & Klang — geöffnet über ⋮ oben rechts, über „?“ im Labor, über [[Begriff]]-Links in Notizen
+   oder über #lexikon / #lexikon-<id> in der Adresse. Einträge: unten in GROESSEN (Elektro) bzw. SYNTH ergänzen.
 
    id      kurzer Schlüssel (für Links: [[Text|id]])
    name    Bezeichnung        sym  Formelzeichen (LaTeX)        cat  Rubrik
@@ -141,31 +141,162 @@ const OSCILexikon = (() => {
       phys: R`Die Last bekommt die größtmögliche Leistung, wenn sie so groß ist wie der Innenwiderstand. Das maximiert die Leistung an der Last, nicht den Wirkungsgrad — in der echten Schaltung kann er deutlich unter 50 % liegen.`,
       alias: ['anpassung', 'maximale leistung']}
   ];
-  const CATS = ['Alle', ...new Set(GROESSEN.map(g => g.cat))];
+  /* ---------- Zweiter Teil: Synthesizer & Klang (lab = wo man es im Crashtest-Labor ausprobiert) ---------- */
+  const SYNTH = [
+    // Klang
+    {id: 'oszillator', name: 'Oszillator (VCO)', sym: R`\sim`, cat: 'Klang', unit: 'Frequenz in Hz',
+      formal: [R`x(t) = \hat{x}\,\sin(2\pi f t + \varphi)`, R`T = \frac{1}{f}`],
+      phys: R`Die Klangquelle jedes Synthesizers: eine Schaltung oder ein Programm, das periodisch schwingt. In analogen Synthesizern ist er spannungsgesteuert — VCO, „Voltage Controlled Oscillator“: Eine Steuerspannung legt die Frequenz fest.`,
+      lab: 'Baustein „∿ Oszillator“. Mit ×2 / ÷2 springst du Oktaven, oben wählst du die Wellenform.', alias: ['vco', 'tongenerator']},
+    {id: 'wellenformen', name: 'Wellenformen', sym: R`\sim\ \wedge\ \sqcap`, cat: 'Klang', unit: 'Sinus, Dreieck, Sägezahn, Rechteck',
+      formal: [R`\text{Rechteck: } x(t) = \tfrac{4}{\pi}\textstyle\sum_{k = 1, 3, 5, \dots} \tfrac{1}{k}\sin(2\pi k f t)`, R`\text{Sägezahn: } x(t) = \tfrac{2}{\pi}\textstyle\sum_{k=1}^{\infty} \tfrac{(-1)^{k+1}}{k}\sin(2\pi k f t)`, R`\text{Dreieck: } x(t) = \tfrac{8}{\pi^2}\textstyle\sum_{k = 1, 3, 5, \dots} \tfrac{(-1)^{(k-1)/2}}{k^2}\sin(2\pi k f t)`],
+      phys: R`Die Form einer Schwingung bestimmt, welche Obertöne darin stecken. Sinus: nur der Grundton, rein und weich. Dreieck: ungerade Obertöne, die schnell leiser werden ($1/k^2$). Rechteck: ungerade Obertöne mit $1/k$ — hohl. Sägezahn: alle Obertöne mit $1/k$ — hell und scharf.`,
+      lab: 'Wellenform-Schalter am Oszillator und am Sequencer. Schau dabei aufs Oszilloskop.', alias: ['sinus', 'dreieck', 'saegezahn', 'rechteck', 'fourier']},
+    {id: 'obertoene', name: 'Obertöne & Klangfarbe', sym: R`f_k = k \cdot f_0`, cat: 'Klang', unit: 'Vielfache des Grundtons',
+      formal: [R`x(t) = \sum_{k=1}^{\infty} a_k \sin(2\pi k f_0 t + \varphi_k)`],
+      phys: R`Jeder periodische Klang lässt sich als Summe von Sinustönen schreiben (Fourier-Reihe): dem Grundton $f_0$ und seinen Vielfachen. Wie laut die einzelnen Obertöne sind, hören wir als Klangfarbe — darum klingen Geige und Flöte beim selben Ton verschieden.`,
+      lab: 'Sägezahn durch einen Tiefpass schicken: Die Obertöne verschwinden, der Grundton bleibt.', alias: ['harmonische', 'spektrum', 'timbre', 'klangfarbe']},
+    {id: 'tonhoehe', name: 'Tonhöhe, Oktave, Halbton', sym: R`f = 440\,\mathrm{Hz}\cdot 2^{(n-69)/12}`, cat: 'Klang', unit: 'Hz bzw. Notenname',
+      formal: [R`f_\text{Oktave} = 2 \cdot f`, R`f_\text{Halbton} = \sqrt[12]{2} \cdot f \approx 1{,}0595 \cdot f`, R`f(n) = 440\,\mathrm{Hz} \cdot 2^{(n - 69)/12} \quad (n = \text{MIDI-Notennummer})`],
+      phys: R`Wir hören Tonhöhen logarithmisch: Gleiche Verhältnisse klingen wie gleiche Abstände. Eine Oktave ist eine Verdopplung der Frequenz, in der gleichstufigen Stimmung aufgeteilt in zwölf gleich große Halbtonschritte. Der Stimmton A4 liegt bei 440 Hz.`,
+      lab: 'Der Oszillator zeigt zur Frequenz den Notennamen. ×2 ist genau eine Oktave.', alias: ['oktave', 'halbton', 'midi', 'stimmton', 'note']},
+    {id: 'intervalle', name: 'Intervalle & Quinte', sym: R`3 : 2`, cat: 'Klang', unit: 'Frequenzverhältnisse',
+      formal: [R`\text{Oktave } 2 : 1, \quad \text{Quinte } 3 : 2, \quad \text{Quarte } 4 : 3, \quad \text{große Terz } 5 : 4`],
+      phys: R`Zwei Töne klingen besonders ruhig zusammen, wenn ihre Frequenzen in einem Verhältnis kleiner ganzer Zahlen stehen: Dann wiederholt sich das gemeinsame Schwingungsmuster schnell. Die Quinte (3 : 2) ist nach der Oktave das einfachste — Powerchords auf der E-Gitarre bestehen genau daraus.`,
+      lab: 'Mission „Zweistimmig“: zwei Oszillatoren am selben Sequencer, einer auf 220 Hz, einer auf 330 Hz.', alias: ['quinte', 'terz', 'quarte', 'akkord', 'powerchord']},
+    {id: 'pentatonik', name: 'Tonleiter & Pentatonik', sym: R`5`, cat: 'Klang', unit: 'Töne pro Oktave',
+      formal: [R`\text{Dur-Pentatonik (C): } \mathrm{C,\ D,\ E,\ G,\ A}`, R`\text{Moll-Pentatonik (A): } \mathrm{A,\ C,\ D,\ E,\ G}`],
+      phys: R`Eine Tonleiter wählt aus den zwölf Halbtönen einer Oktave einige aus. Die Pentatonik nimmt nur fünf und lässt die Halbtonschritte weg — dadurch reiben sich fast keine Töne aneinander. Sie steckt in Volksliedern, Blues und Rock auf der ganzen Welt.`,
+      lab: 'Alle Zeilen im Sequencer-Raster gehören zu einer Pentatonik — umschaltbar zwischen Dur und Moll.', alias: ['tonleiter', 'skala', 'dur', 'moll']},
+    {id: 'schwebung', name: 'Schwebung', sym: R`|f_1 - f_2|`, cat: 'Klang', unit: 'Hz',
+      formal: [R`\sin(2\pi f_1 t) + \sin(2\pi f_2 t) = 2\cos\!\big(\pi (f_1 - f_2) t\big)\,\sin\!\big(\pi (f_1 + f_2) t\big)`, R`f_\text{Schwebung} = |f_1 - f_2|`],
+      phys: R`Zwei fast gleich hohe Töne verstärken und schwächen sich abwechselnd. Man hört einen Ton in der Mitte, dessen Lautstärke mit der Differenzfrequenz pulsiert. So stimmen Musiker ihre Instrumente: Verschwindet das Wabern, sind beide gleich hoch.`,
+      lab: 'Starter „Schwebung“ oder Mission „Wabern“: zwei Oszillatoren mit 220 und 223 Hz.', alias: ['wabern', 'interferenz']},
+    // Filter & Effekte
+    {id: 'filter', name: 'Filter (VCF)', sym: R`|H(f)|`, cat: 'Filter & Effekte', unit: 'Grenzfrequenz in Hz',
+      formal: [R`\text{Tiefpass 1. Ordnung: } |H(f)| = \frac{1}{\sqrt{1 + (f/f_c)^2}}`, R`\text{Flanke: } -6\,\mathrm{dB/Oktave} = -20\,\mathrm{dB/Dekade}`],
+      phys: R`Ein Filter lässt manche Frequenzen durch und dämpft andere. Tiefpass: nur das Tiefe. Hochpass: nur das Hohe. Bandpass: ein Bereich in der Mitte. Je höher die Ordnung, desto steiler die Flanke. In Synthesizern formt der Filter (VCF) den Klang mehr als alles andere.`,
+      lab: 'Tiefpass (C), Spule (L) und Hochpass (CR) sind Filter erster Ordnung.', alias: ['vcf', 'grenzfrequenz', 'bandpass']},
+    {id: 'tiefpass', name: 'Tiefpass (RC)', sym: R`f_c = \tfrac{1}{2\pi RC}`, cat: 'Filter & Effekte', unit: 'Hz',
+      formal: [R`\underline{H}(j\omega) = \frac{1}{1 + j\omega RC}`, R`f_c = \frac{1}{2\pi RC}`],
+      phys: R`Ein Widerstand in Serie, ein Kondensator gegen Masse. Für hohe Frequenzen ist der Kondensator fast ein Kurzschluss — sie werden abgeleitet. Klanglich: dumpfer, wärmer, weiter weg.`,
+      lab: 'Baustein „C Tiefpass“. Die ausführliche Herleitung steht in der Notiz zum RC-Tiefpass.', alias: ['lowpass', 'rc-filter']},
+    {id: 'hochpass', name: 'Hochpass (CR)', sym: R`f_c = \tfrac{1}{2\pi RC}`, cat: 'Filter & Effekte', unit: 'Hz',
+      formal: [R`\underline{H}(j\omega) = \frac{j\omega RC}{1 + j\omega RC}`, R`|H(f)| = \frac{1}{\sqrt{1 + (f_c/f)^2}}`],
+      phys: R`Der Kondensator sitzt in Serie, der Widerstand gegen Masse. Tiefe Frequenzen sieht der Kondensator als großen Widerstand — sie kommen kaum durch. Klanglich: dünn, wie aus einem Telefon. In Lautsprecherboxen trennt so ein Filter die Höhen für den Hochtöner ab.`,
+      lab: 'Baustein „CR Hochpass“ und Mission „Nur die Höhen“.', alias: ['highpass', 'cr-filter']},
+    {id: 'resonanz', name: 'Resonanz & Güte', sym: R`Q`, cat: 'Filter & Effekte', unit: 'Güte Q (dimensionslos)',
+      formal: [R`f_0 = \frac{1}{2\pi\sqrt{LC}}`, R`Q = \frac{f_0}{\Delta f}`],
+      phys: R`Ein Schwingkreis aus L und C hat eine Eigenfrequenz $f_0$, bei der er besonders stark reagiert. Synthesizer-Filter lassen sich so einstellen, dass sie rund um die Grenzfrequenz eine Spitze bekommen — das typische „Quietschen“ und „Wah“. Je höher die Güte $Q$, desto schmaler und höher die Spitze.`,
+      lab: 'Noch nicht im Labor: Die Filter dort sind erster Ordnung und haben keine Resonanzspitze.', alias: ['schwingkreis', 'guete', 'q-faktor']},
+    {id: 'echo', name: 'Echo & Delay', sym: R`\Delta t`, cat: 'Filter & Effekte', unit: 'Verzögerung in ms, Rückkopplung in %',
+      formal: [R`y(t) = x(t) + g \cdot y(t - \Delta t)`, R`\text{Echo } n \text{ hat die Lautstärke } g^n`],
+      phys: R`Das Signal wird gespeichert und nach $\Delta t$ noch einmal abgespielt. Mit Rückkopplung $g$ läuft jedes Echo erneut in den Speicher: Es entstehen immer leisere Wiederholungen $g, g^2, g^3, \dots$ — eine geometrische Reihe, die nur für $g < 1$ abklingt.`,
+      lab: 'Baustein „Δt Echo“. Stell Δt auf einen Sequencer-Schritt (60 s / 2 / BPM), dann groovt das Echo mit.', alias: ['delay', 'verzoegerung', 'rueckkopplung', 'feedback']},
+    {id: 'hall', name: 'Hall (Reverb)', sym: R`T_{60}`, cat: 'Filter & Effekte', unit: 'Nachhallzeit in s',
+      formal: [R`T_{60}: \text{ Zeit, bis der Schall um } 60\,\mathrm{dB} \text{ abgeklungen ist}`],
+      phys: R`In einem Raum erreicht uns der Schall nicht nur direkt, sondern über tausende Reflexionen an Wänden, Decke und Boden — so dicht, dass man sie nicht mehr einzeln hört. Kleine Räume haben kurzen Hall, Kirchen mehrere Sekunden.`,
+      lab: 'Noch nicht im Labor. Ein Echo mit kurzer Zeit und viel Rückkopplung kommt dem schon nahe.', alias: ['reverb', 'nachhall']},
+    {id: 'verzerrung', name: 'Verzerrung & Clipping', sym: R`\tanh(kx)`, cat: 'Filter & Effekte', unit: 'Übersteuerung k',
+      formal: [R`y = \frac{\tanh(k\,x)}{\tanh(k)} \quad \text{(weiche Begrenzung)}`, R`y = \max(-1, \min(1, k\,x)) \quad \text{(harte Begrenzung)}`],
+      phys: R`Wird ein Signal größer, als eine Schaltung verarbeiten kann, wird es abgeschnitten (Clipping). Dioden ab etwa $0{,}7\,\mathrm{V}$, Röhren oder Transistoren begrenzen weich. Dabei entstehen neue Obertöne — der Klang von E-Gitarren-Verzerrern.`,
+      lab: 'Baustein „⊣⊢ Verzerrer“ und Mission „Crashtest“: aus dem Sinus wird fast ein Rechteck.', alias: ['distortion', 'clipping', 'overdrive', 'waveshaper']},
+    {id: 'tremolo', name: 'Tremolo (Amplitudenmodulation)', sym: R`\text{AM}`, cat: 'Filter & Effekte', unit: 'Tempo in Hz, Tiefe in %',
+      formal: [R`y(t) = x(t)\left(1 - \tfrac{d}{2} + \tfrac{d}{2}\sin(2\pi f_m t)\right)`],
+      phys: R`Ein langsamer Oszillator bewegt die Lautstärke auf und ab — die Tonhöhe bleibt. Dasselbe Prinzip trägt beim AM-Radio die Sprache auf einer Trägerfrequenz um eine Million Hertz.`,
+      lab: 'Baustein „↝ Tremolo“ und Mission „Puls fühlen“.', alias: ['am', 'amplitudenmodulation']},
+    {id: 'vibrato', name: 'Vibrato (Frequenzmodulation)', sym: R`\text{FM}`, cat: 'Filter & Effekte', unit: 'Tempo in Hz, Tiefe in Halbtönen',
+      formal: [R`f(t) = f_0 \cdot \left(1 + m \sin(2\pi f_m t)\right)`],
+      phys: R`Wie Tremolo, nur wackelt die Tonhöhe statt der Lautstärke — so wie Sänger einen langen Ton beleben. Wird die Modulation sehr schnell (hörbar), entsteht FM-Synthese: der Klang vieler Synthesizer der 80er.`,
+      lab: 'Noch nicht im Labor.', alias: ['fm', 'frequenzmodulation']},
+    {id: 'pegel', name: 'Pegel & Dezibel', sym: R`\mathrm{dB}`, cat: 'Filter & Effekte', unit: 'Dezibel (logarithmisch)',
+      formal: [R`L = 20 \cdot \log_{10}\!\left(\frac{U}{U_0}\right)\,\mathrm{dB}`, R`\times 2 \text{ Spannung} \approx +6\,\mathrm{dB}, \qquad \times 10 = +20\,\mathrm{dB}`],
+      phys: R`Unser Gehör empfindet Lautstärke logarithmisch. Dezibel zählen deshalb Verhältnisse statt Differenzen: Jede Verdopplung der Spannung sind rund 6 dB mehr, egal wie laut es vorher war.`,
+      lab: 'Der Pegelregler im Labor und der Widerstand (Spannungsteiler) verändern den Pegel.', alias: ['dezibel', 'db', 'lautstaerke']},
+    {id: 'limiter', name: 'Limiter & Kompressor', sym: R`\text{Ratio}`, cat: 'Filter & Effekte', unit: 'Schwelle in dB, Verhältnis',
+      formal: [R`\text{oberhalb der Schwelle: } \Delta L_\text{aus} = \frac{\Delta L_\text{ein}}{\text{Ratio}}`],
+      phys: R`Ein Kompressor macht laute Stellen leiser, sobald sie eine Schwelle überschreiten. Bei sehr großem Verhältnis heißt er Limiter: Er lässt praktisch nichts mehr darüber. Das schützt Lautsprecher und Ohren.`,
+      lab: 'Im Ausgang des Labors sitzt ein Limiter (Schwelle −12 dB, Verhältnis 12 : 1).', alias: ['kompressor', 'compressor', 'dynamik']},
+    // Steuerung
+    {id: 'sequencer', name: 'Sequencer', sym: R`\text{Step}`, cat: 'Steuerung', unit: 'Schritte, Tempo in BPM',
+      formal: [R`t_\text{Schritt} = \frac{60\,\mathrm{s}}{2 \cdot \mathrm{BPM}} \quad \text{(Achtelnoten)}`],
+      phys: R`Ein Taktgeber mit Gedächtnis: Er geht Schritt für Schritt durch ein Muster und sagt bei jedem Schritt, welche Töne klingen sollen. Seit den 1960ern Herzstück elektronischer Musik.`,
+      lab: 'Baustein „♪︎ Sequencer“: Spalten sind Schritte, Zeilen Tonhöhen. Er kann auch Oszillatoren spielen.', alias: ['step-sequencer', 'pattern']},
+    {id: 'tempo', name: 'Tempo (BPM)', sym: R`\mathrm{BPM}`, cat: 'Steuerung', unit: 'Schläge pro Minute',
+      formal: [R`T_\text{Schlag} = \frac{60\,\mathrm{s}}{\mathrm{BPM}}`, R`f_\text{Schlag} = \frac{\mathrm{BPM}}{60}\,\mathrm{Hz}`],
+      phys: R`Beats per Minute. 120 BPM sind zwei Schläge pro Sekunde, also 2 Hz. Ruhige Lieder liegen um 70 BPM, Pop um 120, Techno um 130 und mehr.`,
+      lab: 'Tempo-Regler am Sequencer (60 bis 200 BPM).', alias: ['bpm', 'beat']},
+    {id: 'huellkurve', name: 'Hüllkurve (ADSR)', sym: R`\text{ADSR}`, cat: 'Steuerung', unit: 'Zeiten in ms, Sustain-Pegel',
+      formal: [R`\text{Attack} \to \text{Decay} \to \text{Sustain} \to \text{Release}`],
+      phys: R`Wie ein Ton beginnt und endet: Attack (Anstieg), Decay (Abfall auf das Haltelevel), Sustain (halten, solange die Taste gedrückt ist), Release (Ausklingen). Ein Klavier hat einen schnellen Attack und lässt sofort nach, eine Orgel hält gleichmäßig.`,
+      lab: 'Jede Sequencer-Note hat eine kurze Hüllkurve: etwa 8 ms Anstieg, danach exponentielles Abklingen.', alias: ['adsr', 'envelope', 'attack', 'release']},
+    {id: 'lfo', name: 'LFO', sym: R`f < 20\,\mathrm{Hz}`, cat: 'Steuerung', unit: 'Hz',
+      formal: [R`p(t) = p_0 + \Delta p \cdot \sin(2\pi f_\text{LFO}\, t)`],
+      phys: R`Low Frequency Oscillator: ein Oszillator, der so langsam schwingt, dass man ihn nicht als Ton hört. Er bewegt stattdessen andere Parameter — Lautstärke (Tremolo), Tonhöhe (Vibrato) oder die Grenzfrequenz eines Filters (Wah).`,
+      lab: 'Im Tremolo steckt ein LFO, der die Lautstärke bewegt.', alias: ['low-frequency-oscillator', 'modulation']},
+    {id: 'cv-gate', name: 'CV & Gate', sym: R`1\,\mathrm{V/Okt}`, cat: 'Steuerung', unit: 'Steuerspannungen in V',
+      formal: [R`f = f_0 \cdot 2^{\,U_\text{CV} / 1\,\mathrm{V}}`, R`\text{Gate: } U \text{ hoch} = \text{Note an}, \quad U = 0 = \text{Note aus}`],
+      phys: R`In modularen Synthesizern reden die Module über Spannungen. CV (Control Voltage) stellt die Tonhöhe ein, oft nach der Regel „1 Volt pro Oktave“. Das Gate sagt, wann eine Note an ist. Ein Sequencer gibt beides aus.`,
+      lab: 'Ein gestricheltes Steuerkabel vom Sequencer in den SEQ-Eingang eines Oszillators überträgt genau das: Tonhöhe und An/Aus.', alias: ['cv', 'gate', 'steuerspannung', 'volt-pro-oktave']},
+    {id: 'modular', name: 'Modularsynthesizer', sym: R`\text{VCO} \to \text{VCF} \to \text{VCA}`, cat: 'Steuerung', unit: 'Module + Patchkabel',
+      formal: [R`\text{Quelle (VCO)} \to \text{Klangformung (VCF)} \to \text{Lautstärke (VCA)}`],
+      phys: R`Ein Synthesizer aus einzelnen Modulen, die man mit Patchkabeln frei verbindet: Oszillatoren, Filter, Verstärker, Hüllkurven, Sequencer. Die klassische Kette heißt subtraktive Synthese: ein obertonreicher Ton, aus dem ein Filter etwas wegnimmt.`,
+      lab: 'Das freie Pult funktioniert genau so — Bausteine stecken, Kabel ziehen.', alias: ['patchkabel', 'eurorack', 'subtraktive-synthese', 'vca', 'synthesizer']},
+    // Digital
+    {id: 'abtastrate', name: 'Abtastrate & Nyquist', sym: R`f_s`, cat: 'Digital', unit: 'Hz (meist 44,1 oder 48 kHz)',
+      formal: [R`f_\text{max} < \frac{f_s}{2} \quad \text{(Nyquist-Shannon)}`],
+      phys: R`Digitaler Klang besteht aus Messwerten in festen Zeitabständen. Um eine Frequenz eindeutig darzustellen, braucht man mehr als zwei Messpunkte pro Schwingung. Bei 48 kHz geht das bis knapp 24 kHz — genug, denn wir hören bis etwa 20 kHz.`,
+      lab: 'Das Labor rechnet mit der Abtastrate deines Geräts, meist 44,1 oder 48 kHz.', alias: ['samplerate', 'sampling', 'nyquist', 'shannon']},
+    {id: 'aliasing', name: 'Aliasing', sym: R`|f - k f_s|`, cat: 'Digital', unit: 'Hz',
+      formal: [R`f_\text{Alias} = |f - k \cdot f_s| \quad (k \in \mathbb{Z})`],
+      phys: R`Liegt eine Frequenz über der halben Abtastrate, taucht sie als falsche, tiefere Frequenz wieder auf — wie Wagenräder im Film, die sich scheinbar rückwärts drehen. Darum werden Signale vor dem Digitalisieren tiefpassgefiltert.`,
+      lab: 'Der Verzerrer rechnet intern mit vierfacher Überabtastung, damit kaum Aliasing entsteht.', alias: ['spiegelfrequenz', 'oversampling']},
+    {id: 'bilinear', name: 'Bilineare Transformation', sym: R`s \mapsto z`, cat: 'Digital', unit: 'analog → digital',
+      formal: [R`s = \frac{2}{T}\cdot\frac{z - 1}{z + 1}`, R`\text{Vorverzerrung: } \omega_a = \frac{2}{T}\tan\!\left(\frac{\omega_d T}{2}\right)`],
+      phys: R`Ein Rezept, um ein analoges Filter (RC, RL) in ein digitales umzurechnen. Weil dabei die Frequenzachse verbogen wird, verzerrt man die gewünschte Grenzfrequenz vorher passend — dann stimmt sie im digitalen Filter genau.`,
+      lab: 'So rechnen Tiefpass, Spule und Hochpass im Labor.', alias: ['tustin', 'iir', 'digitales-filter']},
+    {id: 'oszilloskop', name: 'Oszilloskop', sym: R`u(t)`, cat: 'Digital', unit: 'Spannung über Zeit',
+      formal: [R`\text{Trigger: Bild startet bei steigendem Nulldurchgang}`],
+      phys: R`Ein Messgerät, das den Spannungsverlauf über der Zeit zeichnet. Der Trigger sorgt dafür, dass jedes Bild an derselben Stelle der Schwingung beginnt — dann steht die Kurve still, statt durchzulaufen.`,
+      lab: 'Oszilloskop unten im Labor und das kleine in der Play-Leiste.', alias: ['scope', 'trigger']},
+    {id: 'web-audio', name: 'Web Audio', sym: R`\text{AudioNode}`, cat: 'Digital', unit: 'Browser-Schnittstelle',
+      formal: [R`\text{Quelle} \to \text{AudioNode} \to \dots \to \text{destination}`],
+      phys: R`Eine Programmierschnittstelle in jedem modernen Browser: Man baut einen Graphen aus Audio-Knoten — Oszillatoren, Filter, Verzögerungen, Verstärker — und der Browser rechnet daraus in Echtzeit Klang.`,
+      lab: 'Jeder Baustein im Labor ist ein kleiner Web-Audio-Graph.', alias: ['webaudio', 'audiocontext']}
+  ];
+  const SETS = {
+    elektro: {title: 'Elektrische Größen', items: GROESSEN, placeholder: 'Suchen: Spannung, Ohm, τ …', foot: 'Formal = Definition bzw. Beziehung in Formeln · Physikalisch = was die Größe bedeutet · Einheit zerlegt in SI-Basiseinheiten.'},
+    synth: {title: 'Synthesizer & Klang', items: SYNTH, placeholder: 'Suchen: Filter, Hüllkurve, CV …', foot: 'Formal = Beziehung in Formeln · Physikalisch = was dahintersteckt · Im Labor = wo du es selbst ausprobierst.'}
+  };
+  const ALL = [...GROESSEN, ...SYNTH];
   const esc = (t) => String(t).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
   const norm = (t) => String(t).toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   /* Text mit $…$ → Formel-Spans */
   const textMath = (t) => esc(t).replace(/\$([^$]+)\$/g, (_, tex) => `<span class="math math-inline">${tex}</span>`);
+  const catsOf = items => ['Alle', ...new Set(items.map(g => g.cat))];
 
-  let root = null, list = null, search = null, chips = null, cat = 'Alle', lastFocus = null;
+  let root = null, list = null, search = null, chips = null, tabs = null, cat = 'Alle', tab = 'elektro', lastFocus = null;
   function build() {
     root = document.createElement('div');
     root.className = 'lex';
     root.hidden = true;
     root.innerHTML = `<div class="lex-backdrop" data-lex-close></div>
       <section class="lex-panel" role="dialog" aria-modal="true" aria-labelledby="lex-title">
-        <header class="lex-head"><div><span class="eyebrow">Nachschlagen</span><h2 id="lex-title">Elektrische Größen</h2></div><button type="button" class="lex-close" data-lex-close aria-label="Lexikon schließen">×</button></header>
-        <input class="lex-search" type="search" placeholder="Suchen: Spannung, Ohm, τ …" aria-label="Größe suchen">
-        <div class="lex-chips" role="group" aria-label="Rubrik">${CATS.map(c => `<button type="button" class="tag" data-cat="${c}" aria-pressed="${c === cat}">${c}</button>`).join('')}</div>
+        <header class="lex-head"><div><span class="eyebrow">Nachschlagen</span><h2 id="lex-title">Lexikon</h2></div><button type="button" class="lex-close" data-lex-close aria-label="Lexikon schließen">×</button></header>
+        <div class="lex-tabs" role="tablist">${Object.entries(SETS).map(([k, v]) => `<button type="button" role="tab" data-tab="${k}" aria-selected="false">${v.title}<small>${v.items.length}</small></button>`).join('')}</div>
+        <input class="lex-search" type="search" aria-label="Im Lexikon suchen">
+        <div class="lex-chips" role="group" aria-label="Rubrik"></div>
         <div class="lex-list"></div>
-        <p class="lex-foot">Formal = Definition bzw. Beziehung in Formeln · Physikalisch = was die Größe bedeutet · Einheit zerlegt in SI-Basiseinheiten.</p>
+        <p class="lex-foot"></p>
       </section>`;
     document.body.append(root);
-    list = root.querySelector('.lex-list'); search = root.querySelector('.lex-search'); chips = root.querySelector('.lex-chips');
+    list = root.querySelector('.lex-list'); search = root.querySelector('.lex-search'); chips = root.querySelector('.lex-chips'); tabs = root.querySelector('.lex-tabs');
     root.addEventListener('click', e => {
       if (e.target.closest('[data-lex-close]')) close();
       const c = e.target.closest('[data-cat]');
       if (c) { cat = c.dataset.cat; render(); }
+      const t = e.target.closest('[data-tab]');
+      if (t && t.dataset.tab !== tab) { tab = t.dataset.tab; cat = 'Alle'; search.value = ''; render(); list.scrollTop = 0; }
     });
     search.addEventListener('input', render);
     root.addEventListener('keydown', e => {
@@ -184,8 +315,9 @@ const OSCILexikon = (() => {
       <summary><span class="lex-sym"><span class="math math-inline">${g.sym}</span></span><span class="lex-name">${esc(g.name)}<small>${g.unit === '—' ? esc(g.cat) : esc(g.unit)}</small></span></summary>
       <div class="lex-body">
         <h4>Formal</h4>${g.formal.map(f => `<div class="math math-display">${f}</div>`).join('')}
-        <h4>Physikalisch</h4><p>${textMath(g.phys)}</p>
+        <h4>${tab === 'synth' ? 'Was dahintersteckt' : 'Physikalisch'}</h4><p>${textMath(g.phys)}</p>
         ${g.si ? `<h4>Einheit</h4><div class="math math-display lex-unit">${g.si}</div>` : ''}
+        ${g.lab ? `<h4>Im Labor</h4><p class="lex-lab">${textMath(g.lab)}${location.pathname.includes('/labor/') ? '' : ` <a href="${OSCI.url('labor/')}">Zum Labor ↗︎</a>`}</p>` : ''}
       </div></details>`;
   }
   function matches(g, q) {
@@ -195,11 +327,16 @@ const OSCILexikon = (() => {
     return norm(q).split('-').filter(Boolean).every(w => hay.includes(w));
   }
   function render() {
-    const q = search.value.trim();
-    chips.querySelectorAll('[data-cat]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cat === cat)));
-    const shown = GROESSEN.filter(g => matches(g, q));
-    const byCat = CATS.slice(1).map(c => [c, shown.filter(g => g.cat === c)]).filter(([, gs]) => gs.length);
-    list.innerHTML = byCat.length ? byCat.map(([c, gs]) => `<h3 class="lex-cat">${c}</h3>${gs.map(entry).join('')}`).join('') : '<p class="lex-empty">Nichts gefunden. Probier ein anderes Wort oder ein Formelzeichen.</p>';
+    const set = SETS[tab], cats = catsOf(set.items), q = search.value.trim();
+    tabs.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
+    search.placeholder = set.placeholder;
+    root.querySelector('.lex-foot').textContent = set.foot;
+    chips.innerHTML = cats.map(c => `<button type="button" class="tag" data-cat="${c}" aria-pressed="${c === cat}">${c}</button>`).join('');
+    const shown = set.items.filter(g => matches(g, q));
+    const byCat = cats.slice(1).map(c => [c, shown.filter(g => g.cat === c)]).filter(([, gs]) => gs.length);
+    const other = tab === 'synth' ? 'elektro' : 'synth', elsewhere = q ? SETS[other].items.filter(g => matches({...g, cat: 'Alle'}, q)).length : 0;
+    list.innerHTML = byCat.length ? byCat.map(([c, gs]) => `<h3 class="lex-cat">${c}</h3>${gs.map(entry).join('')}`).join('')
+      : `<p class="lex-empty">Nichts gefunden.${elsewhere ? ` Unter <button type="button" class="lex-switch" data-tab="${other}">${SETS[other].title}</button> gibt es ${elsewhere} Treffer.` : ' Probier ein anderes Wort oder ein Formelzeichen.'}</p>`;
     OSCI.loadKatex().then(() => list.querySelectorAll('summary .math').forEach(el => typeOne(el))).catch(() => {});
   }
   function typeOne(el) {
@@ -212,13 +349,16 @@ const OSCILexikon = (() => {
   function find(id) {
     if (!id) return null;
     const key = norm(id);
-    return GROESSEN.find(g => g.id === key) || GROESSEN.find(g => norm(g.name) === key || (g.alias || []).some(a => norm(a) === key)) || GROESSEN.find(g => norm(g.name).includes(key));
+    return ALL.find(g => g.id === key) || ALL.find(g => norm(g.name) === key || (g.alias || []).some(a => norm(a) === key)) || ALL.find(g => norm(g.name).includes(key));
   }
+  /* open('synth') bzw. open('elektro') öffnet einen Reiter, sonst einen Eintrag (aus beiden Teilen) */
   function open(id) {
     if (!root) build();
     lastFocus = document.activeElement;
-    const target = find(id);
-    if (target) { cat = 'Alle'; search.value = ''; }
+    const target = SETS[id] ? null : find(id);
+    if (SETS[id]) { tab = id; cat = 'Alle'; search.value = ''; }
+    else if (target) { tab = SYNTH.includes(target) ? 'synth' : 'elektro'; cat = 'Alle'; search.value = ''; }
+    else if (!id) tab = location.pathname.includes('/labor/') ? 'synth' : tab;
     render();
     root.hidden = false;
     document.documentElement.classList.add('lex-open');
@@ -227,7 +367,7 @@ const OSCILexikon = (() => {
       const el = list.querySelector(`#lex-${target.id}`);
       el.open = true;
       requestAnimationFrame(() => { el.scrollIntoView({block: 'start'}); el.querySelector('summary').focus({preventScroll: true}); });
-    } else search.focus({preventScroll: true});
+    } else { list.scrollTop = 0; search.focus({preventScroll: true}); }
   }
   function close() {
     if (!root || root.hidden) return;
@@ -237,5 +377,5 @@ const OSCILexikon = (() => {
     if (/^#lexikon/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search);
     lastFocus?.focus?.({preventScroll: true});
   }
-  return {open, close, eintraege: GROESSEN};
+  return {open, close, eintraege: ALL};
 })();
