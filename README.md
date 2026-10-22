@@ -93,10 +93,10 @@ Wichtig: Die versteckte Datei **`.nojekyll`** muss im Repo bleiben. Ohne sie ble
 
 ### Wenn Design oder Code geändert wurde
 
-Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer (aktuell `?v=11`). Nach Änderungen in `assets/` diese Zahl in allen HTML-Dateien um eins erhöhen, zum Beispiel von 11 auf 12:
+Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer (aktuell `?v=12`). Nach Änderungen in `assets/` diese Zahl in allen HTML-Dateien um eins erhöhen, zum Beispiel von 12 auf 13:
 
 ```bash
-grep -rl '?v=11"' --include='*.html' . | xargs sed -i '' 's/?v=11"/?v=12"/g'
+grep -rl '?v=12"' --include='*.html' . | xargs sed -i '' 's/?v=12"/?v=13"/g'
 ```
 
 Für `assets/lexikon.js` gilt stattdessen `LEX_VERSION` in `assets/site.js`. Für neue Notizen oder Projekte ist beides nicht nötig.
@@ -198,6 +198,7 @@ Die Brücken-Simulation (`bruecke`) rechnet dagegen exakt über die Ersatzspannu
 - Synth-Lexikon (29 Einträge) neben dem Elektro-Lexikon, erreichbar über ⋮ und über „?“ an jedem Baustein; × zum Entfernen direkt am Baustein.
 - Dunkelmodus für alle Seiten (System oder ◐-Knopf), ohne Aufblitzen beim Laden.
 - Behoben: das × auf schwingenden Kabeln ließ sich nicht treffen (die Knöpfe wurden in jedem Bild neu gebaut).
+- Lautstärke: Belohnungs-Töne laufen über den Pegel (waren vorher am Pegel vorbei und viel zu laut), Wellenformen, Verzerrer und Echo-Rückkopplung gleichen sich aus; jede Mission startet mit eigener Sequencer-Melodie statt Dauerton.
 
 **Inhalte**
 - Notiz Brückenschaltung (A2.3) mit Simulation `bruecke`: Schaltplan, Potentialskala, Zweig-Tabelle mit Leistungsbilanz, Lastleistungs-Kurve.

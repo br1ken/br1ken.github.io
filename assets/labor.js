@@ -872,11 +872,11 @@ function buildAudio() {
       const p = n.p;
       if (n.type === 'osc') {
         const osc = ctx.createOscillator(); osc.type = p.wave; osc.frequency.value = p.frequency;
-        const gain = ctx.createGain(); gain.gain.value = .5; osc.connect(gain);
+        const gain = ctx.createGain(); gain.gain.value = WAVE_GAIN[p.wave]; osc.connect(gain);
         const controlled = state.edges.some(e => e.to === n.id), gate = ctx.createGain();
         gate.gain.value = controlled ? 0 : 1; gain.connect(gate); // gesteuert: still bis zur ersten Note
         bundle.sources.push(osc); bundle.nodes.push(osc, gain, gate); output = gate;
-        bundle.live.set(n.id, {osc, gate, controlled});
+        bundle.live.set(n.id, {osc, gate, controlled, amp: gain});
       } else if (n.type === 'resistor') {
         input = output = ctx.createGain(); input.gain.value = LabModels.divider(p.r * 1000, 10000); bundle.nodes.push(input);
         bundle.live.set(n.id, {gain: input});
@@ -893,15 +893,15 @@ function buildAudio() {
       } else if (n.type === 'delay') {
         input = ctx.createGain(); output = ctx.createGain();
         const line = ctx.createDelay(1), fb = ctx.createGain(), wet = ctx.createGain();
-        line.delayTime.value = p.time / 1000; fb.gain.value = p.feedback / 100; wet.gain.value = p.mix / 100;
+        line.delayTime.value = p.time / 1000; fb.gain.value = p.feedback / 100; wet.gain.value = echoWet(p);
         input.connect(output); input.connect(line); line.connect(fb); fb.connect(line); line.connect(wet); wet.connect(output);
         bundle.nodes.push(input, output, line, fb, wet);
         bundle.live.set(n.id, {line, fb, wet});
       } else if (n.type === 'distortion') {
         input = ctx.createWaveShaper(); input.curve = clipCurve(p.drive); input.oversample = '4x';
-        output = ctx.createGain(); output.gain.value = .75; input.connect(output);
+        output = ctx.createGain(); output.gain.value = driveGain(p.drive); input.connect(output);
         bundle.nodes.push(input, output);
-        bundle.live.set(n.id, {shaper: input});
+        bundle.live.set(n.id, {shaper: input, out: output});
       } else if (n.type === 'tremolo') {
         input = output = ctx.createGain(); const depth = p.depth / 100;
         input.gain.value = 1 - depth / 2;
@@ -926,6 +926,11 @@ function highpassCoeffs(cutoff, sampleRate) {
   return {feedforward: [1 / (1 + k), -1 / (1 + k)], feedback: [1, (k - 1) / (k + 1)]};
 }
 /* Weiche Begrenzung wie zwei antiparallele Dioden: y = tanh(k·x)/tanh(k). */
+/* Gleich laut statt ohrenbetäubend: Rechteck und Sägezahn haben viel mehr Energie als ein Sinus,
+   ein stark übersteuerter Ton ist praktisch ein Rechteck, und Rückkopplung im Echo summiert sich auf. */
+const WAVE_GAIN = {sine: .5, triangle: .45, sawtooth: .32, square: .26};
+const driveGain = drive => .9 / Math.sqrt(drive);
+const echoWet = p => p.mix / 100 * Math.sqrt(1 - (p.feedback / 100) ** 2);
 function clipCurve(drive) {
   const curve = new Float32Array(1024), norm = Math.tanh(drive);
   for (let i = 0; i < curve.length; i++) { const x = i / (curve.length - 1) * 2 - 1; curve[i] = Math.tanh(drive * x) / norm; }
@@ -938,16 +943,16 @@ function liveUpdate(n, key) {
   if (n.type === 'out') { audio.master.gain.setTargetAtTime(p.volume / 100, now, .02); return true; }
   if (!live) return false;
   if (n.type === 'osc' && key === 'frequency') { if (!live.controlled) live.osc.frequency.setTargetAtTime(p.frequency, now, .015); return true; }
-  if (n.type === 'osc' && key === 'wave') { live.osc.type = p.wave; return true; }
+  if (n.type === 'osc' && key === 'wave') { live.osc.type = p.wave; live.amp.gain.setTargetAtTime(WAVE_GAIN[p.wave], now, .02); return true; }
   if (n.type === 'resistor') { live.gain.gain.setTargetAtTime(LabModels.divider(p.r * 1000, 10000), now, .015); return true; }
   if (n.type === 'seq') return true; // Tempo, Raster und Wellenform liest der Taktgeber bei jedem Schritt neu
   if (n.type === 'delay') {
     live.line.delayTime.setTargetAtTime(p.time / 1000, now, .03);
     live.fb.gain.setTargetAtTime(p.feedback / 100, now, .02);
-    live.wet.gain.setTargetAtTime(p.mix / 100, now, .02);
+    live.wet.gain.setTargetAtTime(echoWet(p), now, .02);
     return true;
   }
-  if (n.type === 'distortion') { live.shaper.curve = clipCurve(p.drive); return true; }
+  if (n.type === 'distortion') { live.shaper.curve = clipCurve(p.drive); live.out.gain.setTargetAtTime(driveGain(p.drive), now, .02); return true; }
   if (n.type === 'tremolo') {
     const depth = p.depth / 100;
     live.lfo.frequency.setTargetAtTime(p.rate, now, .02);
@@ -1037,7 +1042,7 @@ function playNote(n, row, t, dur, level) {
   const ctx = audio.ctx, osc = ctx.createOscillator(), env = ctx.createGain();
   osc.type = n.p.wave; osc.frequency.value = seqFreq(n, row);
   env.gain.setValueAtTime(.0001, t);
-  env.gain.exponentialRampToValueAtTime(level, t + .008);
+  env.gain.exponentialRampToValueAtTime(level * WAVE_GAIN[n.p.wave] / .5, t + .008);
   env.gain.exponentialRampToValueAtTime(.0006, t + dur * .92);
   osc.connect(env); env.connect(live.out);
   osc.start(t); osc.stop(t + dur);
@@ -1098,13 +1103,13 @@ function sfx(kind) {
   if (!audio) return;
   const ctx = audio.ctx, t = ctx.currentTime + .005, osc = ctx.createOscillator(), env = ctx.createGain();
   if (kind === 'plug') {
-    osc.type = 'square'; osc.frequency.setValueAtTime(150, t); osc.frequency.exponentialRampToValueAtTime(55, t + .08);
-    env.gain.setValueAtTime(.1, t); env.gain.exponentialRampToValueAtTime(.0005, t + .1);
+    osc.type = 'triangle'; osc.frequency.setValueAtTime(150, t); osc.frequency.exponentialRampToValueAtTime(55, t + .08);
+    env.gain.setValueAtTime(.3, t); env.gain.exponentialRampToValueAtTime(.0005, t + .1);
   } else {
-    osc.type = 'triangle'; osc.frequency.setValueAtTime(1320, t); osc.frequency.setValueAtTime(1760, t + .06);
-    env.gain.setValueAtTime(.0001, t); env.gain.exponentialRampToValueAtTime(.14, t + .01); env.gain.exponentialRampToValueAtTime(.0005, t + .24);
+    osc.type = 'sine'; osc.frequency.setValueAtTime(880, t); osc.frequency.setValueAtTime(1175, t + .06);
+    env.gain.setValueAtTime(.0001, t); env.gain.exponentialRampToValueAtTime(.3, t + .01); env.gain.exponentialRampToValueAtTime(.0005, t + .24);
   }
-  osc.connect(env); env.connect(audio.limiter);
+  osc.connect(env); env.connect(audio.master); // über den Pegel, damit es nie lauter als der Patch ist
   osc.start(t); osc.stop(t + .26);
 }
 function updatePlayheads() {
@@ -1481,13 +1486,13 @@ function loadChain(list, text) {
 function jingle() {
   if (!audio) return;
   const ctx = audio.ctx, t = ctx.currentTime + .05;
-  [72, 76, 79, 84].forEach((midi, i) => {
+  [67, 72, 76, 79].forEach((midi, i) => {
     const osc = ctx.createOscillator(), env = ctx.createGain();
     osc.type = 'triangle'; osc.frequency.value = 440 * 2 ** ((midi - 69) / 12);
     env.gain.setValueAtTime(.0001, t + i * .09);
-    env.gain.exponentialRampToValueAtTime(.18, t + i * .09 + .01);
+    env.gain.exponentialRampToValueAtTime(.28, t + i * .09 + .01);
     env.gain.exponentialRampToValueAtTime(.0005, t + i * .09 + .35);
-    osc.connect(env); env.connect(audio.limiter);
+    osc.connect(env); env.connect(audio.master);
     osc.start(t + i * .09); osc.stop(t + i * .09 + .4);
   });
 }
