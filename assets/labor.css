@@ -72,7 +72,7 @@
 .wire-cut {
   position: absolute; transform: translate(-50%, -50%); pointer-events: auto;
   width: 24px; height: 24px; border-radius: 50%; border: 1px solid #9a9a90; background: #fff; color: #55554d;
-  font: 15px/1 var(--sans); cursor: pointer; display: grid; place-items: center; padding: 0 0 1px; opacity: .7;
+  font: 15px/1 var(--mono); cursor: pointer; display: grid; place-items: center; padding: 0 0 1px; opacity: .7;
   transition: opacity .15s, transform .15s, background .15s;
 }
 .wire-cut:hover, .wire-cut:focus-visible { opacity: 1; background: var(--ink); color: #fff; transform: translate(-50%, -50%) scale(1.15); }
@@ -131,7 +131,7 @@
 .inspector-kicker { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
 .inspector h3 { font-size: 31px; font-weight: 400; letter-spacing: -.05em; margin: 14px 0 5px; }
 .inspector .unit { font-size: 11px; color: var(--muted); margin-bottom: 18px; }
-.inspector p { font-size: 12.5px; line-height: 1.65; }
+.inspector p { font-size: 12px; line-height: 1.65; }
 .inspector .formula { font-family: var(--mono); font-size: 13px; line-height: 1.5; border-top: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline); padding: 14px 0; margin: 16px 0; }
 .control { display: grid; gap: 5px; font-size: 11px; }
 .inspector .control { margin-top: 16px; }
@@ -273,7 +273,7 @@ select { width: 100%; min-height: 40px; font: inherit; font-size: 12px; padding:
 .chain-result { font: 12.5px/1.5 var(--mono); margin: 12px 0 2px; padding: 8px 10px; background: var(--paper); border-left: 3px solid var(--ink); }
 .is-playing .chain-out .chain-result { background: var(--accent); }
 .big-waves { display: grid; grid-template-columns: repeat(4, 1fr); margin: 14px 0 2px; border: 1px solid var(--ink); }
-.big-waves button { display: grid; gap: 2px; justify-items: center; padding: 8px 2px; min-height: 56px; border: 0; border-left: 1px solid var(--hairline); background: #fff; font: 10px var(--sans); color: var(--muted); cursor: pointer; }
+.big-waves button { display: grid; gap: 2px; justify-items: center; padding: 8px 2px; min-height: 56px; border: 0; border-left: 1px solid var(--hairline); background: #fff; font: 10px var(--mono); color: var(--muted); cursor: pointer; }
 .big-waves button:first-child { border-left: 0; }
 .big-waves button b { font: 20px/1 var(--mono); color: var(--ink); }
 .big-waves button[aria-pressed="true"] { background: var(--ink); color: #fff; }
@@ -300,7 +300,7 @@ select { width: 100%; min-height: 40px; font: inherit; font-size: 12px; padding:
 .chain-info .formula { font-family: var(--mono); font-size: 12px; }
 .chain-sources.multi { border: 1px dashed var(--ink); padding: 12px; background: rgba(255,255,255,.5); }
 .chain-group-label { display: block; margin-bottom: 10px; }
-.chain-ghost { display: block; width: 100%; margin-top: 10px; min-height: 46px; border: 1px dashed var(--ink); background: transparent; font: 13px var(--sans); color: var(--ink); cursor: pointer; }
+.chain-ghost { display: block; width: 100%; margin-top: 10px; min-height: 46px; border: 1px dashed var(--ink); background: transparent; font: 12px var(--mono); color: var(--ink); cursor: pointer; }
 .chain-ghost:hover { background: #fff; }
 /* Das „Kabel“ zwischen den Karten, mit Einfüge-Knopf */
 .chain-link { position: relative; display: grid; justify-items: center; padding: 14px 0; }
@@ -311,7 +311,7 @@ select { width: 100%; min-height: 40px; font: inherit; font-size: 12px; padding:
 .chain-add { position: relative; z-index: 1; min-height: 38px; padding: 0 16px; border: 1px solid var(--ink); border-radius: 19px; background: #fff; font: 12px var(--mono); color: var(--ink); cursor: pointer; }
 .chain-add:hover, .chain-link.open .chain-add { background: var(--accent); }
 .chain-picker { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; width: 100%; margin-top: 10px; padding: 10px; background: #fff; border: 1px solid var(--ink); box-shadow: 4px 4px 0 rgba(0,0,0,.08); }
-.chain-picker button { display: grid; grid-template-columns: 32px 1fr; grid-template-rows: auto auto; column-gap: 8px; align-items: center; text-align: left; padding: 10px; min-height: 58px; border: 1px solid var(--hairline); background: #fff; font: 14px var(--sans); color: var(--ink); cursor: pointer; }
+.chain-picker button { display: grid; grid-template-columns: 32px 1fr; grid-template-rows: auto auto; column-gap: 8px; align-items: center; text-align: left; padding: 10px; min-height: 58px; border: 1px solid var(--hairline); background: #fff; font: 13px var(--mono); color: var(--ink); cursor: pointer; }
 .chain-picker button:hover { border-color: var(--ink); background: var(--paper); }
 .chain-picker b { grid-row: span 2; font: 20px var(--mono); text-align: center; }
 .chain-picker small { font: 10px var(--mono); color: var(--muted); text-transform: uppercase; }

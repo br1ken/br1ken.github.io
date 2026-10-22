@@ -1,3 +1,9 @@
+/* Schrift für Fließtext und Labels: MesloLGS Nerd Font (verkleinert, siehe assets/fonts/LIZENZ.md).
+   Die großen Überschriften bleiben in Helvetica Neue (--sans). */
+@font-face { font-family: 'Meslo'; src: url('fonts/meslo-lgs-nf-regular.woff') format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Meslo'; src: url('fonts/meslo-lgs-nf-italic.woff') format('woff'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Meslo'; src: url('fonts/meslo-lgs-nf-bold.woff') format('woff'); font-weight: 500 700; font-style: normal; font-display: swap; }
+
 /* osci//log — gemeinsames Design für alle Seiten.
    Farben und Abstände stehen als Variablen oben; Seiten-spezifisches liegt in labor.css und notizen.css. */
 :root {
@@ -14,7 +20,7 @@
   --accent-ink: #1a1a00;
   --ok: #1f6b3a;
   --warn: #8a3b12;
-  --mono: 'SFMono-Regular', ui-monospace, Menlo, Consolas, 'Liberation Mono', monospace;
+  --mono: 'Meslo', 'MesloLGS Nerd Font', ui-monospace, Menlo, Consolas, monospace;
   --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --gutter: 34px;
   --max: 1248px;
@@ -28,7 +34,7 @@ body { overflow-x: hidden; overflow-x: clip; }
 button, a, input, label, summary { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 body {
   min-height: 100vh;
-  font-family: var(--sans);
+  font-family: var(--mono);
   color: var(--fg);
   background:
     radial-gradient(circle at 50% 18%, rgba(255,255,255,.92) 0%, rgba(255,255,255,0) 55%),
@@ -39,6 +45,8 @@ img { max-width: 100%; }
 :focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; }
 ::selection { background: var(--accent); color: var(--accent-ink); }
 .mono, .eyebrow, .card-kicker, .sub, .meta { font-family: var(--mono); }
+/* Überschriften und große Leitsätze: Helvetica */
+h1, h2, h3, .headline, .about-lead, .menu-item b, .post-nav b, .lesson h4 { font-family: var(--sans); }
 .skip-link { position: fixed; left: 20px; top: -80px; z-index: 60; background: #fff; padding: 14px; color: #000; }
 .skip-link:focus { top: 15px; }
 .visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -84,7 +92,7 @@ img { max-width: 100%; }
 .section-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; border-bottom: 1px solid var(--hairline); padding-bottom: 18px; margin-bottom: 28px; }
 .section-heading h2 { font-size: clamp(30px, 4.2vw, 48px); font-weight: 400; letter-spacing: -.055em; margin: 0; line-height: 1; }
 .eyebrow { font-size: 10px; text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
-.intro { max-width: 66ch; color: var(--muted); line-height: 1.7; font-size: 15px; }
+.intro { max-width: 66ch; color: var(--muted); line-height: 1.7; font-size: 14px; }
 .button {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   min-height: 44px; padding: 12px 18px; border: 1px solid var(--fg); border-radius: 0;
@@ -115,7 +123,7 @@ a.card:hover, .card:has(.card-link:hover) { border-color: var(--ink); box-shadow
 .card-body { padding: 18px 18px 20px; display: grid; gap: 10px; flex: 1; align-content: start; }
 .card-kicker { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; gap: 10px; }
 .card h3 { margin: 0; font-size: 23px; font-weight: 400; letter-spacing: -.04em; line-height: 1.12; }
-.card p { margin: 0; font-size: 13.5px; line-height: 1.6; color: var(--muted); }
+.card p { margin: 0; font-size: 12.5px; line-height: 1.65; color: var(--muted); }
 .card .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
 .card-link::after { content: ""; position: absolute; inset: 0; }
 .card .card-actions { position: relative; z-index: 1; display: flex; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
@@ -160,11 +168,11 @@ html.lex-open { overflow: hidden; }
 .lex-entry summary::after { content: "+"; font: 16px var(--mono); }
 .lex-entry[open] summary::after { content: "−"; }
 .lex-sym { font-size: 16px; text-align: center; overflow: hidden; white-space: nowrap; }
-.lex-name { display: grid; gap: 2px; font-size: 15px; letter-spacing: -.01em; }
+.lex-name { display: grid; gap: 2px; font-size: 13.5px; }
 .lex-name small { font: 11px var(--mono); color: var(--muted); }
 .lex-body { padding: 0 14px 14px; border-top: 1px dashed var(--hairline); }
 .lex-body h4 { margin: 14px 0 6px; font: 10px var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
-.lex-body p { margin: 0; font-size: 14px; line-height: 1.6; }
+.lex-body p { margin: 0; font-size: 13px; line-height: 1.65; }
 .lex-body .math-display { margin: 4px 0; padding: 8px 6px; overflow-x: auto; overflow-y: hidden; background: var(--paper); text-align: center; }
 .lex-body .lex-unit { background: var(--accent); }
 .lex .math:not([data-done]) { font-family: var(--mono); font-size: .85em; color: var(--muted); }
