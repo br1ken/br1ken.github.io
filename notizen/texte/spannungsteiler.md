@@ -2,6 +2,7 @@
 titel: Der Spannungsteiler — und warum die Last alles ändert
 datum: 2026-10-21
 fach: Grundlagen der E-Technik
+art: theorie
 tags: [Widerstand, Kirchhoff, Last]
 teaser: Zwei Widerstände, eine Formel. Bis man etwas anschließt. Eine kurze Notiz über belastete Teiler.
 welle: rechteck

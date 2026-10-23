@@ -6,11 +6,10 @@
 .filter-row .eyebrow { margin-right: 8px; min-width: 52px; }
 .search { width: min(420px, 100%); min-height: 44px; padding: 10px 14px; border: 1px solid var(--ink); background: var(--card); font: inherit; font-size: 14px; border-radius: 0; }
 .notes-count { font-family: var(--mono); font-size: 11px; color: var(--muted); }
-.featured { display: grid; grid-template-columns: 1.25fr 1fr; margin-bottom: 18px; }
-.featured .card-cover { aspect-ratio: auto; min-height: 300px; border-bottom: 0; border-right: 1px solid var(--hairline); }
-.featured .card-body { padding: 28px; align-content: center; }
-.featured h3 { font-size: clamp(28px, 3.4vw, 44px); }
-.featured p { font-size: 15px; }
+.notes-group + .notes-group { margin-top: 64px; }
+.notes-group .section-heading { margin-bottom: 10px; }
+.notes-group-text { margin: 0; max-width: 640px; font-size: 14px; line-height: 1.6; color: var(--muted); }
+.notes-fach { margin: 26px 0 12px; font-family: var(--mono); font-size: 11px; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 
 /* ---------- Eine Notiz ---------- */
 .progress { position: fixed; left: 0; top: 0; z-index: 50; height: 3px; width: 100%; background: var(--ink); transform-origin: 0 50%; transform: scaleX(0); }
@@ -196,7 +195,7 @@
 .writer-meta label, .writer-meta2 label { display: grid; gap: 4px; font-family: var(--mono); font-size: 10px; text-transform: uppercase; color: var(--muted); letter-spacing: .06em; }
 .writer input[type=text], .writer input[type=date], .writer select, .writer textarea { font: inherit; font-size: 14px; color: var(--ink); background: var(--card); border: 1px solid var(--hairline); border-radius: 0; padding: 9px 11px; min-height: 42px; text-transform: none; letter-spacing: 0; }
 .writer input:focus, .writer textarea:focus, .writer select:focus { border-color: var(--ink); outline: none; }
-.writer-meta2 { display: grid; grid-template-columns: 2fr 1fr auto; gap: 10px; margin-bottom: 14px; align-items: end; }
+.writer-meta2 { display: grid; grid-template-columns: 2fr 1fr .8fr .8fr auto; gap: 10px; margin-bottom: 14px; align-items: end; }
 .writer-meta2 .check { display: flex; gap: 8px; align-items: center; text-transform: none; font-size: 12px; color: var(--ink); min-height: 42px; }
 .writer-tools { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--ink); border-bottom: 0; background: var(--card); }
 .writer-tools button { border: 0; border-right: 1px solid var(--hairline); background: var(--card); padding: 10px 12px; font: 12px var(--mono); cursor: pointer; min-height: 40px; color: var(--ink); }
@@ -219,12 +218,10 @@
   .post-facts { align-self: start; }
   .sim-body { grid-template-columns: 1fr; }
   .sim-side { border-left: 0; border-top: 1px solid var(--ink); }
-  .writer-meta { grid-template-columns: 1fr 1fr; }
+  .writer-meta, .writer-meta2 { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 760px) {
-  .featured { grid-template-columns: 1fr; }
-  .featured .card-cover { min-height: 0; aspect-ratio: 16 / 7; border-right: 0; border-bottom: 1px solid var(--hairline); }
-  .featured .card-body { padding: 18px; }
+  .notes-group + .notes-group { margin-top: 48px; }
   .post-cover { aspect-ratio: 16 / 7; }
   .prose { font-size: 14.5px; }
   .prose .anchor { display: none; }

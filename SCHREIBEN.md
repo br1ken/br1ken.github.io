@@ -16,6 +16,7 @@ Ganz oben, zwischen zwei `---`-Zeilen:
 titel: Warum doppeltes C die Grenzfrequenz halbiert
 datum: 2026-10-22
 fach: Grundlagen der E-Technik
+art: theorie
 tags: [RC, Filter, Kondensator]
 teaser: Ein, zwei Sätze für die Karte in der Übersicht.
 welle: lade
@@ -23,11 +24,21 @@ entwurf: ja
 ---
 ```
 
+Für eine durchgerechnete Aufgabe sieht der Anfang so aus:
+
+```
+fach: ET1 · Rechenübung 2
+art: rechnung
+aufgabe: 2.5
+```
+
 | Feld | Pflicht? | Bedeutung |
 |---|---|---|
-| `titel` | ja | Überschrift der Notiz |
+| `titel` | ja | Überschrift der Notiz. Die Aufgabennummer gehört nicht hinein, die steht in `aufgabe` |
 | `datum` | ja | `JJJJ-MM-TT`, bestimmt die Reihenfolge |
-| `fach` | empfohlen | Rubrik, z. B. Fach oder Semester. Wird automatisch zum Filter |
+| `fach` | empfohlen | Rubrik, z. B. Fach oder Semester. Wird automatisch zum Filter und gliedert die Übersicht |
+| `art` | empfohlen | `rechnung` = durchgerechnete Aufgabe aus Vorlesung oder Übung, `theorie` = allgemeine Erklärung oder Herleitung. Die Übersicht trennt danach in „Rechnungen“ und „Theorie“. Ohne Angabe landet die Notiz unter „Sonstiges“ |
+| `aufgabe` | bei Rechnungen | Nummer wie `2.5`. Erscheint auf der Karte als „A2.5“, Rechnungen werden danach sortiert |
 | `tags` | optional | Schlagworte in eckigen Klammern |
 | `teaser` | empfohlen | Kurztext auf der Karte und in Link-Vorschauen |
 | `welle` | optional | Titelbild: `sinus`, `rechteck`, `dreieck`, `saege`, `gedaempft`, `lade`, `am`. Ohne Angabe wird eine Welle passend zum Dateinamen erzeugt |

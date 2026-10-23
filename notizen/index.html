@@ -12,11 +12,11 @@
 <meta property="og:image" content="https://br1ken.github.io/assets/og-bild.png">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../assets/touch-icon.png">
-<link rel="stylesheet" href="../assets/site.css?v=16">
-<link rel="stylesheet" href="../assets/notizen.css?v=16">
-<script src="../assets/site.js?v=16" defer></script>
+<link rel="stylesheet" href="../assets/site.css?v=17">
+<link rel="stylesheet" href="../assets/notizen.css?v=17">
+<script src="../assets/site.js?v=17" defer></script>
 <script src="beitraege.js" defer></script>
-<script src="../assets/notizen-liste.js?v=16" defer></script>
+<script src="../assets/notizen-liste.js?v=17" defer></script>
 </head>
 <body id="top" data-page="notizen">
 <a class="skip-link" href="#liste">Zur Liste springen</a>
@@ -25,16 +25,16 @@
   <header class="page-hero">
     <span class="eyebrow">002 / Notizen aus dem Studium</span>
     <h1>Noti<span>//</span>zen</h1>
-    <p class="intro">Was ich im Elektrotechnik-Studium lerne — so erklärt, dass man es auch ohne Vorlesung versteht. Mit Formeln, Simulationen zum Anfassen und Aufgaben zum Mitdenken.</p>
+    <p class="intro">Was ich im Elektrotechnik-Studium lerne — so erklärt, dass man es auch ohne Vorlesung versteht. Getrennt in <b>Rechnungen</b>, also durchgerechnete Aufgaben aus Vorlesung und Übung, und <b>Theorie</b>, also allgemeine Erklärungen und Herleitungen.</p>
   </header>
   <div class="filter-bar">
-    <input class="search" id="suche" type="search" placeholder="Suchen: z. B. Kondensator, Filter …" aria-label="Notizen durchsuchen">
+    <input class="search" id="suche" type="search" placeholder="Suchen: z. B. Kondensator, Filter, 2.5 …" aria-label="Notizen durchsuchen">
+    <div class="filter-row" id="art-filter" aria-label="Nach Art filtern"></div>
     <div class="filter-row" id="filter" aria-label="Nach Thema filtern"></div>
     <span class="notes-count" id="anzahl" role="status"></span>
   </div>
   <section class="section" id="liste" aria-label="Alle Notizen" style="padding-top:0">
-    <div id="featured"></div>
-    <div class="card-grid" id="notes"></div>
+    <div id="notes"></div>
   </section>
 </main>
 <div data-site-footer></div>

@@ -2,6 +2,8 @@
 titel: Brückenschaltung — maximale Leistung, kaum Wirkungsgrad
 datum: 2026-10-22
 fach: ET1 · Rechenübung 2
+art: rechnung
+aufgabe: 2.3
 tags: [Brückenschaltung, Ersatzquelle, Leistungsanpassung, Wirkungsgrad, Potentiale]
 teaser: Aufgabe 2.3 komplett durchgerechnet: Innenwiderstand, Leerlaufspannung, Potentiale, Wirkungsgrad — und warum die Lastleistung bei 10 Ω auf null fällt.
 welle: dreieck

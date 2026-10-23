@@ -2,6 +2,7 @@
 titel: Warum doppeltes C die Grenzfrequenz halbiert
 datum: 2026-10-22
 fach: Grundlagen der E-Technik
+art: theorie
 tags: [RC, Filter, Kondensator, Komplexe Rechnung]
 teaser: Der RC-Tiefpass in drei Schritten — Spannungsteiler, Grenzfrequenz, Ladekurve. Mit einer Simulation zum Mitziehen.
 welle: lade

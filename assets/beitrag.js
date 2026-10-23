@@ -24,6 +24,7 @@
   const newer = index > 0 ? published[index - 1] : null, older = index >= 0 ? published[index + 1] : null;
   const e = OSCI.escape;
   const titel = m.titel || slug;
+  const art = OSCI.ARTEN[String(m.art || '').toLowerCase()];
 
   document.title = `${titel} — osci//log`;
   document.querySelector('meta[name="description"]').content = m.teaser || titel;
@@ -36,7 +37,7 @@
       <div class="post-cover">${m.bild ? `<img src="${e(m.bild)}" alt="">` : OSCI.cover(slug, m.welle)}</div>
       <div class="post-head">
         <div>
-          <span class="eyebrow">${entry?.nummer ? `Notiz N°${entry.nummer}` : 'Entwurf — nicht in der Liste'} · ${e(m.fach || 'Notiz')}</span>
+          <span class="eyebrow">${entry?.nummer ? `Notiz N°${entry.nummer}` : 'Entwurf — nicht in der Liste'}${art ? ` · ${art.name}` : ''} · ${e(m.fach || 'Notiz')}${m.aufgabe ? ` · Aufgabe ${e(m.aufgabe)}` : ''}</span>
           <h1>${e(titel)}</h1>
           ${m.teaser ? `<p class="post-teaser">${e(m.teaser)}</p>` : ''}
           ${tags.length ? `<div class="post-tags">${tags.map(t => `<a class="tag" href="./?tag=${encodeURIComponent(t)}">${e(t)}</a>`).join('')}</div>` : ''}

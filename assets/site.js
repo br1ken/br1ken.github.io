@@ -137,7 +137,7 @@ const OSCI = (() => {
           const res = await fetch(url(`notizen/texte/${encodeURIComponent(slug)}.md`));
           if (!res.ok) throw Error(res.status);
           const {meta} = frontMatter(await res.text());
-          return {...meta, slug, tags: Array.isArray(meta.tags) ? meta.tags : meta.tags ? String(meta.tags).split(',').map(t => t.trim()) : [], titel: meta.titel || slug, datum: meta.datum || '', entwurf: istEntwurf(meta)};
+          return {...meta, slug, tags: Array.isArray(meta.tags) ? meta.tags : meta.tags ? String(meta.tags).split(',').map(t => t.trim()) : [], titel: meta.titel || slug, datum: meta.datum || '', art: String(meta.art || '').toLowerCase(), aufgabe: String(meta.aufgabe || ''), entwurf: istEntwurf(meta)};
         } catch { return null; }
       })).then(list => {
         const ok = list.filter(Boolean).sort((a, b) => String(b.datum).localeCompare(String(a.datum)));
@@ -147,9 +147,13 @@ const OSCI = (() => {
     }
     return notizenPromise.then(list => mitEntwuerfen ? list : list.filter(n => !n.entwurf));
   }
+  /* Art einer Notiz (Feld „art“ im Kopf): durchgerechnete Aufgabe oder allgemeine Theorie.
+     Notizen ohne gültige Art landen in der Übersicht unter „Sonstiges“. */
+  const ARTEN = {rechnung: {name: 'Rechnung', mehrzahl: 'Rechnungen'}, theorie: {name: 'Theorie', mehrzahl: 'Theorie'}};
   function notizKarte(n) {
     const href = url(`notizen/beitrag.html?b=${encodeURIComponent(n.slug)}`);
-    return `<article class="card"><div class="card-cover">${n.bild ? `<img src="${url('notizen/' + escape(n.bild))}" alt="" loading="lazy">` : cover(n.slug, n.welle)}</div><div class="card-body"><div class="card-kicker"><span>${n.nummer ? `N°${n.nummer}` : 'Entwurf'} · ${escape(n.fach || 'Notiz')}</span><span>${date(n.datum)}</span></div><h3><a class="card-link" href="${href}">${escape(n.titel)}</a></h3><p>${escape(n.teaser || '')}</p>${n.tags.length ? `<div class="tags">${n.tags.map(t => `<span class="tag">${escape(t)}</span>`).join('')}</div>` : ''}</div></article>`;
+    const art = ARTEN[n.art];
+    return `<article class="card"><div class="card-cover">${art ? `<span class="card-art" data-art="${n.art}">${art.name}</span>` : ''}${n.bild ? `<img src="${url('notizen/' + escape(n.bild))}" alt="" loading="lazy">` : cover(n.slug, n.welle)}</div><div class="card-body"><div class="card-kicker"><span>${n.nummer ? `N°${n.nummer}` : 'Entwurf'} · ${escape(n.fach || 'Notiz')}${n.aufgabe ? ` · A${escape(n.aufgabe)}` : ''}</span><span>${date(n.datum)}</span></div><h3><a class="card-link" href="${href}">${escape(n.titel)}</a></h3><p>${escape(n.teaser || '')}</p>${n.tags.length ? `<div class="tags">${n.tags.map(t => `<span class="tag">${escape(t)}</span>`).join('')}</div>` : ''}</div></article>`;
   }
   function projektKarte(p) {
     const href = !p.link ? '' : /^https?:/.test(p.link) ? p.link : url(p.link);
@@ -202,7 +206,7 @@ const OSCI = (() => {
   syncThemeColor();
   lexFromHash();
   return {
-    url, escape, cover, date, frontMatter, notizenLaden, notizKarte, projektKarte, loadKatex, lexikon, isDark,
+    url, escape, cover, date, frontMatter, notizenLaden, notizKarte, projektKarte, loadKatex, lexikon, isDark, ARTEN,
     projekte: () => store.projekte.slice(),
     /* Wird von notizen/beitraege.js und projekte/projekte.js aufgerufen. */
     beitraege: list => { store.notizen = Array.isArray(list) ? list.map(x => String(x).replace(/\.md$/, '')) : []; },

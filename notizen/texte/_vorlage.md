@@ -2,6 +2,7 @@
 titel: Titel deiner Notiz
 datum: 2026-10-22
 fach: Grundlagen der E-Technik
+art: theorie
 tags: [Stichwort, Noch eins]
 teaser: Ein, zwei Sätze, die neugierig machen. Erscheinen auf der Karte in der Übersicht.
 welle: sinus

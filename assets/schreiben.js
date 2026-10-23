@@ -2,7 +2,7 @@
 'use strict';
 (() => {
   const $ = id => document.getElementById(id);
-  const fields = ['titel', 'datum', 'fach', 'welle', 'teaser', 'tags', 'entwurf'];
+  const fields = ['titel', 'datum', 'fach', 'art', 'aufgabe', 'welle', 'teaser', 'tags', 'entwurf'];
   const DRAFT = 'osci-log-schreibstube';
   const now = new Date(), today = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
   const text = $('w-text'), preview = $('w-preview');
@@ -20,6 +20,8 @@
     const tags = v.tags.split(',').map(t => t.trim()).filter(Boolean);
     const head = ['---', `titel: ${v.titel || 'Ohne Titel'}`, `datum: ${v.datum || today}`];
     if (v.fach) head.push(`fach: ${v.fach}`);
+    if (v.art) head.push(`art: ${v.art}`);
+    if (v.aufgabe) head.push(`aufgabe: ${v.aufgabe}`);
     if (tags.length) head.push(`tags: [${tags.join(', ')}]`);
     if (v.teaser) head.push(`teaser: ${v.teaser}`);
     if (v.welle) head.push(`welle: ${v.welle}`);
@@ -44,7 +46,8 @@
     timer = setTimeout(() => {
       const v = values();
       const doc = OSCIMarkdown.render(text.value);
-      preview.innerHTML = `<span class="eyebrow">${OSCI.escape(v.fach || 'Notiz')} · ${OSCI.date(v.datum || today)} · ${doc.minutes} min</span><h1>${OSCI.escape(v.titel || 'Ohne Titel')}</h1>${v.teaser ? `<p class="post-teaser" style="margin:0 0 28px">${OSCI.escape(v.teaser)}</p>` : ''}<div class="prose">${doc.html}</div>`;
+      const art = OSCI.ARTEN[v.art];
+      preview.innerHTML = `<span class="eyebrow">${art ? `${art.name} · ` : ''}${OSCI.escape(v.fach || 'Notiz')}${v.aufgabe ? ` · Aufgabe ${OSCI.escape(v.aufgabe)}` : ''} · ${OSCI.date(v.datum || today)} · ${doc.minutes} min</span><h1>${OSCI.escape(v.titel || 'Ohne Titel')}</h1>${v.teaser ? `<p class="post-teaser" style="margin:0 0 28px">${OSCI.escape(v.teaser)}</p>` : ''}<div class="prose">${doc.html}</div>`;
       OSCIMarkdown.typeset(preview);
       OSCISims.mount(preview);
       try { localStorage.setItem(DRAFT, markdown()); $('w-status').textContent = `Entwurf gespeichert · ${new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})}`; } catch { $('w-status').textContent = 'Hinweis: Dieser Browser speichert keine Entwürfe. Lade die Datei zwischendurch herunter.'; }
@@ -107,7 +110,7 @@
     $('w-panes').dataset.view = b.dataset.view;
     document.querySelectorAll('.writer-tabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
   });
-  fields.forEach(f => $('w-' + f).addEventListener(f === 'entwurf' || f === 'welle' ? 'change' : 'input', update));
+  fields.forEach(f => $('w-' + f).addEventListener(f === 'entwurf' || f === 'welle' || f === 'art' ? 'change' : 'input', update));
   text.addEventListener('input', update);
   text.addEventListener('keydown', e => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'b') { e.preventDefault(); insert('bold'); }

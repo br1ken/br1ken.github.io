@@ -3,6 +3,8 @@
    Neue Notiz: Datei in texte/ anlegen (oder in schreiben.html erstellen) und den Namen hier ergänzen.
    Reihenfolge egal — sortiert wird automatisch nach Datum. */
 OSCI.beitraege([
+  'ersatzwiderstand-dreieck-stern',
+  'stern-dreieck',
   'von-newton-zu-ohm',
   'brueckenschaltung',
   'rc-tiefpass',

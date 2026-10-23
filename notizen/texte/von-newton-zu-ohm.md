@@ -2,6 +2,7 @@
 titel: Von Newton bis Ohm — Spannung, Strom und Widerstand hergeleitet
 datum: 2026-10-23
 fach: Grundlagen der E-Technik
+art: theorie
 tags: [Herleitung, Arbeit, Ladung, Potential, Spannung, Strom, Widerstand, Ohmsches Gesetz]
 teaser: Kraft, Arbeit, Ladung, Feld, Potential, Spannung, Strom, Widerstand — jede Größe folgt aus der vorigen. Physikalisch, mathematisch, mit Einheiten, Bildern und so erklärt, wie Feynman es tun würde.
 welle: lade
