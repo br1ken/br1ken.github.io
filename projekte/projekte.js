@@ -12,6 +12,15 @@
    welle   optional: Wellenform des generierten Bildes: sinus, rechteck, dreieck, saege, gedaempft, lade, am */
 OSCI.projekteListe([
   {
+    titel: 'Messplatz',
+    text: 'Elektroniklabor im Browser: Steckbrett, Oszilloskop, Funktionsgenerator, Multimeter und Netzgerät. Eigener Schaltungssimulator wie SPICE, neun Versuche.',
+    link: 'messplatz/',
+    status: 'Spielbar',
+    datum: '2026-10-23',
+    tags: ['Simulation', 'Messtechnik', 'SPICE'],
+    welle: 'gedaempft'
+  },
+  {
     titel: 'RC-Filter-Explorer',
     text: 'Bode-Diagramm und Sprungantwort eines RC-Tiefpasses live: R und C verschieben und sehen, wie sich Grenzfrequenz und Ladekurve verändern.',
     link: 'projekte/rc-filter/',

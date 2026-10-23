@@ -444,6 +444,8 @@ select { width: 100%; min-height: 40px; font: inherit; font-size: 12px; padding:
 
 /* ---------- Startseite: Teaser fürs Labor ---------- */
 .lab-teaser .teaser-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+.mess-teaser { padding-top: 0; }
+.mess-visual { background: var(--panel); }
 .teaser-visual { border: 1px solid var(--ink); background: var(--paper); box-shadow: 6px 6px 0 var(--ink); overflow: hidden; }
 .teaser-visual svg { display: block; width: 100%; height: auto; }
 .teaser-visual .t-node { fill: var(--card); stroke: var(--node-border); }

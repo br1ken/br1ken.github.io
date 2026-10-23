@@ -1,0 +1,231 @@
+/* Messplatz (messplatz/): Steckbrett, Laborkabel, Geräteregal. Baut auf site.css auf. */
+:root {
+  --mp-red: #cf3a28;
+  --mp-black: #1e1e1c;
+  --mp-ch1: #a9bb0e;
+  --mp-ch2: #0a7fb4;
+  --mp-hot: #e2591f;
+  --lcd-bg: #121410;
+  --lcd-fg: #dff27a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --mp-red: #ff6a52; --mp-black: #8d8d85; --mp-ch1: #d4e43a; --mp-ch2: #4cc9f0; --lcd-bg: #0a0b08; }
+}
+:root[data-theme="dark"] { --mp-red: #ff6a52; --mp-black: #8d8d85; --mp-ch1: #d4e43a; --mp-ch2: #4cc9f0; --lcd-bg: #0a0b08; }
+
+/* ---------- Versuche ---------- */
+.mp-versuche-section { padding-bottom: 28px; }
+.mp-versuche { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.mp-v { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; align-content: start; text-align: left; padding: 12px 14px; border: 1px solid var(--hairline); background: var(--card); color: var(--fg); cursor: pointer; font: inherit; transition: border-color .15s, transform .15s, box-shadow .15s; }
+.mp-v:hover { border-color: var(--ink); transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--fg); }
+.mp-v[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 4px 0 0 var(--accent), 3px 3px 0 var(--fg); }
+.mp-v-nr { grid-row: span 2; font: 11px var(--mono); color: var(--muted); padding-top: 2px; }
+.mp-v b { font: 400 17px/1.15 var(--sans); letter-spacing: -.02em; }
+.mp-v small { font: 11px/1.5 var(--mono); color: var(--muted); }
+
+/* ---------- Werkbank ---------- */
+.mp-bench { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter) 60px; scroll-margin-top: 80px; }
+.mp-anleitung { border: 1px solid var(--ink); border-left: 6px solid var(--accent); background: var(--card); padding: 16px 20px; margin-bottom: 14px; font-size: 13px; line-height: 1.6; }
+.mp-anleitung h3 { font: 400 24px/1.1 var(--sans); letter-spacing: -.03em; margin: 4px 0 10px; }
+.mp-anleitung ol { margin: 0 0 10px; padding-left: 20px; }
+.mp-anleitung li { margin: 4px 0; }
+.mp-anleitung details { border-top: 1px dashed var(--hairline); padding-top: 8px; }
+.mp-anleitung summary { cursor: pointer; font: 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.mp-anleitung details p { margin: 8px 0 0; color: var(--prose); }
+
+.mp-desk { border: 1px solid var(--ink); background: var(--card); }
+.mp-toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; border-bottom: 1px solid var(--ink); }
+.mp-palette { display: flex; flex-wrap: wrap; }
+.mp-palette button { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 62px; padding: 6px 6px 5px; border: 0; border-right: 1px solid var(--hairline); background: transparent; color: var(--fg); cursor: pointer; font: 9px var(--mono); }
+.mp-palette button:hover { background: var(--accent); color: var(--accent-ink); }
+.mp-palette svg { width: 40px; height: 22px; overflow: visible; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.mp-palette svg .fill { fill: currentColor; }
+.mp-palette svg .thin { stroke-width: 1.4; }
+.mp-tools { display: flex; flex-wrap: wrap; align-items: stretch; border-left: 1px solid var(--hairline); }
+.mp-tools > button, .mp-zoom button { border: 0; border-left: 1px solid var(--hairline); background: transparent; color: var(--fg); padding: 8px 10px; font: 11px var(--mono); cursor: pointer; }
+.mp-tools > button:first-child { border-left: 0; }
+.mp-tools button:hover:not(:disabled) { background: var(--ink); color: var(--on-ink); }
+.mp-tools button:disabled { opacity: .4; cursor: default; }
+.mp-tools button[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); }
+.mp-zoom { display: flex; align-items: center; border-left: 1px solid var(--hairline); }
+.mp-zoom span { font: 10px var(--mono); color: var(--muted); padding: 0 6px; min-width: 42px; text-align: center; }
+
+.mp-work { display: grid; grid-template-columns: minmax(0, 1fr) 270px; }
+.mp-scroll { position: relative; overflow: auto; height: clamp(380px, 62vh, 640px); background: var(--paper); overscroll-behavior: contain; }
+.mp-sizer { position: relative; }
+.mp-board { position: absolute; left: 0; top: 0; width: 1200px; height: 720px; transform-origin: 0 0; touch-action: none;
+  background-image: radial-gradient(circle, var(--dot) 1.2px, transparent 1.4px); background-size: 24px 24px; }
+.mp-wires { position: absolute; left: 0; top: 0; width: 1200px; height: 720px; overflow: visible; pointer-events: none; z-index: 4; }
+.mp-parts { position: absolute; inset: 0; z-index: 2; }
+.mp-cuts { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+.mp-volts { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
+
+/* Steckbausteine */
+.mp-part { position: absolute; color: var(--fg); border: 1px solid var(--node-border); border-radius: 6px; background: var(--card); box-shadow: 0 1px 0 var(--hairline); }
+.mp-part.selected { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink), 4px 4px 0 var(--accent); z-index: 3; }
+.mp-grab { position: absolute; inset: 0; cursor: grab; touch-action: none; border-radius: 6px; }
+.mp-grab:active { cursor: grabbing; }
+.mp-grab:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.mp-sym { position: absolute; left: 0; top: 0; overflow: visible; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+.mp-sym .fill { fill: currentColor; }
+.mp-sym .thin { stroke-width: 1.1; }
+.mp-sym .thick { stroke-width: 2.6; }
+.mp-val { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); margin-top: 3px; padding: 0 3px; font: 10px var(--mono); color: var(--muted); white-space: nowrap; background: var(--paper); pointer-events: none; }
+.mp-part.v .mp-val { left: 100%; top: 50%; transform: translateY(-50%); margin: 0 0 0 6px; }
+.mp-gnd, .mp-gnd.selected { border-color: transparent; background: transparent; box-shadow: none; }
+.mp-gnd.selected .mp-sym { color: var(--ink); filter: drop-shadow(0 0 3px var(--accent)); }
+.mp-gnd .mp-val { display: none; }
+.mp-x { position: absolute; top: -10px; right: -10px; z-index: 4; width: 22px; height: 22px; padding: 0; border: 1px solid var(--ink); border-radius: 50%; background: var(--card); color: var(--ink); font: 14px/1 var(--mono); cursor: pointer; opacity: 0; transition: opacity .12s; }
+.mp-part:hover .mp-x, .mp-part.selected .mp-x, .mp-x:focus-visible { opacity: 1; }
+.mp-x:hover { background: var(--ink); color: var(--on-ink); }
+@media (pointer: coarse) { .mp-part.selected .mp-x { opacity: 1; } }
+
+/* 4-mm-Buchsen */
+.mp-sock { --sock: var(--wire); position: absolute; z-index: 3; width: 17px; height: 17px; padding: 0; transform: translate(-50%, -50%); border: 4px solid var(--sock); border-radius: 50%; background: radial-gradient(circle, var(--ink) 0 2px, var(--paper) 2.5px); cursor: crosshair; touch-action: none; transition: transform .1s, box-shadow .1s; }
+.mp-sock::before { content: ""; position: absolute; inset: -9px; border-radius: 50%; }
+.mp-sock:hover, .mp-sock.target { transform: translate(-50%, -50%) scale(1.3); }
+.mp-sock.pending { box-shadow: 0 0 0 4px var(--accent); animation: sockpulse 1s ease-in-out infinite; }
+@keyframes sockpulse { 50% { box-shadow: 0 0 0 7px var(--accent); } }
+.mp-sock.red { --sock: var(--mp-red); }
+.mp-sock.black { --sock: var(--mp-black); }
+.mp-sock.ch1 { --sock: var(--mp-ch1); }
+.mp-sock.ch2 { --sock: var(--mp-ch2); }
+
+/* Geräte-Anschlussfelder */
+.mp-instr { background: var(--panel); border-color: var(--ink); }
+.mp-instr .mp-grab { padding: 8px 10px; }
+.mp-instr-name { display: block; font: 10px var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+.mp-instr-state { display: block; margin-top: 3px; font: 10px/1.35 var(--mono); color: var(--muted); max-width: 76px; white-space: pre-line; }
+.mp-pinlabel { position: absolute; transform: translateY(-50%); font: 9px var(--mono); color: var(--muted); pointer-events: none; }
+.mp-pinlabel.r { right: 14px; }
+.mp-pinlabel.l { left: 14px; }
+.mp-osz .mp-instr-state, .mp-dmm .mp-instr-state { margin-left: 34px; }
+.mp-osz .mp-instr-name, .mp-dmm .mp-instr-name { margin-left: 34px; }
+
+/* lebendige Bauteile */
+.mp-led { --glow: 0; }
+.mp-led .mp-sym .fill { fill: color-mix(in srgb, #ff3b2f calc(var(--glow) * 100%), currentColor); }
+.mp-led .mp-sym { filter: drop-shadow(0 0 calc(var(--glow) * 10px) rgba(255, 59, 47, calc(var(--glow) * .9))); }
+.mp-part.hot { border-color: var(--mp-hot); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mp-hot) 35%, transparent); animation: hot .8s ease-in-out infinite alternate; }
+@keyframes hot { to { box-shadow: 0 0 14px 4px color-mix(in srgb, var(--mp-hot) 55%, transparent); } }
+.mp-part.broken { background: repeating-linear-gradient(135deg, var(--panel) 0 6px, var(--card) 6px 12px); border-style: dashed; }
+.mp-part.broken .mp-sym { opacity: .35; }
+.mp-part.broken::after { content: "defekt"; position: absolute; left: 50%; top: -18px; transform: translateX(-50%); font: 9px var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--warn); background: var(--paper); padding: 0 4px; }
+
+/* Laborkabel */
+.mp-wire { fill: none; stroke: var(--wire); stroke-width: 3.2; stroke-linecap: round; }
+.mp-wire.red { stroke: var(--mp-red); }
+.mp-wire.black { stroke: var(--mp-black); }
+.mp-wire.ch1 { stroke: var(--mp-ch1); }
+.mp-wire.ch2 { stroke: var(--mp-ch2); }
+.mp-wire.active { stroke-width: 4.4; }
+.mp-draft { stroke: var(--ink); stroke-width: 2.4; stroke-dasharray: 6 5; animation: march .5s linear infinite; }
+@keyframes march { to { stroke-dashoffset: -11; } }
+.mp-plug { fill: var(--wire); }
+.mp-plug.red { fill: var(--mp-red); }
+.mp-plug.black { fill: var(--mp-black); }
+.mp-plug.ch1 { fill: var(--mp-ch1); }
+.mp-plug.ch2 { fill: var(--mp-ch2); }
+.mp-cut { position: absolute; width: 20px; height: 20px; padding: 0; transform: translate(-50%, -50%); border: 1px solid var(--hairline); border-radius: 50%; background: var(--card); color: var(--muted); font: 13px/1 var(--mono); cursor: pointer; pointer-events: none; opacity: 0; transition: opacity .15s; }
+/* × nur, wo es gebraucht wird: an den Kabeln des gewählten Bauteils, mit Maus zusätzlich beim Überfahren des Bretts */
+@media (hover: hover) { .mp-board:hover .mp-cut { opacity: .5; pointer-events: auto; } }
+.mp-cut.active, .mp-cut:focus-visible { opacity: 1; pointer-events: auto; }
+.mp-cut::before { content: ""; position: absolute; inset: -8px; }
+.mp-board .mp-cut:hover, .mp-cut:focus-visible, .mp-cut.active { opacity: 1; border-color: var(--ink); color: var(--ink); }
+.mp-cut:hover { background: var(--ink); color: var(--on-ink); }
+.mp-volt { position: absolute; transform: translate(-50%, -170%); padding: 1px 5px; font: 10px var(--mono); white-space: nowrap; background: var(--ink); color: var(--on-ink); border-radius: 3px; }
+
+/* Inspektor */
+.mp-inspector { border-left: 1px solid var(--ink); padding: 14px; font: 12px/1.5 var(--mono); background: var(--card); overflow: auto; max-height: clamp(380px, 62vh, 640px); }
+.mp-inspector header { font-size: 12px; margin-bottom: 10px; }
+.mp-insp-empty { color: var(--muted); margin: 0 0 10px; }
+.mp-insp-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
+.mp-field { display: grid; gap: 4px; width: 100%; }
+.mp-field label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.mp-field input[type="range"] { width: 100%; accent-color: var(--fg); }
+.mp-stepper { display: grid; grid-template-columns: 36px 1fr 36px; }
+.mp-input { min-width: 0; border: 1px solid var(--ink); border-left: 0; border-right: 0; background: var(--paper); color: var(--fg); font: 14px var(--mono); text-align: center; padding: 6px; }
+.mp-live { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 14px 0 0; padding-top: 10px; border-top: 1px dashed var(--hairline); }
+.mp-live dt { color: var(--muted); }
+.mp-live dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.mp-broken { color: var(--warn); margin: 0 0 10px; }
+.mp-statusbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; padding: 8px 12px; border-top: 1px solid var(--ink); font: 11px var(--mono); }
+.mp-hint { transition: background .3s; }
+.mp-hint.flash { background: var(--accent); color: var(--accent-ink); }
+.mp-status { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* ---------- Geräteregal ---------- */
+.mp-rack { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); grid-template-areas: "osz fg" "osz dmm" "osz psu"; gap: 14px; margin-top: 14px; align-items: start; }
+.dev-osz { grid-area: osz; } .dev-fg { grid-area: fg; } .dev-dmm { grid-area: dmm; } .dev-psu { grid-area: psu; }
+.mp-dev { border: 1px solid var(--ink); background: var(--card); padding: 14px; display: grid; gap: 10px; font: 11px var(--mono); }
+.mp-dev header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 12px; border-bottom: 1px solid var(--hairline); padding-bottom: 8px; }
+.mp-dev h3 { margin: 0; font: 400 20px var(--sans); letter-spacing: -.03em; }
+.mp-dev header span { font-size: 10px; color: var(--muted); }
+.mp-dev label.row { display: grid; grid-template-columns: 9.5em 1fr; align-items: center; gap: 8px; }
+.mp-dev input[type="range"] { width: 100%; accent-color: var(--fg); }
+.dev-hint { margin: 0; color: var(--muted); line-height: 1.5; }
+.mp-dev [hidden] { display: none !important; }
+.lcd { background: var(--lcd-bg); color: var(--lcd-fg); padding: 10px 12px; border-radius: 4px; font: 13px/1.5 var(--mono); min-height: 44px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; font-variant-numeric: tabular-nums; }
+.lcd b { font-weight: 600; }
+.lcd.big { justify-content: space-between; }
+.lcd.big b { font-size: 30px; letter-spacing: .02em; }
+.lcd.big small { font-size: 12px; opacity: .8; }
+#psu-display b { font-size: 20px; }
+.lamps { display: flex; gap: 6px; }
+.lamp { padding: 2px 8px; border: 1px solid var(--hairline); border-radius: 10px; font-size: 10px; color: var(--muted); }
+.lamp.on { background: var(--accent); color: var(--accent-ink); border-color: var(--ink); }
+.seg { display: inline-flex; flex-wrap: wrap; }
+.seg button, .step button, .mini { border: 1px solid var(--ink); background: var(--card); color: var(--fg); font: 11px var(--mono); padding: 6px 8px; cursor: pointer; min-height: 32px; }
+.seg button + button { border-left: 0; }
+.seg button[aria-pressed="true"], .mini[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); }
+.seg.wide { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; }
+.step { display: inline-flex; align-items: stretch; }
+.step output { display: grid; place-items: center; min-width: 88px; padding: 0 6px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); font-variant-numeric: tabular-nums; }
+.step.wide { display: grid; grid-template-columns: repeat(4, 1fr); }
+.step.wide button + button { border-left: 0; }
+.seg button:hover, .step button:hover, .mini:hover { background: var(--accent); color: var(--accent-ink); }
+.seg button[aria-pressed="true"]:hover, .mini[aria-pressed="true"]:hover { background: var(--ink); color: var(--on-ink); }
+
+.osz-wrap { display: grid; gap: 8px; }
+.osz-screen { display: block; width: 100%; border-radius: 6px; box-shadow: inset 0 0 0 1px #000, 0 0 0 4px var(--panel); }
+.osz-meas table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.osz-meas th, .osz-meas td { padding: 4px 6px; text-align: right; border-bottom: 1px solid var(--hairline); white-space: nowrap; }
+.osz-meas thead th { font-weight: 400; color: var(--muted); font-size: 10px; }
+.osz-meas tbody th { text-align: left; }
+.osz-meas tbody th::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+.osz-meas .ch1 th::before { background: var(--mp-ch1); }
+.osz-meas .ch2 th::before { background: var(--mp-ch2); }
+.osz-meas p { margin: 6px 0 0; color: var(--muted); }
+.osz-meas { overflow-x: auto; }
+.osz-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; }
+.ctl { border: 1px solid var(--hairline); padding: 8px; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-width: 0; }
+.ctl legend { padding: 0 4px; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.ctl.ch1 legend::before, .ctl.ch2 legend::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+.ctl.ch1 legend::before { background: var(--mp-ch1); }
+.ctl.ch2 legend::before { background: var(--mp-ch2); }
+.ctl label { display: flex; align-items: center; gap: 6px; flex: 1 1 140px; color: var(--muted); }
+.ctl-row { display: flex; gap: 8px; align-items: center; }
+
+.mp-modelle-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 34px; font-size: 13px; line-height: 1.65; color: var(--prose); }
+.mp-modelle-grid p { margin: 0; }
+
+@media (max-width: 960px) {
+  .mp-work { grid-template-columns: 1fr; }
+  .mp-inspector { border-left: 0; border-top: 1px solid var(--ink); max-height: none; }
+  .mp-rack { grid-template-columns: 1fr; grid-template-areas: "osz" "fg" "dmm" "psu"; }
+}
+@media (max-width: 760px) {
+  .mp-bench { padding: 0 12px 40px; }
+  .mp-scroll { height: 58vh; }
+  .mp-palette { flex-wrap: nowrap; overflow-x: auto; width: 100%; scrollbar-width: thin; }
+  .mp-palette button { min-width: 64px; flex: none; }
+  .mp-tools { flex-wrap: nowrap; overflow-x: auto; border-left: 0; border-top: 1px solid var(--hairline); width: 100%; }
+  .mp-tools > button, .mp-zoom { flex: none; white-space: nowrap; }
+  .mp-dev label.row { grid-template-columns: 7.5em 1fr; }
+  .mp-modelle-grid { grid-template-columns: 1fr; }
+  .step output { min-width: 74px; }
+  .osz-meas th:nth-child(6), .osz-meas td:nth-child(6) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mp-part.hot, .mp-sock.pending, .mp-draft { animation: none; }
+}

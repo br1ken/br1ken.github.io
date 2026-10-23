@@ -31,6 +31,7 @@ const OSCILexikon = (() => {
     {id: 'widerstand', name: 'Elektrischer Widerstand', sym: 'R', cat: 'Grundgrößen', unit: 'Ohm, Ω', si: R`1\,\Omega = 1\,\frac{\mathrm{V}}{\mathrm{A}} = 1\,\frac{\mathrm{kg\,m^2}}{\mathrm{A^2\,s^3}}`,
       formal: [R`R = \frac{U}{I}`, R`R = \frac{\rho\, l}{A} = \frac{l}{\kappa A}`],
       phys: R`Wie stark ein Bauteil den Stromfluss hemmt. Ein ohmscher Widerstand hat ein konstantes Verhältnis von Spannung zu Strom und wandelt die aufgenommene elektrische Energie vollständig in Wärme um. Er hängt von Material ($\rho$), Länge $l$, Querschnitt $A$ und Temperatur ab.`,
+      mess: 'Steckbaustein Widerstand, 0,25 W belastbar — darüber wird er heiß und brennt durch.',
       alias: ['ohm', 'r']},
     {id: 'leitwert', name: 'Elektrischer Leitwert', sym: 'G', cat: 'Grundgrößen', unit: 'Siemens, S', si: R`1\,\mathrm{S} = 1\,\frac{1}{\Omega} = 1\,\frac{\mathrm{A^2\,s^3}}{\mathrm{kg\,m^2}}`,
       formal: [R`G = \frac{1}{R} = \frac{I}{U}`],
@@ -79,15 +80,33 @@ const OSCILexikon = (() => {
     {id: 'kapazitaet', name: 'Kapazität', sym: 'C', cat: 'Bauelemente', unit: 'Farad, F', si: R`1\,\mathrm{F} = 1\,\frac{\mathrm{C}}{\mathrm{V}} = 1\,\frac{\mathrm{A^2\,s^4}}{\mathrm{kg\,m^2}}`,
       formal: [R`C = \frac{Q}{U}`, R`i_C(t) = C\, \frac{\mathrm{d}u_C}{\mathrm{d}t}`, R`W = \tfrac{1}{2}\, C\, U^2`, R`C = \varepsilon_0 \varepsilon_r \frac{A}{d} \quad \text{(Plattenkondensator)}`],
       phys: R`Wie viel Ladung ein Kondensator pro Volt speichert. Die Energie steckt im elektrischen Feld zwischen den Platten. Die Spannung am Kondensator kann nicht springen, solange der Strom endlich ist.`,
+      mess: 'Kondensator (63 V) und Elko (25 V, gepolt: falsch herum platzt er). Versuch „RC-Sprungantwort“.',
       alias: ['kondensator', 'farad', 'c']},
     {id: 'induktivitaet', name: 'Induktivität', sym: 'L', cat: 'Bauelemente', unit: 'Henry, H', si: R`1\,\mathrm{H} = 1\,\frac{\mathrm{V\,s}}{\mathrm{A}} = 1\,\frac{\mathrm{kg\,m^2}}{\mathrm{A^2\,s^2}}`,
       formal: [R`L = \frac{\Psi}{I}`, R`u_L(t) = L\, \frac{\mathrm{d}i_L}{\mathrm{d}t}`, R`W = \tfrac{1}{2}\, L\, I^2`],
       phys: R`Wie stark eine Spule Stromänderungen entgegenwirkt. Die Energie steckt im Magnetfeld. Der Strom durch eine Spule kann nicht springen, solange die Spannung endlich ist.`,
+      mess: 'Versuch „Reihenschwingkreis“.',
       alias: ['spule', 'henry', 'l']},
     {id: 'zeitkonstante', name: 'Zeitkonstante', sym: R`\tau`, cat: 'Bauelemente', unit: 'Sekunde, s', si: R`[\tau] = 1\,\mathrm{s}`,
       formal: [R`\tau = R\, C \qquad \tau = \frac{L}{R}`, R`u_C(t) = U_0 \left(1 - e^{-t/\tau}\right)`],
       phys: R`Wie schnell ein RC- oder RL-Glied auf einen Sprung reagiert: Nach $\tau$ sind 63 % des Endwerts erreicht, nach $5\tau$ gilt der Vorgang als abgeschlossen.`,
       alias: ['tau']},
+
+    {id: 'diode', name: 'Diode, LED und Z-Diode', sym: R`I_D`, cat: 'Bauelemente', unit: 'Durchlassspannung in V', si: '',
+      formal: [R`I_D = I_S\left(e^{U_D/(n\,U_T)} - 1\right)`, R`U_T = \frac{kT}{q} \approx 25{,}9\,\mathrm{mV} \quad (300\,\mathrm{K})`, R`r_d = \frac{n\,U_T}{I_D}`],
+      phys: R`Ein pn-Übergang leitet in einer Richtung und sperrt in der anderen bis auf einen winzigen Sperrstrom. Bei Silizium fließt merklicher Strom ab etwa 0,6 bis 0,7 V. LEDs sind Dioden aus Verbindungshalbleitern; ihre Durchlassspannung liegt je nach Farbe zwischen etwa 1,8 V (rot) und gut 3 V (blau, weiß). Z-Dioden werden gezielt im Durchbruch betrieben: Dort bleibt die Spannung fast konstant.`,
+      mess: 'Versuche „Gleichrichter mit Glättung“ und „Z-Diode stabilisiert“, Diodentest am Multimeter.',
+      alias: ['led', 'z-diode', 'zener', 'gleichrichter', 'shockley', 'pn-uebergang']},
+    {id: 'transistor', name: 'Bipolartransistor', sym: R`I_C`, cat: 'Bauelemente', unit: 'Stromverstärkung B (dimensionslos)', si: '',
+      formal: [R`I_C = B \cdot I_B`, R`I_E = I_C + I_B`, R`I_C \approx I_S\, e^{U_{BE}/U_T} \quad \text{(aktiver Bereich)}`],
+      phys: R`Ein kleiner Basisstrom steuert einen großen Kollektorstrom — beim BC547 je nach Gruppe etwa 110- bis 800-mal größer. Im aktiven Bereich liegt $U_{BE}$ bei Silizium um 0,6 bis 0,7 V. Als Schalter treibt man ihn in die Sättigung: Dann fallen zwischen Kollektor und Emitter nur noch rund 0,1 bis 0,2 V ab. Beim PNP-Typ sind alle Spannungen und Ströme umgekehrt.`,
+      mess: 'Versuch „Transistor als Schalter“. Im Inspektor stehen I_C, I_B und U_CE live.',
+      alias: ['npn', 'pnp', 'bjt', 'bc547', 'bc557', 'stromverstaerkung']},
+    {id: 'opv', name: 'Operationsverstärker', sym: R`A_D`, cat: 'Bauelemente', unit: 'Verstärkung (dimensionslos)', si: '',
+      formal: [R`u_A = A_D\,(u_+ - u_-)`, R`\underbrace{V = -\frac{R_f}{R_i}}_{\text{invertierend}} \qquad \underbrace{V = 1 + \frac{R_f}{R_i}}_{\text{nicht invertierend}}`, R`\underbrace{f_T = A_D \cdot f_g}_{\text{Verstärkungs-Bandbreite-Produkt}}`],
+      phys: R`Ein Differenzverstärker mit sehr großer Leerlaufverstärkung, typisch $10^5$ und mehr. Mit Gegenkopplung stellt sich sein Ausgang so ein, dass zwischen den Eingängen praktisch keine Spannung liegt — daraus folgen die einfachen Formeln für Verstärker, Integrator und Co. Ohne Gegenkopplung läuft der Ausgang in die Sättigung kurz unter der Versorgungsspannung.`,
+      mess: 'Versuche „Invertierender Verstärker“ und „OPV-Integrator“.',
+      alias: ['op-amp', 'operationsverstaerker', 'virtuelle-masse', 'gegenkopplung', 'integrator']},
 
     // ---------- Wechselgrößen ----------
     {id: 'frequenz', name: 'Frequenz', sym: 'f', cat: 'Wechselgrößen', unit: 'Hertz, Hz', si: R`1\,\mathrm{Hz} = 1\,\mathrm{s^{-1}}`,
@@ -139,7 +158,29 @@ const OSCILexikon = (() => {
     {id: 'leistungsanpassung', name: 'Leistungsanpassung', sym: R`R_L = R_i`, cat: 'Netzwerke', unit: '—', si: '',
       formal: [R`R_L = R_i \;\Rightarrow\; P_{L,\max} = \frac{U_0^2}{4 R_i}`, R`\eta_\text{Ersatzquelle} = 50\,\%`],
       phys: R`Die Last bekommt die größtmögliche Leistung, wenn sie so groß ist wie der Innenwiderstand. Das maximiert die Leistung an der Last, nicht den Wirkungsgrad — in der echten Schaltung kann er deutlich unter 50 % liegen.`,
-      alias: ['anpassung', 'maximale leistung']}
+      alias: ['anpassung', 'maximale leistung']},
+
+    // ---------- Messtechnik ----------
+    {id: 'multimeter', name: 'Multimeter und Innenwiderstand', sym: R`R_i`, cat: 'Messtechnik', unit: 'V, A, Ω', si: '',
+      formal: [R`\text{Voltmeter: parallel, } R_i \approx 10\,\mathrm{M\Omega}`, R`\text{Amperemeter: in Reihe, } R_i\ \text{klein}`, R`\text{Ohmmeter: } R = U / I_\text{Prüf}`],
+      phys: R`Spannung misst man parallel, Strom in Reihe. Jedes Messgerät verändert ein wenig, was es misst: Ein Voltmeter zieht über seinen Innenwiderstand Strom, ein Amperemeter verursacht am Messwiderstand einen Spannungsabfall. Ein Ohmmeter schickt selbst einen Prüfstrom — darum nur an spannungsfreien Bauteilen messen. Der Strompfad ist abgesichert: Wer mit der A-Buchse parallel zu einer Quelle misst, schließt sie kurz.`,
+      mess: 'Versuch „Messen belastet“: 10 MΩ parallel zu 1 MΩ machen aus 5 V nur 4,76 V.',
+      alias: ['dmm', 'voltmeter', 'amperemeter', 'ohmmeter', 'innenwiderstand', 'messfehler']},
+    {id: 'oszilloskop-messen', name: 'Oszilloskop', sym: R`u(t)`, cat: 'Messtechnik', unit: 'V/div, s/div', si: '',
+      formal: [R`\Delta\varphi = 360° \cdot \frac{\Delta t}{T}`, R`U_\text{eff} = \frac{U_\text{ss}}{2\sqrt{2}} \quad \text{(Sinus)}`],
+      phys: R`Zeigt Spannungen gegen Masse über der Zeit. Die Masse der Tastköpfe liegt über den Schutzleiter auf Erde — legt man sie an einen Punkt, der nicht auf Masse liegt, schließt man ihn kurz. Die Eingänge haben meist 1 MΩ. AC-Kopplung entfernt den Gleichanteil (Hochpass um 10 Hz), der Trigger hält das Bild still. Im XY-Betrieb entsteht aus zwei Sinussignalen gleicher Frequenz eine Lissajous-Figur, deren Form die Phasenverschiebung verrät.`,
+      mess: 'Zwei Kanäle mit DC/AC/GND, Trigger, Autoset und XY. Versuch „Tiefpass: Betrag und Phase“.',
+      alias: ['oszi', 'tastkopf', 'lissajous', 'xy-betrieb', 'phasenverschiebung', 'ac-kopplung']},
+    {id: 'funktionsgenerator', name: 'Funktionsgenerator', sym: R`R_i = 50\,\Omega`, cat: 'Messtechnik', unit: 'Hz, V', si: '',
+      formal: [R`u(t) = U_\text{off} + \tfrac{U_\text{ss}}{2}\, s(2\pi f t)`, R`u_\text{Klemme} = u_0 \cdot \frac{R_L}{R_L + 50\,\Omega}`],
+      phys: R`Liefert Sinus, Rechteck, Dreieck und Sägezahn mit einstellbarer Frequenz, Amplitude und Offset. Sein Innenwiderstand von 50 Ω lässt die Spannung an niederohmigen Lasten einbrechen. Viele Geräte zeigen die Amplitude bezogen auf eine 50-Ω-Last an — im Leerlauf misst man dann das Doppelte. Die Masse des Ausgangs liegt über den Schutzleiter auf Erde.`,
+      mess: 'Hier zeigt das Display die Leerlaufspannung $u_0$.',
+      alias: ['generator', 'signalgenerator', 'fg']},
+    {id: 'netzgeraet', name: 'Labornetzgerät', sym: R`U,\ I_\text{max}`, cat: 'Messtechnik', unit: 'V, A', si: '',
+      formal: [R`\text{CV: } U = U_\text{soll}, \quad I < I_\text{max}`, R`\text{CC: } I = I_\text{max}, \quad U < U_\text{soll}`],
+      phys: R`Stellt eine einstellbare Gleichspannung bereit und begrenzt den Strom. Solange die Last weniger als die Grenze zieht, hält es die Spannung (CV, Konstantspannung). Will die Last mehr, regelt es auf den Grenzstrom (CC, Konstantstrom) — die Spannung sinkt dann. Die Ausgänge sind potentialfrei: Erst ein Kabel zur Masse legt fest, wo 0 V ist.`,
+      mess: 'Lampen CV und CC am Netzgerät im Geräteregal.',
+      alias: ['netzteil', 'labornetzteil', 'konstantstrom', 'strombegrenzung', 'cv', 'cc']}
   ];
   /* ---------- Zweiter Teil: Synthesizer & Klang (lab = wo man es im Crashtest-Labor ausprobiert) ---------- */
   const SYNTH = [
@@ -318,6 +359,7 @@ const OSCILexikon = (() => {
         <h4>${tab === 'synth' ? 'Was dahintersteckt' : 'Physikalisch'}</h4><p>${textMath(g.phys)}</p>
         ${g.si ? `<h4>Einheit</h4><div class="math math-display lex-unit">${g.si}</div>` : ''}
         ${g.lab ? `<h4>Im Labor</h4><p class="lex-lab">${textMath(g.lab)}${location.pathname.includes('/labor/') ? '' : ` <a href="${OSCI.url('labor/')}">Zum Labor ↗︎</a>`}</p>` : ''}
+        ${g.mess ? `<h4>Am Messplatz</h4><p class="lex-lab">${textMath(g.mess)}${location.pathname.includes('/messplatz/') ? '' : ` <a href="${OSCI.url('messplatz/')}">Zum Messplatz ↗︎</a>`}</p>` : ''}
       </div></details>`;
   }
   function matches(g, q) {

@@ -27,21 +27,23 @@ Bewusst minimal: **plain HTML, CSS und JavaScript, ohne Framework und ohne Build
 |---|---|---|
 | Startseite | `index.html` | Hero, Labor-Teaser, neueste Notizen und Projekte, „Hinter dem Signal.“ (Bio mit Datenblatt) |
 | Crashtest-Labor | `labor/` | Lab 0: Missionen, Sequencer, Effekte, Pult mit baumelnden Kabeln |
+| Messplatz | `messplatz/` | Lab 1: Steckbrett mit Funktionsgenerator, Oszilloskop, Multimeter und Netzgerät, eigener Schaltungssimulator, 9 Versuche |
 | Notizen | `notizen/` | Blog für Gelerntes aus dem Studium, mit Suche und Themenfilter |
 | Eine Notiz | `notizen/beitrag.html?b=name` | wird aus `notizen/texte/name.md` erzeugt |
 | Schreibstube | `notizen/schreiben.html` | Editor mit Live-Vorschau für neue Notizen (nicht verlinkt) |
 | Projekte | `projekte/` | Simulationen, Schaltungen, Code |
-| Lexikon | ⋮ oben rechts auf jeder Seite, „?“ an jedem Baustein im Labor, oder `#lexikon` / `#lexikon-spannung` / `#lexikon-synth` an der Adresse | zwei Teile: **Elektro** (30 Größen und Gesetze: formal, physikalisch, SI-Einheit) und **Synth** (29 Bausteine und Begriffe eines Synthesizers, mit Verweis auf den passenden Labor-Baustein) |
+| Lexikon | ⋮ oben rechts auf jeder Seite, „?“ an jedem Baustein im Labor, oder `#lexikon` / `#lexikon-spannung` / `#lexikon-synth` an der Adresse | zwei Teile: **Elektro** (37 Größen, Gesetze, Bauelemente und Messgeräte: formal, physikalisch, SI-Einheit) und **Synth** (29 Bausteine und Begriffe eines Synthesizers, mit Verweis auf den passenden Labor-Baustein) |
 | Dunkelmodus | ◐ oben rechts | folgt der Systemeinstellung, per Knopf umschaltbar, wird im Browser gemerkt (`osci-log-theme`) |
 
 **Aktuelle Inhalte**
 - Notizen: *Hallo, Labor.* · *Der Spannungsteiler* · *Warum doppeltes C die Grenzfrequenz halbiert* · *Brückenschaltung (ET1, Rechenübung 2, A2.3)* · *Von Newton bis Ohm*
-- Projekte: RC-Filter-Explorer · Crashtest-Labor · *Schaltungen zum Anfassen* (geplant)
+- Projekte: Messplatz · RC-Filter-Explorer · Crashtest-Labor · *Schaltungen zum Anfassen* (geplant)
 - Simulationen zum Einbetten: `rc`, `welle`, `teiler`, `bruecke` (siehe SCHREIBEN.md)
 
 ```
 index.html              Startseite mit Labor-Teaser und Bio
 labor/index.html        Crashtest-Labor (Lab 0)
+messplatz/index.html    Messplatz (Lab 1)
 404.html                Seite für falsche Links
 notizen/
   beitraege.js          Liste der Notizen (nur Dateinamen)
@@ -56,6 +58,8 @@ assets/
   site.css / site.js    gemeinsames Design (Farben als Variablen, hell + dunkel), Kopf- und Fußzeile, Menü, ◐-Dunkelmodus, ⋮-Lexikon-Knopf, Links
   labor.css / labor.js  Labor: Bausteine, Sequencer, Kabelphysik, Einfach-Ansicht und freies Pult
   missionen.js          Missionen, XP, Stufen, Abzeichen
+  schaltung.js          Schaltungssimulator (Knotenanalyse wie SPICE), ohne Oberfläche
+  messplatz.css / .js   Messplatz: Steckbrett, Kabel, Geräte, Versuche
   models.js             Formeln des Labors, Patch-Links
   start.js              Startseite: neueste Notizen und Projekte, alte Patch-Links ins Labor
   markdown.js           Markdown → HTML für Notizen
@@ -100,10 +104,10 @@ Wichtig: Die versteckte Datei **`.nojekyll`** muss im Repo bleiben. Ohne sie ble
 
 ### Wenn Design oder Code geändert wurde
 
-Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer (aktuell `?v=15`). Nach Änderungen in `assets/` diese Zahl in allen HTML-Dateien um eins erhöhen, zum Beispiel von 15 auf 16:
+Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer (aktuell `?v=16`). Nach Änderungen in `assets/` diese Zahl in allen HTML-Dateien um eins erhöhen, zum Beispiel von 16 auf 17:
 
 ```bash
-grep -rl '?v=15"' --include='*.html' . | xargs sed -i '' 's/?v=15"/?v=16"/g'
+grep -rl '?v=16"' --include='*.html' . | xargs sed -i '' 's/?v=16"/?v=17"/g'
 ```
 
 Für `assets/lexikon.js` gilt stattdessen `LEX_VERSION` in `assets/site.js`. Für neue Notizen oder Projekte ist beides nicht nötig.
@@ -166,6 +170,17 @@ Neue Mission: in `assets/missionen.js` in `MISSIONEN` ergänzen (Ziele = Text + 
 - Frequenz, Widerstand, Tremolo und Pegel ändern sich beim Regler-Ziehen ohne Knacksen; C und L bauen den Klang kurz neu auf.
 - Auf iPhones mit aktuellem iOS soll der Ton auch im Lautlos-Modus spielen (`navigator.audioSession`); zusätzlich erscheint ein Hinweis zum Lautlos-Schalter.
 
+## Der Messplatz (`messplatz/`)
+
+Ein Elektroniklabor auf TU-Niveau. Bauteile kommen als Steckbausteine aufs Brett, verbunden wird mit Laborkabeln (4-mm-Buchsen, rot/schwarz, Kanalfarben). Die Geräte stehen im Regal darunter, ihre Buchsen als Anschlussfelder auf dem Brett.
+
+- **Bauteile:** Widerstand, Kondensator, Elko (gepolt), Spule, Diode 1N4148, LED, Z-Diode 5,1 V, Schalter, Potentiometer, OPV, NPN BC547, PNP BC557, Masse. Werte in E12-Schritten oder als Text (`4k7`, `100n`, `2.2u`), drehen mit ⟳ oder Taste R.
+- **Geräte:** Funktionsgenerator (Sinus, Rechteck, Dreieck, Säge, 0,1 Hz bis 1 MHz, Offset, Tastgrad, 50 Ω Innenwiderstand), Oszilloskop (2 Kanäle, 1 MΩ, DC/AC/GND, Trigger mit Flanke, Pegel, Auto/Normal/Single, XY, Autoset, Messwerte inklusive Phase), Multimeter (V⎓, V~ als Echt-Effektivwert, A⎓, A~, Ω mit automatischem Bereich, Diodentest, 400-mA-Sicherung), Netzgerät (0–30 V, Strombegrenzung, CV/CC).
+- **Physik wie im Labor:** Generator- und Oszilloskop-Masse liegen auf Schutzleiter, Netzgerät und Multimeter sind potentialfrei. Überlastete Bauteile werden heiß und brennen durch; „Ersetzen“ im Inspektor repariert sie.
+- **Versuche:** Messen belastet, RC-Sprungantwort, Tiefpass (Betrag und Phase, Lissajous), Reihenschwingkreis, Gleichrichter mit Glättung, Z-Diode, invertierender Verstärker, OPV-Integrator, Transistor als Schalter. Jeder mit Aufgaben und aufklappbarer Theorie.
+- **Rechenkern** (`assets/schaltung.js`): modifizierte Knotenanalyse, BDF2-Zeitschritte, Newton-Raphson mit SPICE-Spannungsbegrenzung, Bauteilmodelle nach Shockley und Ebers-Moll, OPV mit Verstärkungs-Bandbreite-Produkt und Sättigung. Schwebende Teilschaltungen bekommen automatisch einen stromlosen Bezugspunkt. Gegen Lehrbuchwerte getestet (RC, Schwingkreis, Diode, Transistor, OPV: Abweichungen unter 0,1 %).
+- Aufbau und Geräteeinstellungen bleiben im Browser (`osci-log-messplatz-v1`); „↗ Teilen“ erzeugt einen Link mit allem.
+
 ### Was die Modelle bedeuten
 
 Die Kabel sind gerichtete Audiosignale. Jeder Baustein ist ein idealisiertes, gepuffertes Modul. Das ist kein Solver für beliebige elektrische Netze, und die Last eines Moduls wirkt nicht auf andere zurück.
@@ -208,6 +223,8 @@ Die Brücken-Simulation (`bruecke`) rechnet dagegen exakt über die Ersatzspannu
 - Behoben: das × auf schwingenden Kabeln ließ sich nicht treffen (die Knöpfe wurden in jedem Bild neu gebaut).
 - Notiz *Von Newton bis Ohm*: acht Schritte von Kraft und Arbeit über Ladung, Feld, Potential, Spannung und Strom bis zum Drude-Modell, mit SVG-Diagrammen und Feynman-Momenten.
 - Lexikon: lange Formeln auf mehrere Zeilen verteilt, zu breite Formelzeichen werden verkleinert statt abgeschnitten; Formeln passen auf dem Handy ohne Seitwärtsscrollen.
+- Messplatz (Lab 1): eigener Schaltungssimulator, Steckbrett mit Laborkabeln, Funktionsgenerator, Oszilloskop, Multimeter, Netzgerät, neun Versuche; sieben neue Lexikon-Einträge zu Bauelementen und Messgeräten.
+- Behoben: 13 Farbvariablen im hellen Modus verwiesen auf sich selbst (z. B. waren Kabel im freien Pult unsichtbar).
 - Fachlicher Check aller Notizen, Lexikon-Einträge, Labor-Texte und Missionen: präzisere Formulierungen (Impedanz vs. Blindwiderstand, technische Stromrichtung, Ladungsquantelung, Echo bei g = 1, antiparallele Dioden u. a.), Rechenfehler in der Teiler-Simulation („% mehr“) behoben, breite Formeln der Brückenschaltung mehrzeilig.
 - Lautstärke: Belohnungs-Töne laufen über den Pegel (waren vorher am Pegel vorbei und viel zu laut), Wellenformen, Verzerrer und Echo-Rückkopplung gleichen sich aus; jede Mission startet mit eigener Sequencer-Melodie statt Dauerton.
 

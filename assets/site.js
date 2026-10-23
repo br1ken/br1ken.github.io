@@ -17,6 +17,7 @@ const OSCI = (() => {
 
   const NAV = [
     {id: 'labor', href: 'labor/', title: 'Labor', text: 'Missionen, Sequencer, Kabel stecken.'},
+    {id: 'messplatz', href: 'messplatz/', title: 'Messplatz', text: 'Oszi, Generator, Multimeter: Schaltungen messen.'},
     {id: 'notizen', href: 'notizen/', title: 'Notizen', text: 'Gelerntes aus dem E-Technik-Studium.'},
     {id: 'projekte', href: 'projekte/', title: 'Projekte', text: 'Simulationen, Schaltungen, Code.'},
     {id: 'about', href: '#about', title: 'Über mich', text: 'Wer hinter osci//log steckt.'}
@@ -185,7 +186,7 @@ const OSCI = (() => {
     }
     return lexLoading.then(() => OSCILexikon.open(id));
   }
-  const LEX_VERSION = 6;
+  const LEX_VERSION = 8;
   document.addEventListener('click', e => {
     const link = e.target.closest('[data-lex]');
     if (link) { e.preventDefault(); lexikon(link.dataset.lex).catch(() => {}); }
