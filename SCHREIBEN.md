@@ -13,11 +13,11 @@ Ganz oben, zwischen zwei `---`-Zeilen:
 
 ```
 ---
-titel: Warum doppeltes C die Grenzfrequenz halbiert
+titel: Warum der Spannungsteiler unter Last einbricht
 datum: 2026-10-22
 fach: Grundlagen der E-Technik
 art: theorie
-tags: [RC, Filter, Kondensator]
+tags: [Spannungsteiler, Last, Widerstand]
 teaser: Ein, zwei Sätze für die Karte in der Übersicht.
 welle: lade
 entwurf: ja

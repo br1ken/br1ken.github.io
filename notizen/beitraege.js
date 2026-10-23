@@ -8,7 +8,6 @@ OSCI.beitraege([
   'stern-dreieck',
   'von-newton-zu-ohm',
   'brueckenschaltung',
-  'rc-tiefpass',
   'spannungsteiler',
   'hallo-labor'
 ]);

@@ -36,7 +36,9 @@ Bewusst minimal: **plain HTML, CSS und JavaScript, ohne Framework und ohne Build
 | Dunkelmodus | ◐ oben rechts | folgt der Systemeinstellung, per Knopf umschaltbar, wird im Browser gemerkt (`osci-log-theme`) |
 
 **Aktuelle Inhalte**
-- Notizen: *Hallo, Labor.* · *Der Spannungsteiler* · *Warum doppeltes C die Grenzfrequenz halbiert* · *Brückenschaltung (ET1, Rechenübung 2, A2.3)* · *Von Newton bis Ohm*
+- Notizen, Rechnungen: *Brückenschaltung (ET1, Rechenübung 2, A2.3)* · *Ersatzwiderstand mit der Dreieck-Stern-Umwandlung (A2.5)*
+- Notizen, Theorie: *Von Newton bis Ohm* · *Widerstandsnetzwerke* · *Die Kirchhoffschen Gesetze* · *Stern-Dreieck-Umwandlung*
+- Notizen, Sonstiges: *Hallo, Labor.*
 - Projekte: Messplatz · RC-Filter-Explorer · Crashtest-Labor · *Schaltungen zum Anfassen* (geplant)
 - Simulationen zum Einbetten: `rc`, `welle`, `teiler`, `bruecke` (siehe SCHREIBEN.md)
 
