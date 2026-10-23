@@ -1,4 +1,4 @@
-/* Startseite: Hero, Klanglabor, Lernstreifen. Baut auf site.css auf. */
+/* Crashtest-Labor (labor/) und die Labor-Teile der Startseite: Hero, Teaser, Missionen, Pult, Kette. Baut auf site.css auf. */
 
 /* ---------- Hero ---------- */
 .hero { position: relative; min-height: 92svh; display: grid; place-items: center; padding: 130px var(--gutter) 80px; overflow: hidden; }
@@ -44,7 +44,7 @@
 .is-playing #audio-toggle { background: var(--accent); color: var(--accent-ink); border-color: var(--ink); }
 .toolbar { display: flex; justify-content: space-between; align-items: stretch; flex-wrap: wrap; border-bottom: 1px solid var(--ink); }
 .palette { display: flex; flex-wrap: wrap; align-items: stretch; }
-.palette-label, .tools-label { font-family: var(--mono); font-size: 10px; text-transform: uppercase; color: var(--muted); padding: 0 16px; align-self: center; }
+.palette-label { font-family: var(--mono); font-size: 10px; text-transform: uppercase; color: var(--muted); padding: 0 16px; align-self: center; }
 .palette button, .tools button {
   appearance: none; background: var(--card); border: 0; border-left: 1px solid var(--hairline); min-height: 50px; padding: 10px 16px;
   font: inherit; font-size: 12px; color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 9px;
@@ -180,7 +180,6 @@ select { width: 100%; min-height: 40px; font: inherit; font-size: 12px; padding:
 .learning-sources a { display: inline-block; margin: 8px 18px 0 0; text-underline-offset: 3px; }
 
 /* Startseiten-Abschnitte für Notizen und Projekte */
-.teaser-head { display: flex; justify-content: space-between; align-items: baseline; gap: 18px; flex-wrap: wrap; }
 .teaser-more { margin-top: 22px; }
 .about { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr); gap: 56px; align-items: start; }
 .about-lead { margin: 0 0 22px; font-size: clamp(24px, 2.6vw, 34px); line-height: 1.2; letter-spacing: -.04em; font-weight: 400; text-wrap: balance; }
@@ -229,7 +228,6 @@ select { width: 100%; min-height: 40px; font: inherit; font-size: 12px; padding:
   .palette-label { width: 100%; padding: 9px 12px; border-bottom: 1px solid var(--hairline); }
   .palette button { flex: 1 0 30%; padding: 10px 6px; font-size: 11px; border-bottom: 1px solid var(--hairline); justify-content: center; gap: 5px; }
   .palette button:nth-of-type(4) { border-left: 0; }
-  .tools-label { display: none; }
   .tools button { font-size: 11px; padding: 8px 4px; }
   .desk-instructions { font-size: 9px; padding: 10px 12px; }
   .board-scroll { height: 430px; }

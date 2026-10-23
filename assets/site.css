@@ -90,7 +90,7 @@ a { color: inherit; }
 img { max-width: 100%; }
 :focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; }
 ::selection { background: var(--accent); color: var(--accent-ink); }
-.mono, .eyebrow, .card-kicker, .sub, .meta { font-family: var(--mono); }
+.eyebrow, .card-kicker, .sub, .meta { font-family: var(--mono); }
 /* Überschriften und große Leitsätze: Helvetica */
 h1, h2, h3, .headline, .about-lead, .menu-item b, .post-nav b, .lesson h4 { font-family: var(--sans); }
 .skip-link { position: fixed; left: 20px; top: -80px; z-index: 60; background: var(--card); padding: 14px; color: var(--fg); }
@@ -265,7 +265,7 @@ html.lex-open { overflow: hidden; }
 .mw-xp, .xp-pop, .chain-add:hover, .chain-link.open .chain-add, .big-step:active, .lex-q:hover, .seq-seg button:active,
 .badge.on .badge-sym, .mm li.next .mm-dot, .chain-out .chain-sym, .datasheet-tags li, .mw-badge .badge-sym, .lex-unit, .sim-badge,
 .is-playing .chain-out .chain-result, .writer-tools button:hover, .prose a:hover, .answers button.right, .port.pending .port-label,
-.callout-merke, .callout-merke .callout-label, .teaser-progress .mh-bar i, .button.accent { color: var(--accent-ink); }
+.callout-merke, .callout-merke .callout-label, .teaser-progress .mh-bar i { color: var(--accent-ink); }
 .lex-unit .katex, .callout-merke .katex { color: var(--accent-ink); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .prose mark { background: var(--accent); color: var(--accent-ink); } }
 :root[data-theme="dark"] .prose mark { background: var(--accent); color: var(--accent-ink); }

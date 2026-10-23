@@ -57,13 +57,20 @@ assets/
   labor.css / labor.js  Labor: Bausteine, Sequencer, Kabelphysik, Einfach-Ansicht und freies Pult
   missionen.js          Missionen, XP, Stufen, Abzeichen
   models.js             Formeln des Labors, Patch-Links
+  start.js              Startseite: neueste Notizen und Projekte, alte Patch-Links ins Labor
   markdown.js           Markdown → HTML für Notizen
+  beitrag.js            zeigt eine Notiz an (beitrag.html?b=…)
+  notizen-liste.js      Notizen-Übersicht mit Suche und Filter
+  schreiben.js          Schreibstube mit Live-Vorschau
+  projekte-liste.js     Projekt-Übersicht
+  projekt.js            Projektseiten: Simulationen und Formeln
   sims.js               Simulationen (rc, welle, teiler, bruecke)
   lexikon.js            Einträge des Lexikons (GROESSEN und SYNTH)
   notizen.css           Notizen, Simulationen, Schreibstube
   fonts/                MesloLGS Nerd Font (Web-Versionen) + LIZENZ.md
   vendor/katex/         Formelsatz
   og-bild.png           Vorschaubild für geteilte Links
+  touch-icon.png        Homescreen-Icon
 vorschau.command        Doppelklick = lokale Vorschau
 ```
 
@@ -72,7 +79,7 @@ vorschau.command        Doppelklick = lokale Vorschau
 Doppelklick auf **`vorschau.command`**. Ein Terminalfenster startet einen kleinen Server, und der Browser öffnet `http://localhost:4173`. Zum Beenden das Fenster schließen.
 Beim ersten Mal blockiert macOS das eventuell: Rechtsklick → *Öffnen* → *Öffnen*.
 
-`index.html` direkt aus dem Finder zu öffnen geht für das Labor auch. Notizen und Lexikon laden dann aber nicht, weil Browser das Nachladen von Dateien nur über einen Server erlauben.
+`labor/index.html` direkt aus dem Finder zu öffnen geht auch. Notizen und Lexikon laden dann aber nicht, weil Browser das Nachladen von Dateien nur über einen Server erlauben.
 
 ## Änderungen veröffentlichen
 
@@ -93,10 +100,10 @@ Wichtig: Die versteckte Datei **`.nojekyll`** muss im Repo bleiben. Ohne sie ble
 
 ### Wenn Design oder Code geändert wurde
 
-Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer (aktuell `?v=14`). Nach Änderungen in `assets/` diese Zahl in allen HTML-Dateien um eins erhöhen, zum Beispiel von 14 auf 15:
+Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer (aktuell `?v=15`). Nach Änderungen in `assets/` diese Zahl in allen HTML-Dateien um eins erhöhen, zum Beispiel von 15 auf 16:
 
 ```bash
-grep -rl '?v=14"' --include='*.html' . | xargs sed -i '' 's/?v=14"/?v=15"/g'
+grep -rl '?v=15"' --include='*.html' . | xargs sed -i '' 's/?v=15"/?v=16"/g'
 ```
 
 Für `assets/lexikon.js` gilt stattdessen `LEX_VERSION` in `assets/site.js`. Für neue Notizen oder Projekte ist beides nicht nötig.
@@ -120,6 +127,7 @@ Mit `entwurf: ja` im Kopf bleibt eine Notiz aus allen Listen raus. Über ihren L
 1. Ordner `projekte/_vorlage/` kopieren und umbenennen, z. B. `projekte/bandpass/`.
 2. `index.html` darin anpassen, oder den Ordner komplett mit einem eigenen Projekt füllen (eigene HTML/JS-Dateien, ein exportierter Build, …).
 3. In `projekte/projekte.js` oben einen Eintrag ergänzen. Die Felder sind dort erklärt.
+4. In der kopierten `index.html` die Zeile `<meta name="robots" content="noindex">` löschen — die gilt nur für die Vorlage selbst.
 
 Projekte können auch nur auf etwas anderes verlinken (z. B. ein anderes GitHub-Repo): `link: 'https://…'`.
 
