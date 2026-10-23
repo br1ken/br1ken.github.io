@@ -6,6 +6,8 @@
 .filter-row .eyebrow { margin-right: 8px; min-width: 52px; }
 .search { width: min(420px, 100%); min-height: 44px; padding: 10px 14px; border: 1px solid var(--ink); background: var(--card); font: inherit; font-size: 14px; border-radius: 0; }
 .notes-count { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.notes-count.is-filtered { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; padding: 8px 8px 8px 12px; border: 1px solid var(--ink); background: var(--accent-soft); color: var(--ink); font-size: 12px; }
+.notes-count.is-filtered .tag { background: var(--card); color: var(--ink); border-color: var(--ink); }
 .notes-group + .notes-group { margin-top: 64px; }
 .notes-group .section-heading { margin-bottom: 10px; }
 .notes-group-text { margin: 0; max-width: 640px; font-size: 14px; line-height: 1.6; color: var(--muted); }

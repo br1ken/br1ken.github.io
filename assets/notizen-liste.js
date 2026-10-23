@@ -69,9 +69,19 @@
     const list = all.filter(n => matches(n, query));
     const html = GRUPPEN.map(g => { const notes = list.filter(n => artVon(n) === g.art); return notes.length ? gruppe(g, notes) : ''; }).join('');
     $('notes').innerHTML = html || `<p class="empty-state">${all.length ? 'Nichts gefunden. Probier ein anderes Wort oder einen anderen Filter.' : 'Noch keine Notizen veröffentlicht.'}</p>`;
-    $('anzahl').textContent = `${list.length} von ${all.length} Notizen`;
+    /* Aktive Filter deutlich anzeigen, mit Knopf zum Aufheben. Auf dem Handy liegt der gedrückte Filterknopf sonst oft außerhalb des Bildschirms. */
+    const filter = [art && GRUPPEN.find(g => g.art === art)?.titel, active && `Thema „${OSCI.escape(active)}“`, query && `Suche „${OSCI.escape(query)}“`].filter(Boolean);
+    $('anzahl').classList.toggle('is-filtered', filter.length > 0);
+    $('anzahl').innerHTML = filter.length
+      ? `<span>${list.length} von ${all.length} Notizen · gefiltert: ${filter.join(', ')}</span><button class="tag" type="button" id="filter-reset">Alle anzeigen ×</button>`
+      : `${all.length} Notizen`;
     $('art-filter').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.art === art)));
     $('filter').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tag === active)));
+    /* Gedrückte Knöpfe in den waagerecht scrollenden Leisten ins Bild holen */
+    for (const row of [$('art-filter'), $('filter')]) {
+      const b = row.querySelector('[aria-pressed="true"]');
+      if (b && row.scrollWidth > row.clientWidth) row.scrollLeft = b.offsetLeft - (row.clientWidth - b.offsetWidth) / 2;
+    }
     const url = new URL(location.href);
     art ? url.searchParams.set('art', art) : url.searchParams.delete('art');
     active ? url.searchParams.set('tag', active) : url.searchParams.delete('tag');
@@ -90,4 +100,7 @@
   $('art-filter').addEventListener('click', e => { const b = e.target.closest('[data-art]'); if (b) { art = b.dataset.art; themenFilter(); render(); } });
   $('filter').addEventListener('click', e => { const b = e.target.closest('[data-tag]'); if (b) { active = b.dataset.tag; render(); } });
   $('suche').addEventListener('input', () => render());
+  $('anzahl').addEventListener('click', e => {
+    if (e.target.closest('#filter-reset')) { art = ''; active = ''; $('suche').value = ''; themenFilter(); render(); }
+  });
 })();
