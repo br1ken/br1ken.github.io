@@ -3,7 +3,7 @@
 'use strict';
 const OSCI_CONFIG = {
   name: 'Brick',
-  instagram: '',   // z. B. 'osci.log' (ohne @)
+  instagram: '_br1ken_', // ohne @
   github: 'br1ken', // z. B. 'br1ken' oder 'br1ken/osci-log'
   email: ''
 };
