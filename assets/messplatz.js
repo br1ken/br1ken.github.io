@@ -52,7 +52,7 @@ const PARTS = {
     sym: () => '<circle cx="34" cy="40" r="21" class="thin"/><path d="M0 40H25M25 27V53" /><path d="M25 34L48 21V0M25 46L48 59V80"/><path d="M33 48L25 46L31 54Z" class="fill"/>'},
   NMOS: {name: 'MOSFET 2N7000', ref: 'T', lex: 'mosfet', geom: G3, pinNames: ['G', 'D', 'S'], model: '2N7000', rating: {I: .2, P: .4},
     sym: () => '<circle cx="34" cy="40" r="21" class="thin"/><path d="M0 40H20M20 28V52"/><path d="M26 25V33M26 36V44M26 47V55" class="thick"/><path d="M26 29H48V0M26 51H48V80M34 40H48V51"/><path d="M27 40L35 36V44Z" class="fill"/>'},
-  OP: {name: 'Operationsverstärker', ref: 'OPV', lex: 'opv', geom: {w: 88, h: 64, pins: [[0, 16], [0, 48], [88, 32]]}, pinNames: ['−', '+', 'A'],
+  OP: {name: 'Operationsverstärker', ref: 'OPV', lex: 'opv', geom: {w: 88, h: 64, pins: [[0, 16], [0, 48], [88, 32]]}, pinNames: ['−', '+', 'A'], rating: {clamp: .05},
     sym: () => '<path d="M0 16H16M0 48H16M72 32H88"/><path d="M16 4V60L72 32Z"/><path d="M21 16H27M21 48H27M24 45V51" class="thin"/>'},
   TR: {name: 'Trenntrafo', ref: 'Tr', lex: 'transformator', geom: {w: 96, h: 64, pins: [[0, 12], [0, 52], [96, 12], [96, 52]]}, pinNames: ['1', '2', '3', '4'],
     param: {key: 'n', unit: '', min: .1, max: 20, init: 1, e12: true},
@@ -673,7 +673,7 @@ function renderInspector() {
     I: 'Ideal: treibt ihren Strom von 1 nach 2 durch die Quelle, egal welche Spannung dafür nötig ist.',
     V: 'Ideal: 0 Ω Innenwiderstand. Zwei parallel oder ein Kurzschluss machen die Schaltung unlösbar.',
     NMOS: 'n-Kanal, Anreicherung. U_th = 2,1 V, Bodydiode S → D bricht bei 60 V durch.',
-    OP: 'Versorgung ±15 V intern, Ausgang bis ±13,5 V und ±25 mA.'}[part.type];
+    OP: 'Versorgung ±15 V intern, Ausgang bis ±13,5 V und ±25 mA. Wer den Ausgang von außen über ±15 V drückt, treibt Strom in die Klemmdioden — ab 50 mA brennt er durch.'}[part.type];
   inspector.innerHTML = `<header><b>${esc(partTitle(part))}</b> · ${esc(d.name)} <button type="button" class="lex-q" data-lex="${d.lex}" aria-label="${esc(d.name)} im Lexikon">?</button></header>
     ${broken}${d.instr ? `<p class="mp-insp-empty">Bedienung im Geräteregal unten. Buchsen: ${d.pinNames.join(', ')}.</p>` : ''}
     <div class="mp-insp-controls">${controls}${tools}</div>${note ? `<p class="mp-insp-note">${esc(note)}</p>` : ''}<dl class="mp-live" id="mp-live"></dl>`;
@@ -820,7 +820,14 @@ const mt = Object.fromEntries(METERS.map(id => [id, {fuse: true, range: 0, acc: 
 const sim = S.create();
 let nodes = {ch1: 0, ch2: 0, dmm: {v: 0, c: 0, a: 0}, dmm2: {v: 0, c: 0, a: 0}};
 function rebuild() {
+  /* Startwerte für den neuen Aufbau: Jeder Knoten bekommt die bisherige Spannung seiner Buchsen.
+     Ohne das begänne der Löser nach jedem Umstecken bei 0 V, und Knoten könnten neu durchnummeriert sein. */
+  const before = new Map();
+  if (net) for (const p of state.parts) PARTS[p.type].geom.pins.forEach((_, i) => { const key = `${p.id}:${i}`, n = net.nodeOf(key); if (n) before.set(key, sim.v(n)); });
   net = buildNet();
+  const x0 = new Float64Array(net.nodes + 1);
+  for (const [key, v] of before) { const n = net.nodeOf(key); if (n) x0[n] = v; }
+  net.netlist.x0 = x0;
   sim.load(net.netlist);
   sim.setStep(chooseDt());
   nodes = {ch1: net.nodeOf('osz:0'), ch2: net.nodeOf('osz:1')};
@@ -1270,7 +1277,7 @@ function partRows(part, info) {
   const t = part.type;
   if (t === 'NPN' || t === 'PNP') { const q = info(part.id); return q ? [['I_C', fmt(q.ic, 'A')], ['I_B', fmt(q.ib, 'A')], ['U_CE', fmt(q.uce, 'V')], ['U_BE', fmt(q.ube, 'V')], ['B = I_C/I_B', q.ib ? num(q.ic / q.ib, 3) : '—'], ['Bereich', bjtRegion(q, PARTS[t].pol)]] : []; }
   if (t === 'NMOS') { const q = info(part.id), b = info(part.id + '.body'); if (!q) return []; const rows = [['I_D', fmt(q.id, 'A')], ['U_GS', fmt(q.ugs, 'V')], ['U_DS', fmt(q.uds, 'V')], ['Bereich', mosRegion(q)]]; if (b && Math.abs(b.i) > 1e-6) rows.push([b.u > 0 ? 'Bodydiode leitet' : 'Avalanche', fmt(Math.abs(b.i), 'A')]); return rows; }
-  if (t === 'OP') { const q = info(part.id); return q ? [['U_A', fmt(q.u, 'V')], ['I_A', fmt(q.i, 'A')], ['U_D = U₊ − U₋', fmt(q.ud, 'V')], ['Zustand', Math.abs(q.u) > 13 ? 'Sättigung' : 'linear']] : []; }
+  if (t === 'OP') { const q = info(part.id); return q ? [['U_A', fmt(q.u, 'V')], ['I_A', fmt(q.i, 'A')], ['U_D = U₊ − U₋', fmt(q.ud, 'V')], ['Zustand', Math.abs(q.ic) > 1e-3 ? 'Ausgang gegen Versorgung geklemmt' : Math.abs(q.u) > 13 ? 'Sättigung' : 'linear']] : []; }
   if (t === 'POT') { const a = info(part.id + '.a'), b = info(part.id + '.b'); return a && b ? [['U (A–S)', fmt(a.u, 'V')], ['U (S–E)', fmt(b.u, 'V')], ['I (A→S)', fmt(a.i, 'A')]] : []; }
   if (t === 'TR') { const q = info(part.id); return q ? [['U₁ (1–2)', fmt(q.u, 'V')], ['I₁', fmt(q.i, 'A')], ['U₂ (3–4)', fmt(q.u2, 'V')], ['I₂ (in 3)', fmt(q.i2, 'A')]] : []; }
   if (t === 'V') { const q = info(part.id); return q ? [['U', fmt(q.u, 'V')], ['I (aus +)', fmt(q.i, 'A')], ['P abgegeben', fmt(q.u * q.i, 'W')]] : []; }
@@ -1336,6 +1343,7 @@ function checkDamage() {
     let over = 0, why = '';
     if (p.type === 'NPN' || p.type === 'PNP') { const q = sim.info(p.id); if (!q) continue; const P = Math.abs(q.ic * q.uce); over = Math.max(Math.abs(q.ic) / r.I, P / r.P); why = `Überlastet: ${fmt(Math.abs(q.ic), 'A')}, ${fmt(P, 'W')}`; }
     else if (p.type === 'NMOS') { const q = sim.info(p.id); if (!q) continue; const P = Math.abs(q.id * q.uds); over = Math.max(Math.abs(q.id) / r.I, P / r.P); why = `Überlastet: ${fmt(Math.abs(q.id), 'A')}, ${fmt(P, 'W')}`; }
+    else if (p.type === 'OP') { const q = sim.info(p.id); if (!q) continue; over = Math.abs(q.ic) / r.clamp; why = `Durchgebrannt: Der Ausgang wurde mit ${fmt(Math.abs(q.ic), 'A')} über die Versorgung (±15 V) hinaus getrieben`; }
     else if (p.type === 'POT') { const a = sim.info(p.id + '.a'), b = sim.info(p.id + '.b'); if (!a) continue; const P = Math.abs(a.u * a.i) + Math.abs(b.u * b.i); over = P / r.P; why = `Durchgebrannt: ${fmt(P, 'W')} statt höchstens ${fmt(r.P, 'W')}`; }
     else {
       const q = sim.info(p.id); if (!q) continue;
@@ -1471,14 +1479,16 @@ function bodeCompute() {
   ac.load(nb.netlist);
   const o = state.osz, sign = (o.ch[1].inv ? -1 : 1) * (useCh1 && o.ch[0].inv ? -1 : 1);
   /* komplexes H für eine Liste von Frequenzen; null, wenn die Analyse scheitert */
+  let opCache;
   const evalH = fs => {
-    const r = ac.ac(fs, 'fg', [n1, n2]);
+    const r = ac.ac(fs, 'fg', [n1, n2], opCache);
     if (!r.ok) { out.err = r.error || 'Die Kleinsignalanalyse ist gescheitert.'; return null; }
+    opCache = r.op;
     return fs.map((f, i) => { const [ar, ai] = useCh1 ? r.data[0][i] : [1, 0], [br, bi] = r.data[1][i], d = ar * ar + ai * ai; return [sign * (br * ar + bi * ai) / d, sign * (bi * ar - br * ai) / d]; });
   };
   const H = evalH(freqs);
   if (!H) return out;
-  if (useCh1) { const r1 = ac.ac([freqs[0], freqs[freqs.length >> 1], freqs[freqs.length - 1]], 'fg', [n1]); if (r1.ok && r1.data[0].some(([a, b]) => Math.hypot(a, b) < 1e-3)) out.notes.push('CH1 sieht im Arbeitspunkt fast kein Kleinsignal (z. B. weil Dioden sperren) — der Quotient CH2/CH1 sagt dann wenig. Für Gleichrichter ist das Oszi das richtige Werkzeug.'); }
+  if (useCh1) { const r1 = ac.ac([freqs[0], freqs[freqs.length >> 1], freqs[freqs.length - 1]], 'fg', [n1], opCache); if (r1.ok && r1.data[0].some(([a, b]) => Math.hypot(a, b) < 1e-3)) out.notes.push('CH1 sieht im Arbeitspunkt fast kein Kleinsignal (z. B. weil Dioden sperren) — der Quotient CH2/CH1 sagt dann wenig. Für Gleichrichter ist das Oszi das richtige Werkzeug.'); }
   let prev = null, wrap = 0;
   freqs.forEach((f, i) => {
     const [hr, hi] = H[i], mag = Math.hypot(hr, hi);
@@ -1785,6 +1795,7 @@ function renderSaved() {
 function applyState(next, msg) {
   undoStack.past.push(snapshot()); undoStack.future = [];
   state = next; sel = null; ropes.clear(); syncId();
+  for (const id of METERS) Object.assign(mt[id], {fuse: true, range: 0, acc: {n: 0, s: 0, s2: 0, t: 0}, shown: '', value: null, unit: '', overI: 0, rangeHold: 0}); // frische Messgeräte
   restart(); updateAll(); updateBodeControls(); renderVersuch(); changed(true); renderLog();
   ana.bode.stamp = -1; ana.op.stamp = -1;
   hint(msg);
@@ -1936,5 +1947,5 @@ window.OSCIMessplatz = {state: () => state, sim, acq, shown, versuche: VERSUCHE,
   bode: () => ana.bode.res, buildNet, spice: spiceNetlist, op: () => { const nb = buildNet(), s2 = S.create(); s2.load(nb.netlist); return {nb, op: s2.operatingPoint()}; }, speed: v => { simClock.speed = v; simClock.target = sim.t; },
   /* für Tests ohne Bildwiederholung: secs Simulationszeit sofort rechnen, Analyse sofort auffrischen */
   run: (secs, maxMs = 4000) => { if (dirty) rebuild(); const end = sim.t + secs, stop = performance.now() + maxMs; while (sim.t < end && !sim.error && performance.now() < stop) { if (!sim.advance()) break; sample(); dmmSample(); } checkDamage(); for (const id of METERS) mt[id].lastShow = -1e9; meterShow(performance.now()); psuShow(); showMeasurements(); drawScope(); liveBoard(true); return {t: sim.t, meas: acq.meas, dmm: mt.dmm.value, dmm2: mt.dmm2.value, err: sim.error, fails: sim.fails}; },
-  analyze: () => { ana.bode.res = bodeCompute(); renderOp(); return ana.bode.res; }, touch: () => changed(true), rows: id => partRows(getPart(id), sim.info), restore: sanitize};
+  analyze: () => { ana.bode.res = bodeCompute(); renderOp(); return ana.bode.res; }, touch: () => changed(true), frame, tab: showTab, rows: id => partRows(getPart(id), sim.info), restore: sanitize};
 })();

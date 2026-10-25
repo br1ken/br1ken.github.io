@@ -38,7 +38,7 @@ const OSCISchaltung = (() => {
     'BC547': {Is: 1e-14, BF: 300, BR: 5},
     'BC557': {Is: 1e-14, BF: 300, BR: 5},
     '2N7000': {Vth: 2.1, K: .1, lam: .02},                    // R_DS,on ≈ 1,3 Ω bei U_GS = 10 V
-    'OPV': {gbw: 1e6, a0: 2e5, vsat: 13.5, ro: 50, ilim: 0.025} // ±15 V Versorgung (intern)
+    'OPV': {gbw: 1e6, a0: 2e5, vsat: 13.5, ro: 50, ilim: 0.025, vrail: 15, gc: 1} // ±15 V Versorgung (intern), Klemmdioden 1 S
   };
 
   /* Exponentialfunktion, ab e^80 linear fortgesetzt (bleibt endlich, Ableitung stetig) */
@@ -117,7 +117,7 @@ const OSCISchaltung = (() => {
         if (!d.s) {
           d.s = d.k === 'C' ? {v1: 0, v2: 0, i: 0} : d.k === 'L' ? {i1: 0, i2: 0, v: 0} : d.k === 'K' ? {i1: [0, 0], i2: [0, 0], v: [0, 0]}
             : d.k === 'D' ? {vd: 0, i: 0} : d.k === 'Q' ? {vbe: 0, vbc: 0, ic: 0, ib: 0} : d.k === 'M' ? {vgs: 0, vds: 0, id: 0}
-            : d.k === 'OP' ? {x1: 0, x2: 0, x: 0, io: 0} : d.k === 'LS' ? {mode: 'CV'} : {i: 0};
+            : d.k === 'OP' ? {x1: 0, x2: 0, x: 0, io: 0, ic: 0, vo: 0} : d.k === 'LS' ? {mode: 'CV'} : {i: 0};
         }
         if (d.k === 'D' || d.k === 'Q' || d.k === 'OP' || d.k === 'M') d.mm = MODELS[d.m];
         if (d.k === 'D') { const m = d.mm, nvt = m.n * VT; d.nvt = nvt; d.vcrit = nvt * Math.log(nvt / (Math.SQRT2 * m.Is)); if (m.BV) { d.nbvt = m.nb * VT; d.vcritb = d.nbvt * Math.log(d.nbvt / (Math.SQRT2 * m.Ibv)); } }
@@ -132,10 +132,11 @@ const OSCISchaltung = (() => {
       nonlin = devs.some(d => ['D', 'Q', 'M', 'OP', 'LS'].includes(d.k));
       const old = x;
       x = new Float64Array(size); xk = new Float64Array(size);
-      if (old.length === size) x.set(old); // gleiche Größe: alte Potentiale als Startwert
+      if (net.x0) { for (let k = 1; k <= N && k < net.x0.length; k++) x[k - 1] = Number.isFinite(net.x0[k]) ? net.x0[k] : 0; } // Startwerte je Knoten (nach Buchsen zugeordnet)
+      else if (old.length === size) x.set(old); // gleiche Größe: alte Potentiale als Startwert
       for (const d of devs) if (d.k === 'OP') x[d.si] = d.s.x1;
       A = new Float64Array(size * size); lu = new Float64Array(size * size); z = new Float64Array(size); perm = new Int32Array(size);
-      version++; luKey = ''; lastH = 0; sim.error = '';
+      version++; luKey = ''; lastH = 0; sim.error = ''; failRun = 0;
     };
     sim.reset = () => { states.clear(); for (const d of devs) d.s = null; const net = {nodes: N, devices: devs.map(({i, s, mm, ...rest}) => rest)}; sim.t = 0; sim.fails = 0; sim.subs = 0; x = new Float64Array(0); sim.load(net); };
     sim.setStep = (dt) => { h = dt; };
@@ -270,7 +271,15 @@ const OSCISchaltung = (() => {
             break;
           }
           case 'OP': {
-            const m = d.mm, s = d.s, si = d.si, xs = v[si], vo = volt(v, c);
+            /* Im Strombegrenzer ist die Kennlinie flach: Hängt der Ausgang an einem Knoten fast ohne Gleichstrompfad,
+               würde Newton um ilim/GMIN springen, und innerer Zustand und Ausgang schaukeln sich gegenseitig auf.
+               Darum ändern sich beide wie beim MOSFET höchstens um 3 V pro Newton-Schritt. */
+            const m = d.mm, s = d.s, si = d.si;
+            flag.limited = false;
+            const xs = stepLimit(v[si], s.xe ?? v[si], 3, flag);
+            let vo = c >= 0 ? stepLimit(volt(v, c), s.vo ?? volt(v, c), 3, flag) : 0;
+            if (flag.limited) limited = true;
+            s.xe = xs;
             /* innerer Zustand: dx/dt = ωt·(v+ − v−) − x/τ0 − ωaw·w(x)  (Verstärkung a0, GBW, Anti-Windup jenseits der Sättigung) */
             const w = softplus(xs - m.vsat) - softplus(-xs - m.vsat), dw = sigma(xs - m.vsat) + sigma(-xs - m.vsat);
             const nn = -xs / d.tau0 - d.waw * w, dnn = -1 / d.tau0 - d.waw * dw;
@@ -285,9 +294,11 @@ const OSCISchaltung = (() => {
             if (c >= 0) {
               const k = m.ro * m.ilim, u = (xs - w - vo) / k, io = m.ilim * tanh(u), s2 = sech2(u);
               const fx = -s2 * (1 - dw) / m.ro, fo = s2 / m.ro;
-              A[c * size + si] += fx; A[c * size + c] += fo;
-              z[c] -= -io - fx * xs - fo * vo;
-              s.io = io; d.lin.fx = fx; d.lin.fo = fo;
+              /* Klemmdioden gegen die Versorgung: Über ±vrail hinaus leitet der Ausgang hart ab */
+              const ic = m.gc * (softplus(vo - m.vrail) - softplus(-vo - m.vrail)), dic = m.gc * (sigma(vo - m.vrail) + sigma(-vo - m.vrail));
+              A[c * size + si] += fx; A[c * size + c] += fo + dic;
+              z[c] -= -io - fx * xs - fo * vo + ic - dic * vo;
+              s.io = io; s.ic = ic; s.vo = vo; d.lin.fx = fx; d.lin.fo = fo + dic;
             }
             s.x = xs;
             break;
@@ -346,7 +357,7 @@ const OSCISchaltung = (() => {
       }
       return false;
     }
-    function tryStep(hh, ord) {
+    function tryStep(hh, ord, maxIt = 60) {
       if (!size) { sim.t += hh; return true; }
       if (xn.length !== size) xn = new Float64Array(size);
       const t1 = sim.t + hh;
@@ -361,8 +372,20 @@ const OSCISchaltung = (() => {
         return true;
       }
       luKey = '';
-      if (newton(hh, ord, t1, 60)) { x.set(xk); accept(hh); return true; }
+      prime(x);
+      if (newton(hh, ord, t1, maxIt)) { x.set(xk); accept(hh); return true; }
       return false;
+    }
+    /* Bezugswerte der Spannungsbegrenzung (pnjlim, stepLimit) auf eine gültige Lösung setzen —
+       nach einem gescheiterten Versuch stünden dort sonst dessen Zwischenwerte */
+    function prime(v) {
+      for (const d of devs) {
+        const [a, b, c] = d.i, s = d.s;
+        if (d.k === 'D') s.vd = volt(v, a) - volt(v, b);
+        else if (d.k === 'Q') { s.vbe = d.pol * (volt(v, b) - volt(v, c)); s.vbc = d.pol * (volt(v, b) - volt(v, a)); }
+        else if (d.k === 'M') { s.vgs = d.pol * (volt(v, b) - volt(v, c)); s.vds = d.pol * (volt(v, a) - volt(v, c)); }
+        else if (d.k === 'OP') { s.xe = v[d.si]; s.vo = volt(v, c); }
+      }
     }
     /* Zustände nach einem gelungenen Schritt fortschreiben */
     function accept(hh) {
@@ -382,28 +405,43 @@ const OSCISchaltung = (() => {
     /* Schritt mit der eingestellten Weite. Klappt Newton nicht (z. B. Mitkopplung, die innerhalb eines Schritts kippt),
        wird der Schritt wie in SPICE immer feiner geteilt — bis h/1024 — und mit implizitem Euler gerechnet.
        Höchstens SUB_BUDGET Versuche pro Schritt, damit ein hartnäckiger Fall die Seite nicht einfriert. */
-    const SUB_BUDGET = 120;
+    const SUB_BUDGET = 80;
     let budget = 0;
     function subdivide(hh, depth) {
       for (let k = 0; k < 4; k++) {
         if (budget-- > 0) {
-          if (tryStep(hh / 4, 1)) continue;
+          if (tryStep(hh / 4, 1, 30)) continue;
           if (sim.error) return false;
           if (depth < 5) { if (!subdivide(hh / 4, depth + 1)) return false; continue; }
         }
-        sim.fails++; x.set(xk); accept(hh / 4); // letzter Ausweg: bestes Ergebnis übernehmen
+        sim.fails++; hold(hh / 4); // letzter Ausweg: den letzten gültigen Stand halten (nie ein unfertiges Newton-Ergebnis übernehmen)
       }
       return true;
     }
+    /* Zeit läuft weiter, Spannungen und Ströme bleiben wie nach dem letzten gelungenen Schritt */
+    function hold(hh) {
+      for (const d of devs) {
+        const s = d.s;
+        if (d.k === 'C') { s.v2 = s.v1; s.i = 0; }
+        else if (d.k === 'L') s.i2 = s.i1;
+        else if (d.k === 'K') s.i2 = s.i1.slice();
+        else if (d.k === 'OP') s.x2 = s.x1;
+      }
+      sim.t += hh;
+    }
+    const STUCK = 'Die Simulation kommt hier nicht weiter: Viele Schritte hintereinander findet der Löser keine Lösung. Meist hängt ein Knoten nur noch über Bauteile ohne Gleichstrompfad in der Luft — Verkabelung prüfen; jede Änderung startet die Rechnung neu.';
+    let failRun = 0;
     sim.advance = () => {
       if (sim.error) return false;
       const ord = lastH === h ? 2 : 1;
-      if (tryStep(h, ord)) { lastH = h; return true; }
+      if (tryStep(h, ord)) { lastH = h; failRun = 0; return true; }
       if (sim.error) return false;
-      const saved = sim.t;
+      const saved = sim.t, f0 = sim.fails;
       sim.subs++; budget = SUB_BUDGET;
       if (!subdivide(h, 1)) return false;
       sim.t = saved + h; lastH = 0;
+      if (sim.fails === f0) failRun = 0;
+      else if (++failRun > 40) { sim.error = STUCK; return false; }
       return true;
     };
 
@@ -416,13 +454,13 @@ const OSCISchaltung = (() => {
       if (!size) return {ok: true, v: () => 0};
       const snap = snapshot();
       dcMode = true; srcScale = 1;
-      xk.set(x);
-      let ok = newton(1, 1, 0, 200);
+      xk.set(x); prime(x);
+      let ok = newton(1, 1, 0, 100);
       if (!ok && !sim.error) {
         /* Rückfallebene: Quellen in zehn Stufen hochfahren */
         xk.fill(0); for (const d of devs) { if (d.k === 'D') d.s.vd = 0; if (d.k === 'Q') { d.s.vbe = 0; d.s.vbc = 0; } if (d.k === 'M') { d.s.vgs = 0; d.s.vds = 0; } if (d.k === 'LS') d.s.mode = 'CV'; }
         ok = true;
-        for (let k = 1; k <= 10 && ok; k++) { srcScale = k / 10; ok = newton(1, 1, 0, 200); }
+        for (let k = 1; k <= 10 && ok; k++) { srcScale = k / 10; ok = newton(1, 1, 0, 60); }
         srcScale = 1;
       }
       const op = Float64Array.from(xk);
@@ -446,9 +484,10 @@ const OSCISchaltung = (() => {
 
     /* ---------- Kleinsignalanalyse (.AC) ----------
        Anregung: die Norton-Quelle srcId mit 1 V Amplitude. Liefert für jede Frequenz die komplexen Knotenpotentiale
-       der gewünschten Knoten. Nichtlineare Bauteile gehen mit ihren Steigungen im Arbeitspunkt ein. */
-    sim.ac = (freqs, srcId, nodes) => {
-      const op = sim.operatingPoint();
+       der gewünschten Knoten. Nichtlineare Bauteile gehen mit ihren Steigungen im Arbeitspunkt ein.
+       opIn: ein schon berechneter Arbeitspunkt derselben Netzliste (spart ihn bei mehreren Aufrufen). */
+    sim.ac = (freqs, srcId, nodes, opIn) => {
+      const op = opIn || sim.operatingPoint();
       if (!op.ok) return {ok: false, error: sim.error || 'Kein Arbeitspunkt gefunden.'};
       const n = size, Ar = new Float64Array(n * n), Ai = new Float64Array(n * n), br = new Float64Array(n), bi = new Float64Array(n);
       const g = (M, i, j, val) => { if (i >= 0 && j >= 0) M[i * n + j] += val; };
@@ -523,7 +562,7 @@ const OSCISchaltung = (() => {
         case 'LS': return {u, i: d.s.mode === 'CC' ? d.I : (d.V - u) / d.Rs, cc: d.s.mode === 'CC'};
         case 'Q': return {ic: d.s.ic, ib: d.s.ib, ie: -(d.s.ic + d.s.ib), uce: volt(x, a) - volt(x, c), ube: volt(x, b) - volt(x, c)};
         case 'M': return {id: d.s.id, uds: volt(x, a) - volt(x, c), ugs: volt(x, b) - volt(x, c)};
-        case 'OP': return {u: volt(x, c), i: d.s.io, ud: volt(x, a) - volt(x, b)};
+        case 'OP': return {u: volt(x, c), i: d.s.io - (d.s.ic ?? 0), ud: volt(x, a) - volt(x, b), ic: d.s.ic ?? 0};
       }
       return null;
     };

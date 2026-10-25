@@ -13,10 +13,10 @@
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../assets/touch-icon.png">
 <link rel="stylesheet" href="../assets/site.css?v=18">
-<link rel="stylesheet" href="../assets/messplatz.css?v=18">
+<link rel="stylesheet" href="../assets/messplatz.css?v=19">
 <script src="../assets/site.js?v=18" defer></script>
-<script src="../assets/schaltung.js?v=18" defer></script>
-<script src="../assets/messplatz.js?v=18" defer></script>
+<script src="../assets/schaltung.js?v=19" defer></script>
+<script src="../assets/messplatz.js?v=19" defer></script>
 </head>
 <body id="top" data-page="messplatz">
 <a class="skip-link" href="#bench">Zum Messplatz springen</a>
@@ -190,8 +190,8 @@
   <section class="section mp-modelle" aria-labelledby="modelle-title">
     <div class="section-heading"><h2 id="modelle-title">Wie hier gerechnet wird</h2></div>
     <div class="mp-modelle-grid">
-      <p><b>Verfahren.</b> Modifizierte Knotenanalyse wie in SPICE. Zeitschritt mit BDF2 (Gear, 2. Ordnung), Dioden, Transistoren und OPV per Newton-Raphson mit Spannungsbegrenzung; klappt ein Schritt nicht, wird er bis auf ein Tausendstel geteilt. Jeder Knoten hängt mit 10<sup>−12</sup> S an Masse, damit auch offene Schaltungen lösbar bleiben.</p>
-      <p><b>Bauteile.</b> Diode 1N4148 (Shockley), rote LED, Z-Diode 5,1 V. BC547/BC557 nach Ebers-Moll (B = 300) mit C<sub>BE</sub> = 25 pF und C<sub>BC</sub> = 4 pF. MOSFET 2N7000 nach Level 1 (U<sub>th</sub> = 2,1 V) mit Bodydiode, die bei 60 V durchbricht, C<sub>GS</sub> = 20 pF, C<sub>GD</sub> = 5 pF. OPV: 200 000-fache Leerlaufverstärkung, 1 MHz Transitfrequenz, Ausgang ±13,5 V und höchstens 25 mA. Trenntrafo: 10 H primär, Kopplung 0,999. Ideale Spannungs- und Stromquelle. Kabel sind ideal.</p>
+      <p><b>Verfahren.</b> Modifizierte Knotenanalyse wie in SPICE. Zeitschritt mit BDF2 (Gear, 2. Ordnung), Dioden, Transistoren und OPV per Newton-Raphson mit Spannungsbegrenzung; klappt ein Schritt nicht, wird er bis auf ein Tausendstel geteilt; findet der Löser gar keine Lösung, hält er den letzten gültigen Stand, statt Zwischenwerte zu übernehmen. Jeder Knoten hängt mit 10<sup>−12</sup> S an Masse, damit auch offene Schaltungen lösbar bleiben.</p>
+      <p><b>Bauteile.</b> Diode 1N4148 (Shockley), rote LED, Z-Diode 5,1 V. BC547/BC557 nach Ebers-Moll (B = 300) mit C<sub>BE</sub> = 25 pF und C<sub>BC</sub> = 4 pF. MOSFET 2N7000 nach Level 1 (U<sub>th</sub> = 2,1 V) mit Bodydiode, die bei 60 V durchbricht, C<sub>GS</sub> = 20 pF, C<sub>GD</sub> = 5 pF. OPV: 200 000-fache Leerlaufverstärkung, 1 MHz Transitfrequenz, Ausgang ±13,5 V und höchstens 25 mA, Klemmdioden gegen die Versorgung ±15 V (wer den Ausgang darüber hinaus treibt, brennt ihn durch). Trenntrafo: 10 H primär, Kopplung 0,999. Ideale Spannungs- und Stromquelle. Kabel sind ideal.</p>
       <p><b>Geräte.</b> Generator: 50 Ω Innenwiderstand, Masse auf Schutzleiter, Anzeige wahlweise für Leerlauf oder 50-Ω-Last. Oszilloskop: Tastkopf ×1 (1 MΩ ∥ 100 pF) oder ×10 (10 MΩ ∥ 12 pF), AC-Kopplung mit 10 Hz Grenzfrequenz, Masse auf Schutzleiter. Zwei Multimeter: 10 MΩ, Strommessung über 0,1 Ω, Sicherung 400 mA. Netzgerät: Konstantspannung oder Konstantstrom.</p>
       <p><b>Analyse.</b> Frequenzgang als Kleinsignalanalyse (.AC) im Arbeitspunkt, Arbeitspunkt wie .OP (Kondensatoren offen, Spulen kurz). Beides rechnet unabhängig von der laufenden Zeitsimulation. Der Aufbau lässt sich als SPICE-Netzliste exportieren und in LTspice oder ngspice gegenrechnen.</p>
       <p><b>Grenzen.</b> Keine Leitungseffekte, keine Temperatur, kein Rauschen; die Kapazitäten der Halbleiter sind feste Näherungen. Überlastete Bauteile brennen durch, wenn sie deutlich über ihren Grenzwerten liegen — „Ersetzen“ im Inspektor repariert sie.</p>
