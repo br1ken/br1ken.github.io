@@ -59,4 +59,4 @@ Optionaler Satz unter der Simulation. Verfügbar: rc, welle, teiler.
 
 > Ein Zitat oder ein Gedanke, der hervorstechen soll.
 
-![Bildbeschreibung](bilder/beispiel.jpg "Bildunterschrift")
+![Bildbeschreibung](bilder/beispiel.svg "Bildunterschrift")

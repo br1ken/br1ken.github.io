@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300" role="img" aria-label="Beispielbild: eine Sinuswelle auf Rasterpapier">
+  <rect width="800" height="300" rx="12" fill="#8a9280" fill-opacity=".14"/>
+  <path d="M60 50V250M160 50V250M260 50V250M360 50V250M460 50V250M560 50V250M660 50V250M760 50V250M40 100H780M40 150H780M40 200H780" stroke="#8a9280" stroke-opacity=".35" fill="none"/>
+  <path d="M40 150 C90 50 140 50 190 150 S290 250 340 150 S440 50 490 150 S590 250 640 150 S740 50 780 150" stroke="#8a9280" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <text x="400" y="282" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="18" fill="#8a9280">Platzhalter · eigenes Bild nach notizen/bilder/ legen</text>
+</svg>

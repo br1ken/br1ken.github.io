@@ -37,12 +37,5 @@ OSCI.projekteListe([
     datum: '2026-10-21',
     tags: ['Web Audio', 'Grundlagen'],
     welle: 'saege'
-  },
-  {
-    titel: 'Schaltungen zum Anfassen',
-    text: 'Als Nächstes: echte Schaltungssimulationen mit Knoten und Maschen — und Experimente, mit denen man aus Bauteilen Musik macht.',
-    status: 'Geplant',
-    tags: ['Simulation'],
-    welle: 'am'
   }
 ]);

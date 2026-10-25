@@ -36,10 +36,10 @@ Bewusst minimal: **plain HTML, CSS und JavaScript, ohne Framework und ohne Build
 | Dunkelmodus | ◐ oben rechts | folgt der Systemeinstellung, per Knopf umschaltbar, wird im Browser gemerkt (`osci-log-theme`) |
 
 **Aktuelle Inhalte**
-- Notizen, Rechnungen: *Brückenschaltung (ET1, Rechenübung 2, A2.3)* · *Ersatzwiderstand mit der Dreieck-Stern-Umwandlung (A2.5)*
+- Notizen, Rechnungen (ET1, Rechenübung 2): *Knoten- und Maschengleichungen (A2.1)* · *Gemischte Widerstandsschaltung bei Wechselstrom (A2.2)* · *Brückenschaltung (A2.3)* · *Belastetes Potentiometer (A2.4)* · *Ersatzwiderstand mit der Dreieck-Stern-Umwandlung (A2.5)*
 - Notizen, Theorie: *Von Newton bis Ohm* · *Widerstandsnetzwerke* · *Die Kirchhoffschen Gesetze* · *Stern-Dreieck-Umwandlung*
 - Notizen, Sonstiges: *Hallo, Labor.*
-- Projekte: Messplatz · RC-Filter-Explorer · Crashtest-Labor · *Schaltungen zum Anfassen* (geplant)
+- Projekte: Messplatz · RC-Filter-Explorer · Crashtest-Labor
 - Simulationen zum Einbetten: `rc`, `welle`, `teiler`, `bruecke` (siehe SCHREIBEN.md)
 
 ```
@@ -47,6 +47,8 @@ index.html              Startseite mit Labor-Teaser und Bio
 labor/index.html        Crashtest-Labor (Lab 0)
 messplatz/index.html    Messplatz (Lab 1)
 404.html                Seite für falsche Links
+favicon.svg             Logo (Signal formt ein N)
+instagram/              Profilbild, Cover-Bilder, Story und Text für @_br1ken_ (nicht verlinkt)
 notizen/
   beitraege.js          Liste der Notizen (nur Dateinamen)
   texte/*.md            die Notizen selbst  (_vorlage.md = Vorlage)
@@ -106,10 +108,10 @@ Wichtig: Die versteckte Datei **`.nojekyll`** muss im Repo bleiben. Ohne sie ble
 
 ### Wenn Design oder Code geändert wurde
 
-Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer (aktuell `?v=16`). Nach Änderungen in `assets/` diese Zahl in allen HTML-Dateien um eins erhöhen, zum Beispiel von 16 auf 17:
+Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer (aktuell `?v=19`, in allen HTML-Dateien dieselbe). Nach Änderungen in `assets/` diese Zahl überall um eins erhöhen, zum Beispiel von 19 auf 20:
 
 ```bash
-grep -rl '?v=16"' --include='*.html' . | xargs sed -i '' 's/?v=16"/?v=17"/g'
+grep -rl '?v=19"' --include='*.html' . | xargs sed -i '' 's/?v=19"/?v=20"/g'
 ```
 
 Für `assets/lexikon.js` gilt stattdessen `LEX_VERSION` in `assets/site.js`. Für neue Notizen oder Projekte ist beides nicht nötig.
@@ -139,7 +141,7 @@ Projekte können auch nur auf etwas anderes verlinken (z. B. ein anderes GitHub-
 
 ## Persönliches
 
-- **Links in der Fußzeile:** in `assets/site.js` ganz oben (`github: 'br1ken'` ist gesetzt; `instagram` und `email` sind noch leer).
+- **Links in der Fußzeile:** in `assets/site.js` ganz oben (`github: 'br1ken'` und `instagram: '_br1ken_'` sind gesetzt; `email` ist noch leer).
 - **Bio und Datenblatt:** in `index.html` im Abschnitt `id="about"`.
 - **Lexikon-Einträge:** in `assets/lexikon.js`, elektrische Größen in `GROESSEN`, Synth-Begriffe in `SYNTH` (optional `lab:` = welcher Labor-Baustein dazu passt). Texte dort als `R\`…\`` schreiben, damit LaTeX-Backslashes erhalten bleiben. Nach Änderungen `LEX_VERSION` in `assets/site.js` um eins erhöhen.
 - **Farben:** alle in `assets/site.css` ganz oben als Variablen (`--bg`, `--fg`, `--accent` …), einmal für hell und einmal für dunkel. Neue Farben dort ergänzen statt fest in eine Regel zu schreiben.
@@ -234,6 +236,7 @@ Ein Elektroniklabor auf TU-Niveau, gedacht zum Vorbereiten von Laborübungen und
 - Messplatz als Werkzeug fürs Labor: MOSFET, Trenntrafo, ideale Quellen, zweites Multimeter, Tastkopf ×1/×10 mit Eingangskapazität, INV, Math-Kanal, Cursor, Anstiegszeit, Bode-Diagramm, Arbeitspunkt, Messreihe, benannte Aufbauten, JSON- und SPICE-Export, Tempo-Regler, feste Bezeichner (R1, C1 …); sieben neue Versuche (16 insgesamt), sechs neue Lexikon-Einträge (MOSFET, Transformator, ideale Quellen, Arbeitspunkt, Tastkopf, Bode-Diagramm).
 - Behoben im Messplatz: Autoset setzte Triggermodus, Lauf und XY nicht zurück (ein Kommentar hatte den Code verschluckt); der Bezugspunkt für schwebende Teilschaltungen konnte in Sonderfällen einen Generator- oder OPV-Ausgang mit 1 kΩ belasten; die „?“-Knöpfe waren ungestylt; Beschriftungen lagen bei Transistoren und Poti auf einer Buchse.
 - Behoben im Messplatz: Falsch gesteckte OPV-Schaltungen (z. B. Ausgang nur noch an Kondensator oder Messbuchsen) trieben den Löser in endlose Fehlschläge — mit Spannungen bis 10¹⁰ V, „verbrannten“ Bauteilen und einer ruckelnden Seite. Jetzt: OPV-Ausgang und Innenzustand pro Newton-Schritt begrenzt, Klemmdioden gegen ±15 V, Startwerte nach dem Umstecken je Buchse statt 0 V, nie mehr unfertige Ergebnisse übernehmen, Stillstand-Erkennung mit Hinweis, frische Messgeräte beim Laden eines Versuchs. Geprüft mit rund 800 zufälligen Fehlverkabelungen in sieben Versuchen.
+- Aufräumen: Versionsnummern der Assets waren über drei Stände verteilt (16/17/18), jetzt überall `?v=19`; README-Inhalte nachgezogen (alle fünf Rechnungen, Instagram, `instagram/`-Ordner); Platzhalter-Projekt „Schaltungen zum Anfassen" entfernt, das ist der Messplatz; die Vorlage zeigte in der Schreibstube ein kaputtes Bild, jetzt ein Beispiel-SVG.
 
 **Inhalte**
 - Notiz Brückenschaltung (A2.3) mit Simulation `bruecke`: Schaltplan, Potentialskala, Zweig-Tabelle mit Leistungsbilanz, Lastleistungs-Kurve.
