@@ -5,18 +5,18 @@
 <script>try{var t=localStorage.getItem("osci-log-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Messplatz — osci//log</title>
-<meta name="description" content="Lab 1: ein Elektroniklabor im Browser. Bauteile stecken, mit Funktionsgenerator, Oszilloskop, Multimeter und Netzgerät messen — gerechnet wie in SPICE, mit echten Innenwiderständen und Messfehlern.">
+<meta name="description" content="Lab 1: ein Elektroniklabor im Browser. Bauteile stecken, mit Funktionsgenerator, Oszilloskop, zwei Multimetern und Netzgerät messen, Frequenzgang und Arbeitspunkt rechnen — wie in SPICE, mit echten Innenwiderständen und Messfehlern.">
 <meta name="theme-color" content="#fbfbfa">
 <meta property="og:title" content="Messplatz — osci//log">
-<meta property="og:description" content="Steckbrett, Oszilloskop, Funktionsgenerator, Multimeter und Netzgerät. Neun Versuche auf TU-Niveau.">
+<meta property="og:description" content="Steckbrett, Oszilloskop mit Cursorn und Math, Funktionsgenerator, zwei Multimeter, Netzgerät, Bode-Diagramm und Arbeitspunkt. Sechzehn Versuche auf TU-Niveau.">
 <meta property="og:image" content="https://br1ken.github.io/assets/og-bild.png">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../assets/touch-icon.png">
-<link rel="stylesheet" href="../assets/site.css?v=16">
-<link rel="stylesheet" href="../assets/messplatz.css?v=16">
-<script src="../assets/site.js?v=16" defer></script>
-<script src="../assets/schaltung.js?v=16" defer></script>
-<script src="../assets/messplatz.js?v=16" defer></script>
+<link rel="stylesheet" href="../assets/site.css?v=18">
+<link rel="stylesheet" href="../assets/messplatz.css?v=18">
+<script src="../assets/site.js?v=18" defer></script>
+<script src="../assets/schaltung.js?v=18" defer></script>
+<script src="../assets/messplatz.js?v=18" defer></script>
 </head>
 <body id="top" data-page="messplatz">
 <a class="skip-link" href="#bench">Zum Messplatz springen</a>
@@ -25,7 +25,7 @@
   <header class="page-hero">
     <span class="eyebrow">Lab 1 / Messplatz</span>
     <h1>Mess<span>//</span>platz</h1>
-    <p class="intro">Ein Elektroniklabor im Browser: Bauteile aufs Steckbrett, Laborkabel stecken, messen. Funktionsgenerator, Zwei-Kanal-Oszilloskop, Multimeter und Netzgerät verhalten sich wie echte Geräte — mit Innenwiderständen, Masse über den Schutzleiter, Kopplung und Trigger. Gerechnet wird wie in SPICE.</p>
+    <p class="intro">Ein Elektroniklabor im Browser: Bauteile aufs Steckbrett, Laborkabel stecken, messen. Funktionsgenerator, Zwei-Kanal-Oszilloskop, zwei Multimeter und Netzgerät verhalten sich wie echte Geräte — mit Innenwiderständen, Tastköpfen, Masse über den Schutzleiter, Kopplung und Trigger. Dazu Bode-Diagramm, Arbeitspunkt und Messreihe zum Vorbereiten und Nachrechnen. Gerechnet wird wie in SPICE.</p>
   </header>
 
   <section class="section mp-versuche-section" aria-labelledby="versuche-title">
@@ -44,9 +44,24 @@
           <button type="button" id="mp-redo" disabled>↷ Vor</button>
           <button type="button" id="mp-restart" title="Simulation neu starten: Kondensatoren leer, Ströme null">⏻ Neu einschalten</button>
           <button type="button" id="mp-volts-btn" aria-pressed="false" title="Knotenspannungen gegen Masse anzeigen">U Potentiale</button>
+          <button type="button" id="mp-file-btn" aria-expanded="false" aria-controls="mp-filepanel">Datei</button>
           <button type="button" id="mp-share">↗ Teilen</button>
           <button type="button" id="mp-clear">Leeren</button>
+          <label class="mp-speed" title="Wie schnell die Simulationszeit läuft">Tempo <select id="mp-speed"><option value="0">Pause</option><option value="0.01">1 %</option><option value="0.1">10 %</option><option value="1" selected>Echtzeit</option><option value="10">10×</option><option value="max">so schnell es geht</option></select></label>
           <span class="mp-zoom"><button type="button" data-zoom="0.8" aria-label="kleiner">−</button><span id="mp-zoom-val">100 %</span><button type="button" data-zoom="1.25" aria-label="größer">+</button><button type="button" data-zoom="fit">Alles</button></span>
+        </div>
+      </div>
+      <div class="mp-filepanel" id="mp-filepanel" hidden>
+        <div class="mp-file-col">
+          <form id="mp-save-form" class="mp-save"><label for="mp-save-name">Aufbau im Browser speichern</label><span><input id="mp-save-name" class="mp-input" placeholder="Name, z. B. Labor 3 Vorbereitung" maxlength="40" autocomplete="off"><button type="submit" class="button small">Speichern</button></span></form>
+          <ul class="mp-saved" id="mp-saved"></ul>
+        </div>
+        <div class="mp-file-col">
+          <span class="mp-file-label">Datei</span>
+          <button type="button" class="button small" id="mp-json">Als Datei speichern (.json)</button>
+          <button type="button" class="button small" id="mp-open-btn">Datei öffnen …</button><input type="file" id="mp-open" accept=".json,application/json" hidden>
+          <button type="button" class="button small" id="mp-spice">SPICE-Netzliste (.cir)</button>
+          <p class="dev-hint">Die Netzliste läuft in LTspice und ngspice, mit denselben Modellen wie hier.</p>
         </div>
       </div>
       <div class="mp-work">
@@ -67,9 +82,10 @@
 
     <div class="mp-rack" id="mp-rack">
       <section class="mp-dev dev-osz" aria-labelledby="osz-title">
-        <header><h3 id="osz-title">Oszilloskop</h3><span>2 Kanäle · 1 MΩ · Masse = Schutzleiter</span></header>
+        <header><h3 id="osz-title">Oszilloskop</h3><span>2 Kanäle · Tastkopf ×1: 1 MΩ ∥ 100 pF, ×10: 10 MΩ ∥ 12 pF · Masse = Schutzleiter</span></header>
         <div class="osz-wrap">
           <canvas id="osz-screen" class="osz-screen" role="img" aria-label="Bildschirm des Oszilloskops"></canvas>
+          <p class="osz-cursor" id="osz-cursor" aria-live="off" hidden></p>
           <div class="osz-meas" id="osz-meas" aria-live="off"></div>
         </div>
         <div class="osz-controls">
@@ -78,15 +94,20 @@
             <span class="step"><button type="button" data-vdiv="0" data-dir="1" aria-label="CH1 gröber">−</button><output id="osz-v0">1 V/div</output><button type="button" data-vdiv="0" data-dir="-1" aria-label="CH1 feiner">+</button></span>
             <label>Position <input type="range" id="osz-pos0" min="-4" max="4" step="0.1" value="0"></label>
             <span class="seg"><button type="button" data-cpl="0" data-value="DC">DC</button><button type="button" data-cpl="0" data-value="AC">AC</button><button type="button" data-cpl="0" data-value="GND">GND</button></span>
+            <span class="seg" aria-label="Tastkopf CH1"><button type="button" data-probe="0" data-value="1">×1</button><button type="button" data-probe="0" data-value="10">×10</button></span>
+            <button type="button" class="mini" id="osz-inv0" data-inv="0" aria-pressed="false" title="CH1 invertieren">INV</button>
           </fieldset>
           <fieldset class="ctl ch2"><legend>CH2</legend>
             <button type="button" class="mini" id="osz-on1" data-ch-on="1" aria-pressed="true">an</button>
             <span class="step"><button type="button" data-vdiv="1" data-dir="1" aria-label="CH2 gröber">−</button><output id="osz-v1">1 V/div</output><button type="button" data-vdiv="1" data-dir="-1" aria-label="CH2 feiner">+</button></span>
             <label>Position <input type="range" id="osz-pos1" min="-4" max="4" step="0.1" value="0"></label>
             <span class="seg"><button type="button" data-cpl="1" data-value="DC">DC</button><button type="button" data-cpl="1" data-value="AC">AC</button><button type="button" data-cpl="1" data-value="GND">GND</button></span>
+            <span class="seg" aria-label="Tastkopf CH2"><button type="button" data-probe="1" data-value="1">×1</button><button type="button" data-probe="1" data-value="10">×10</button></span>
+            <button type="button" class="mini" id="osz-inv1" data-inv="1" aria-pressed="false" title="CH2 invertieren">INV</button>
           </fieldset>
           <fieldset class="ctl"><legend>Zeit</legend>
             <span class="step"><button type="button" data-tdiv="1" aria-label="langsamer">−</button><output id="osz-t">1 ms/div</output><button type="button" data-tdiv="-1" aria-label="schneller">+</button></span>
+            <span class="seg" aria-label="Lage des Triggerpunkts"><button type="button" data-pre="0.1">Trigger links</button><button type="button" data-pre="0.5">Mitte</button></span>
             <button type="button" class="mini" id="osz-xy" aria-pressed="false">XY</button>
           </fieldset>
           <fieldset class="ctl"><legend>Trigger</legend>
@@ -95,7 +116,15 @@
             <label>Pegel <input type="range" id="osz-lvl" min="-4" max="4" step="0.04" value="0"> <output id="osz-lvl-val">0 V</output></label>
             <span class="seg"><button type="button" data-trig-mode="auto">Auto</button><button type="button" data-trig-mode="normal">Normal</button><button type="button" id="osz-single">Single</button></span>
           </fieldset>
-          <div class="ctl-row"><button type="button" class="button small" id="osz-run">■ Stop</button><button type="button" class="button small primary" id="osz-auto">Autoset</button></div>
+          <fieldset class="ctl math"><legend>Math</legend>
+            <span class="seg"><button type="button" data-math="off">aus</button><button type="button" data-math="sub">CH1 − CH2</button><button type="button" data-math="add">CH1 + CH2</button></span>
+            <span class="step" id="osz-mstep"><button type="button" data-mdiv="1" aria-label="Math gröber">−</button><output id="osz-mv">1 V/div</output><button type="button" data-mdiv="-1" aria-label="Math feiner">+</button></span>
+          </fieldset>
+          <fieldset class="ctl"><legend>Cursor</legend>
+            <span class="seg"><button type="button" data-cur="off">aus</button><button type="button" data-cur="t">Zeit</button><button type="button" data-cur="v">Spannung</button></span>
+            <span class="seg" id="osz-cur-src" aria-label="Spannungs-Cursor für"><button type="button" data-cur-src="0">CH1</button><button type="button" data-cur-src="1">CH2</button><button type="button" data-cur-src="2">Math</button></span>
+          </fieldset>
+          <div class="ctl-row"><button type="button" class="button small" id="osz-run">■ Stop</button><button type="button" class="button small primary" id="osz-auto">Autoset</button><button type="button" class="button small" id="osz-log" title="Generatorfrequenz, beide Spitze-Spitze-Werte, Phase und Multimeter notieren">＋ Messreihe</button><button type="button" class="button small" id="osz-csv" title="Aufnahme als Tabelle speichern">CSV</button><button type="button" class="button small" id="osz-png" title="Schirmbild speichern">PNG</button></div>
         </div>
       </section>
 
@@ -108,16 +137,13 @@
         <label class="row"><span>Amplitude V<sub>ss</sub></span> <input type="range" id="fg-vpp" min="0" max="20" step="0.05"></label>
         <label class="row"><span>Offset</span> <input type="range" id="fg-off" min="-10" max="10" step="0.05"></label>
         <label class="row" id="fg-duty-row"><span>Tastgrad</span> <input type="range" id="fg-duty" min="5" max="95" step="1"></label>
+        <div class="row-inline"><span>Anzeige für</span><span class="seg"><button type="button" data-fg-load="hiz">hochohmig</button><button type="button" data-fg-load="50">50 Ω</button></span></div>
+        <p class="dev-hint" id="fg-load-hint"></p>
         <button type="button" class="button small" id="fg-on" aria-pressed="true">Ausgang an</button>
       </section>
 
-      <section class="mp-dev dev-dmm" aria-labelledby="dmm-title">
-        <header><h3 id="dmm-title">Multimeter</h3><span>Batteriebetrieben, potentialfrei · 10 MΩ</span></header>
-        <div class="lcd big" id="dmm-display"><b>—</b></div>
-        <span class="seg wide"><button type="button" data-dmm="VDC">V⎓</button><button type="button" data-dmm="VAC">V~</button><button type="button" data-dmm="ADC">A⎓</button><button type="button" data-dmm="AAC">A~</button><button type="button" data-dmm="OHM">Ω</button><button type="button" data-dmm="DIODE">▷|</button></span>
-        <p class="dev-hint" id="dmm-hint"></p>
-        <button type="button" class="button small" id="dmm-fuse" hidden>Sicherung tauschen</button>
-      </section>
+      <section class="mp-dev dev-dmm" data-meter="dmm" aria-labelledby="dmm-title"></section>
+      <section class="mp-dev dev-dmm2" data-meter="dmm2" aria-labelledby="dmm2-title"></section>
 
       <section class="mp-dev dev-psu" aria-labelledby="psu-title">
         <header><h3 id="psu-title">Netzgerät</h3><span>0–30 V · Strombegrenzung · potentialfrei</span></header>
@@ -130,15 +156,45 @@
         <button type="button" class="button small" id="psu-on" aria-pressed="true">Ausgang an</button>
       </section>
     </div>
+
+    <section class="mp-ana" aria-label="Analyse">
+      <div class="mp-tabs" id="mp-tabs" role="tablist" aria-label="Analyse">
+        <button type="button" role="tab" id="tab-bode" data-tab="bode" aria-controls="ana-bode" aria-selected="true">Frequenzgang</button>
+        <button type="button" role="tab" id="tab-op" data-tab="op" aria-controls="ana-op" aria-selected="false" tabindex="-1">Arbeitspunkt</button>
+        <button type="button" role="tab" id="tab-log" data-tab="log" aria-controls="ana-log" aria-selected="false" tabindex="-1">Messreihe<span id="log-count"></span></button>
+      </div>
+      <div class="mp-tabpanel" id="ana-bode" role="tabpanel" aria-labelledby="tab-bode">
+        <div class="ana-bar">
+          <span class="seg" aria-label="Bezug"><button type="button" data-bode-ref="ch1">Bezug CH1</button><button type="button" data-bode-ref="fg">Bezug Generator</button></span>
+          <span class="ana-range">von <span class="step"><button type="button" data-bode-f="min" data-dir="-1" aria-label="untere Frequenz kleiner">−</button><output id="bode-fmin">10 Hz</output><button type="button" data-bode-f="min" data-dir="1" aria-label="untere Frequenz größer">+</button></span>
+          bis <span class="step"><button type="button" data-bode-f="max" data-dir="-1" aria-label="obere Frequenz kleiner">−</button><output id="bode-fmax">1 MHz</output><button type="button" data-bode-f="max" data-dir="1" aria-label="obere Frequenz größer">+</button></span></span>
+          <button type="button" class="button small" id="bode-keep">Kurve merken</button>
+          <button type="button" class="button small" id="bode-csv">CSV</button>
+          <button type="button" class="lex-q" data-lex="bode-diagramm" aria-label="Bode-Diagramm im Lexikon">?</button>
+        </div>
+        <canvas id="bode-plot" class="bode-plot" role="img" aria-label="Bode-Diagramm: Betrag und Phase von CH2 bezogen auf CH1"></canvas>
+        <p class="bode-read" id="bode-read" aria-live="polite"></p>
+        <p class="dev-hint">Kleinsignalanalyse wie SPICE .AC: Alle Bauteile werden im Arbeitspunkt linearisiert, der Generator regt mit kleiner Amplitude an. Gezeigt wird U(CH2)/U(CH1) — genau das, was man mit dem Oszi Frequenz für Frequenz messen würde, inklusive Tastkopf. Übersteuerung und Verzerrung sieht man hier nicht, dafür das Oszi.</p>
+      </div>
+      <div class="mp-tabpanel" id="ana-op" role="tabpanel" aria-labelledby="tab-op" hidden>
+        <div class="ana-bar"><button type="button" class="lex-q" data-lex="arbeitspunkt" aria-label="Arbeitspunkt im Lexikon">?</button></div>
+        <div id="op-out"></div>
+      </div>
+      <div class="mp-tabpanel" id="ana-log" role="tabpanel" aria-labelledby="tab-log" hidden>
+        <div class="ana-bar"><button type="button" class="button small primary" id="log-add">＋ Messpunkt</button><button type="button" class="button small" id="log-csv">CSV</button><button type="button" class="button small" id="log-clear">Alle löschen</button></div>
+        <div id="log-out"></div>
+      </div>
+    </section>
   </section>
 
   <section class="section mp-modelle" aria-labelledby="modelle-title">
     <div class="section-heading"><h2 id="modelle-title">Wie hier gerechnet wird</h2></div>
     <div class="mp-modelle-grid">
-      <p><b>Verfahren.</b> Modifizierte Knotenanalyse wie in SPICE. Zeitschritt mit BDF2 (Gear, 2. Ordnung), Dioden, Transistoren und OPV per Newton-Raphson mit Spannungsbegrenzung. Jeder Knoten hängt mit 10<sup>−12</sup> S an Masse, damit auch offene Schaltungen lösbar bleiben.</p>
-      <p><b>Bauteile.</b> Diode 1N4148 (Shockley), rote LED, Z-Diode 5,1 V, Transistoren BC547/BC557 (Ebers-Moll, B = 300). OPV: 200 000-fache Leerlaufverstärkung, 1 MHz Transitfrequenz, Ausgang ±13,5 V und höchstens 25 mA. Kabel sind ideal.</p>
-      <p><b>Geräte.</b> Generator: 50 Ω Innenwiderstand, Masse auf Schutzleiter. Oszilloskop: 1 MΩ je Kanal, AC-Kopplung mit 10 Hz Grenzfrequenz, Masse auf Schutzleiter. Multimeter: 10 MΩ, Strommessung über 0,1 Ω, Sicherung 400 mA. Netzgerät: Konstantspannung oder Konstantstrom.</p>
-      <p><b>Grenzen.</b> Kein Netzwerk aus Leitungen, keine parasitären Kapazitäten, keine Temperatur. Überlastete Bauteile brennen durch, wenn sie deutlich über ihren Grenzwerten liegen — „Ersetzen“ im Inspektor repariert sie.</p>
+      <p><b>Verfahren.</b> Modifizierte Knotenanalyse wie in SPICE. Zeitschritt mit BDF2 (Gear, 2. Ordnung), Dioden, Transistoren und OPV per Newton-Raphson mit Spannungsbegrenzung; klappt ein Schritt nicht, wird er bis auf ein Tausendstel geteilt. Jeder Knoten hängt mit 10<sup>−12</sup> S an Masse, damit auch offene Schaltungen lösbar bleiben.</p>
+      <p><b>Bauteile.</b> Diode 1N4148 (Shockley), rote LED, Z-Diode 5,1 V. BC547/BC557 nach Ebers-Moll (B = 300) mit C<sub>BE</sub> = 25 pF und C<sub>BC</sub> = 4 pF. MOSFET 2N7000 nach Level 1 (U<sub>th</sub> = 2,1 V) mit Bodydiode, die bei 60 V durchbricht, C<sub>GS</sub> = 20 pF, C<sub>GD</sub> = 5 pF. OPV: 200 000-fache Leerlaufverstärkung, 1 MHz Transitfrequenz, Ausgang ±13,5 V und höchstens 25 mA. Trenntrafo: 10 H primär, Kopplung 0,999. Ideale Spannungs- und Stromquelle. Kabel sind ideal.</p>
+      <p><b>Geräte.</b> Generator: 50 Ω Innenwiderstand, Masse auf Schutzleiter, Anzeige wahlweise für Leerlauf oder 50-Ω-Last. Oszilloskop: Tastkopf ×1 (1 MΩ ∥ 100 pF) oder ×10 (10 MΩ ∥ 12 pF), AC-Kopplung mit 10 Hz Grenzfrequenz, Masse auf Schutzleiter. Zwei Multimeter: 10 MΩ, Strommessung über 0,1 Ω, Sicherung 400 mA. Netzgerät: Konstantspannung oder Konstantstrom.</p>
+      <p><b>Analyse.</b> Frequenzgang als Kleinsignalanalyse (.AC) im Arbeitspunkt, Arbeitspunkt wie .OP (Kondensatoren offen, Spulen kurz). Beides rechnet unabhängig von der laufenden Zeitsimulation. Der Aufbau lässt sich als SPICE-Netzliste exportieren und in LTspice oder ngspice gegenrechnen.</p>
+      <p><b>Grenzen.</b> Keine Leitungseffekte, keine Temperatur, kein Rauschen; die Kapazitäten der Halbleiter sind feste Näherungen. Überlastete Bauteile brennen durch, wenn sie deutlich über ihren Grenzwerten liegen — „Ersetzen“ im Inspektor repariert sie.</p>
     </div>
   </section>
 </main>

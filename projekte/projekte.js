@@ -13,7 +13,7 @@
 OSCI.projekteListe([
   {
     titel: 'Messplatz',
-    text: 'Elektroniklabor im Browser: Steckbrett, Oszilloskop, Funktionsgenerator, Multimeter und Netzgerät. Eigener Schaltungssimulator wie SPICE, neun Versuche.',
+    text: 'Elektroniklabor im Browser: Steckbrett, Oszilloskop, Funktionsgenerator, zwei Multimeter und Netzgerät, dazu Bode-Diagramm und Arbeitspunkt. Eigener Schaltungssimulator wie SPICE, sechzehn Versuche.',
     link: 'messplatz/',
     status: 'Spielbar',
     datum: '2026-10-23',

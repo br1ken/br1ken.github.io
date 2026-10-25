@@ -34,7 +34,7 @@ const OSCISchaltung = (() => {
     '1N4148': {Is: 2.52e-9, n: 1.752},
     'LED': {Is: 1e-18, n: 1.9},                               // rot, etwa 1,8 V bei 10 mA
     'ZD5V1': {Is: 1e-14, n: 1, BV: 5.1, Ibv: 5e-3, nb: 4},    // Z-Diode: 5,1 V bei 5 mA, r_z ≈ 20 Ω
-    'BODY': {Is: 1e-11, n: 1.5},                              // Bodydiode des MOSFET, etwa 0,9 V bei 0,1 A
+    'BODY': {Is: 1e-11, n: 1.5, BV: 60, Ibv: 1e-3, nb: 2},    // Bodydiode des MOSFET: 0,9 V bei 0,1 A, Avalanche ab 60 V
     'BC547': {Is: 1e-14, BF: 300, BR: 5},
     'BC557': {Is: 1e-14, BF: 300, BR: 5},
     '2N7000': {Vth: 2.1, K: .1, lam: .02},                    // R_DS,on ≈ 1,3 Ω bei U_GS = 10 V
@@ -84,7 +84,7 @@ const OSCISchaltung = (() => {
     let h = 1e-5, lastH = 0;
     let dcMode = false, srcScale = 1; // Arbeitspunkt: Kondensatoren offen, Spulen kurz, Quellen skaliert
     const states = new Map(); // Bauteilzustände über Neuaufbauten hinweg (Kondensatorspannung, Spulenstrom, …)
-    const sim = {t: 0, fails: 0, iters: 0, error: ''};
+    const sim = {t: 0, fails: 0, subs: 0, iters: 0, error: ''};
 
     /* ---------- Einträge in Matrix und rechte Seite (Index −1 = Masse) ---------- */
     const ix = node => node - 1;
@@ -137,7 +137,7 @@ const OSCISchaltung = (() => {
       A = new Float64Array(size * size); lu = new Float64Array(size * size); z = new Float64Array(size); perm = new Int32Array(size);
       version++; luKey = ''; lastH = 0; sim.error = '';
     };
-    sim.reset = () => { states.clear(); for (const d of devs) d.s = null; const net = {nodes: N, devices: devs.map(({i, s, mm, ...rest}) => rest)}; sim.t = 0; sim.fails = 0; x = new Float64Array(0); sim.load(net); };
+    sim.reset = () => { states.clear(); for (const d of devs) d.s = null; const net = {nodes: N, devices: devs.map(({i, s, mm, ...rest}) => rest)}; sim.t = 0; sim.fails = 0; sim.subs = 0; x = new Float64Array(0); sim.load(net); };
     sim.setStep = (dt) => { h = dt; };
     sim.step = () => h;
 
@@ -380,13 +380,18 @@ const OSCISchaltung = (() => {
       sim.t += hh;
     }
     /* Schritt mit der eingestellten Weite. Klappt Newton nicht (z. B. Mitkopplung, die innerhalb eines Schritts kippt),
-       wird der Schritt wie in SPICE immer feiner geteilt — bis h/1024 — und mit implizitem Euler gerechnet. */
+       wird der Schritt wie in SPICE immer feiner geteilt — bis h/1024 — und mit implizitem Euler gerechnet.
+       Höchstens SUB_BUDGET Versuche pro Schritt, damit ein hartnäckiger Fall die Seite nicht einfriert. */
+    const SUB_BUDGET = 120;
+    let budget = 0;
     function subdivide(hh, depth) {
       for (let k = 0; k < 4; k++) {
-        if (tryStep(hh / 4, 1)) continue;
-        if (sim.error) return false;
-        if (depth < 5) { if (!subdivide(hh / 4, depth + 1)) return false; }
-        else { sim.fails++; x.set(xk); accept(hh / 4); } // letzter Ausweg: bestes Ergebnis übernehmen
+        if (budget-- > 0) {
+          if (tryStep(hh / 4, 1)) continue;
+          if (sim.error) return false;
+          if (depth < 5) { if (!subdivide(hh / 4, depth + 1)) return false; continue; }
+        }
+        sim.fails++; x.set(xk); accept(hh / 4); // letzter Ausweg: bestes Ergebnis übernehmen
       }
       return true;
     }
@@ -396,6 +401,7 @@ const OSCISchaltung = (() => {
       if (tryStep(h, ord)) { lastH = h; return true; }
       if (sim.error) return false;
       const saved = sim.t;
+      sim.subs++; budget = SUB_BUDGET;
       if (!subdivide(h, 1)) return false;
       sim.t = saved + h; lastH = 0;
       return true;
@@ -422,16 +428,20 @@ const OSCISchaltung = (() => {
       const op = Float64Array.from(xk);
       if (ok) assemble(op, 1, 1, 0, true); // Linearisierung im Arbeitspunkt festhalten
       const lin = devs.map(d => ({lin: d.lin && structuredClone(d.lin), gd: d.gd, mode: d.s.mode}));
+      /* Spannungen und Ströme aller Bauteile im Arbeitspunkt: Kondensatoren führen keinen Strom, Spulen sind Kurzschlüsse */
+      const infos = new Map(), live = x;
+      x = op;
+      for (const d of devs) {
+        let q = sim.info(d.id);
+        if (d.k === 'C') q = {...q, i: 0};
+        else if (d.k === 'L') q = {...q, i: GSHORT * q.u};
+        else if (d.k === 'K') q = {...q, i: GSHORT * q.u, i2: GSHORT * q.u2};
+        infos.set(d.id, q);
+      }
+      x = live;
       dcMode = false; srcScale = 1; luKey = ''; // die zwischengespeicherte LU-Zerlegung der Zeitsimulation ist überschrieben
       restore(snap);
-      return {ok, op, lin, v: node => node > 0 && node <= N ? op[node - 1] : 0, info: id => {
-        const i = devs.findIndex(d => d.id === id); if (i < 0) return null;
-        const d = devs[i], [a, b, c] = d.i, u = volt(op, a) - volt(op, b);
-        if (d.k === 'R') return {u, i: u / d.R};
-        if (d.k === 'D') return {u, i: null};
-        if (d.k === 'Q') return {uce: volt(op, a) - volt(op, c), ube: volt(op, b) - volt(op, c)};
-        return {u};
-      }};
+      return {ok, op, lin, v: node => node > 0 && node <= N ? op[node - 1] : 0, info: id => infos.get(id) ?? null};
     };
 
     /* ---------- Kleinsignalanalyse (.AC) ----------

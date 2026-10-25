@@ -27,12 +27,12 @@ Bewusst minimal: **plain HTML, CSS und JavaScript, ohne Framework und ohne Build
 |---|---|---|
 | Startseite | `index.html` | Hero, Labor-Teaser, neueste Notizen und Projekte, „Hinter dem Signal.“ (Bio mit Datenblatt) |
 | Crashtest-Labor | `labor/` | Lab 0: Missionen, Sequencer, Effekte, Pult mit baumelnden Kabeln |
-| Messplatz | `messplatz/` | Lab 1: Steckbrett mit Funktionsgenerator, Oszilloskop, Multimeter und Netzgerät, eigener Schaltungssimulator, 9 Versuche |
+| Messplatz | `messplatz/` | Lab 1: Steckbrett mit Funktionsgenerator, Oszilloskop, zwei Multimetern und Netzgerät, Bode-Diagramm, Arbeitspunkt, Messreihe, eigener Schaltungssimulator, 16 Versuche |
 | Notizen | `notizen/` | Blog für Gelerntes aus dem Studium, mit Suche und Themenfilter |
 | Eine Notiz | `notizen/beitrag.html?b=name` | wird aus `notizen/texte/name.md` erzeugt |
 | Schreibstube | `notizen/schreiben.html` | Editor mit Live-Vorschau für neue Notizen (nicht verlinkt) |
 | Projekte | `projekte/` | Simulationen, Schaltungen, Code |
-| Lexikon | ⋮ oben rechts auf jeder Seite, „?“ an jedem Baustein im Labor, oder `#lexikon` / `#lexikon-spannung` / `#lexikon-synth` an der Adresse | zwei Teile: **Elektro** (37 Größen, Gesetze, Bauelemente und Messgeräte: formal, physikalisch, SI-Einheit) und **Synth** (29 Bausteine und Begriffe eines Synthesizers, mit Verweis auf den passenden Labor-Baustein) |
+| Lexikon | ⋮ oben rechts auf jeder Seite, „?“ an jedem Baustein im Labor, oder `#lexikon` / `#lexikon-spannung` / `#lexikon-synth` an der Adresse | zwei Teile: **Elektro** (43 Größen, Gesetze, Bauelemente und Messgeräte: formal, physikalisch, SI-Einheit) und **Synth** (29 Bausteine und Begriffe eines Synthesizers, mit Verweis auf den passenden Labor-Baustein) |
 | Dunkelmodus | ◐ oben rechts | folgt der Systemeinstellung, per Knopf umschaltbar, wird im Browser gemerkt (`osci-log-theme`) |
 
 **Aktuelle Inhalte**
@@ -61,7 +61,7 @@ assets/
   labor.css / labor.js  Labor: Bausteine, Sequencer, Kabelphysik, Einfach-Ansicht und freies Pult
   missionen.js          Missionen, XP, Stufen, Abzeichen
   schaltung.js          Schaltungssimulator (Knotenanalyse wie SPICE), ohne Oberfläche
-  messplatz.css / .js   Messplatz: Steckbrett, Kabel, Geräte, Versuche
+  messplatz.css / .js   Messplatz: Steckbrett, Kabel, Geräte, Analyse, Versuche
   models.js             Formeln des Labors, Patch-Links
   start.js              Startseite: neueste Notizen und Projekte, alte Patch-Links ins Labor
   markdown.js           Markdown → HTML für Notizen
@@ -172,17 +172,6 @@ Neue Mission: in `assets/missionen.js` in `MISSIONEN` ergänzen (Ziele = Text + 
 - Frequenz, Widerstand, Tremolo und Pegel ändern sich beim Regler-Ziehen ohne Knacksen; C und L bauen den Klang kurz neu auf.
 - Auf iPhones mit aktuellem iOS soll der Ton auch im Lautlos-Modus spielen (`navigator.audioSession`); zusätzlich erscheint ein Hinweis zum Lautlos-Schalter.
 
-## Der Messplatz (`messplatz/`)
-
-Ein Elektroniklabor auf TU-Niveau. Bauteile kommen als Steckbausteine aufs Brett, verbunden wird mit Laborkabeln (4-mm-Buchsen, rot/schwarz, Kanalfarben). Die Geräte stehen im Regal darunter, ihre Buchsen als Anschlussfelder auf dem Brett.
-
-- **Bauteile:** Widerstand, Kondensator, Elko (gepolt), Spule, Diode 1N4148, LED, Z-Diode 5,1 V, Schalter, Potentiometer, OPV, NPN BC547, PNP BC557, Masse. Werte in E12-Schritten oder als Text (`4k7`, `100n`, `2.2u`), drehen mit ⟳ oder Taste R.
-- **Geräte:** Funktionsgenerator (Sinus, Rechteck, Dreieck, Säge, 0,1 Hz bis 1 MHz, Offset, Tastgrad, 50 Ω Innenwiderstand), Oszilloskop (2 Kanäle, 1 MΩ, DC/AC/GND, Trigger mit Flanke, Pegel, Auto/Normal/Single, XY, Autoset, Messwerte inklusive Phase), Multimeter (V⎓, V~ als Echt-Effektivwert, A⎓, A~, Ω mit automatischem Bereich, Diodentest, 400-mA-Sicherung), Netzgerät (0–30 V, Strombegrenzung, CV/CC).
-- **Physik wie im Labor:** Generator- und Oszilloskop-Masse liegen auf Schutzleiter, Netzgerät und Multimeter sind potentialfrei. Überlastete Bauteile werden heiß und brennen durch; „Ersetzen“ im Inspektor repariert sie.
-- **Versuche:** Messen belastet, RC-Sprungantwort, Tiefpass (Betrag und Phase, Lissajous), Reihenschwingkreis, Gleichrichter mit Glättung, Z-Diode, invertierender Verstärker, OPV-Integrator, Transistor als Schalter. Jeder mit Aufgaben und aufklappbarer Theorie.
-- **Rechenkern** (`assets/schaltung.js`): modifizierte Knotenanalyse, BDF2-Zeitschritte, Newton-Raphson mit SPICE-Spannungsbegrenzung, Bauteilmodelle nach Shockley und Ebers-Moll, OPV mit Verstärkungs-Bandbreite-Produkt und Sättigung. Schwebende Teilschaltungen bekommen automatisch einen stromlosen Bezugspunkt. Gegen Lehrbuchwerte getestet (RC, Schwingkreis, Diode, Transistor, OPV: Abweichungen unter 0,1 %).
-- Aufbau und Geräteeinstellungen bleiben im Browser (`osci-log-messplatz-v1`); „↗ Teilen“ erzeugt einen Link mit allem.
-
 ### Was die Modelle bedeuten
 
 Die Kabel sind gerichtete Audiosignale. Jeder Baustein ist ein idealisiertes, gepuffertes Modul. Das ist kein Solver für beliebige elektrische Netze, und die Last eines Moduls wirkt nicht auf andere zurück.
@@ -201,6 +190,19 @@ Die Brücken-Simulation (`bruecke`) rechnet dagegen exakt über die Ersatzspannu
 - [Kondensator / MathWorks](https://www.mathworks.com/help/simscape/ref/capacitor.html)
 - [Spule / MathWorks](https://www.mathworks.com/help/simscape/ref/inductor.html)
 - [Passive components and circuits / TI Precision Labs](https://www.ti.com/content/dam/videos/external-videos/en-us/4/3816841626001/6119035031001.mp4/subassets/passive_components_and_circuits_2.pdf)
+
+## Der Messplatz (`messplatz/`)
+
+Ein Elektroniklabor auf TU-Niveau, gedacht zum Vorbereiten von Laborübungen und zum Nachrechnen im Labor. Bauteile kommen als Steckbausteine aufs Brett, verbunden wird mit Laborkabeln (4-mm-Buchsen, rot/schwarz, Kanalfarben). Die Geräte stehen im Regal darunter, ihre Buchsen als Anschlussfelder auf dem Brett.
+
+- **Bauteile:** Widerstand, Kondensator, Elko (gepolt), Spule, Potentiometer, Schalter, Diode 1N4148, LED, Z-Diode 5,1 V, NPN BC547, PNP BC557, MOSFET 2N7000 (mit Bodydiode), OPV, Trenntrafo (Übersetzung einstellbar), ideale Spannungs- und Stromquelle, Masse. Jedes Teil hat einen festen Bezeichner (R1, C2, T1 …). Werte in E12-Schritten oder als Text (`4k7`, `100n`, `2.2u`), drehen mit ⟳ oder Taste R. Der Inspektor zeigt Spannung, Strom, Leistung und bei Transistoren den Arbeitsbereich.
+- **Geräte:** Funktionsgenerator (Sinus, Rechteck, Dreieck, Säge, 0,1 Hz bis 1 MHz, Offset, Tastgrad, 50 Ω, Anzeige für Leerlauf oder 50-Ω-Last), Oszilloskop (2 Kanäle, Tastkopf ×1 = 1 MΩ ∥ 100 pF oder ×10 = 10 MΩ ∥ 12 pF, DC/AC/GND, INV, Math CH1 ± CH2, Zeit- und Spannungscursor, Trigger links oder in der Mitte, Auto/Normal/Single, XY, Autoset, Messwerte mit Phase und Anstiegszeit, Export als CSV und PNG), zwei Multimeter (V⎓, V~ als Echt-Effektivwert, A⎓, A~, Ω mit automatischem Bereich, Diodentest, 400-mA-Sicherung), Netzgerät (0–30 V, Strombegrenzung, CV/CC).
+- **Analyse:** Frequenzgang als Bode-Diagramm (Kleinsignalanalyse wie SPICE .AC, U(CH2)/U(CH1) inklusive Tastkopf, −3-dB-Punkte, Resonanz und Güte, Steigung, Vergleichskurve, CSV); Arbeitspunkt wie .OP (alle Knotenpotentiale und Bauteilwerte, Bereich jedes Transistors); Messreihe (Punkte von Oszi und Multimetern notieren, als CSV speichern, im Bode-Diagramm gegen die Rechnung legen).
+- **Physik wie im Labor:** Generator- und Oszilloskop-Masse liegen auf Schutzleiter, Netzgerät, Multimeter und die Trafo-Sekundärseite sind potentialfrei. Überlastete Bauteile werden heiß und brennen durch; „Ersetzen“ im Inspektor repariert sie.
+- **Versuche (16):** Messen belastet, Tastkopf ×1 oder ×10, RC-Sprungantwort, Tiefpass (Betrag und Phase), Reihenschwingkreis, Gleichrichter mit Glättung, Brückengleichrichter mit Trafo, Diodenkennlinie im XY-Betrieb, Z-Diode, Transistor als Schalter, Emitterschaltung, MOSFET schaltet eine Spule, invertierender Verstärker, OPV-Integrator, Schmitt-Trigger, aktiver Tiefpass 2. Ordnung (Sallen-Key). Jeder mit Aufgaben und aufklappbarer Theorie; die Zahlen in den Texten sind gegen die Simulation geprüft.
+- **Speichern:** Der aktuelle Aufbau bleibt im Browser (`osci-log-messplatz-v1`). Unter „Datei“: benannte Aufbauten speichern (`osci-log-messplatz-aufbauten`), als JSON-Datei speichern und öffnen, SPICE-Netzliste (.cir) für LTspice oder ngspice exportieren. „↗ Teilen“ erzeugt einen Link mit Aufbau und Geräteeinstellungen. Tempo: Pause, 1 %, 10 %, Echtzeit, 10×, so schnell es geht.
+- **Rechenkern** (`assets/schaltung.js`): modifizierte Knotenanalyse, BDF2-Zeitschritte mit Schrittteilung bei schwieriger Konvergenz, Newton-Raphson mit SPICE-Spannungsbegrenzung; Modelle nach Shockley (mit Durchbruch), Ebers-Moll, MOSFET Level 1, gekoppelte Spulen, OPV mit Verstärkungs-Bandbreite-Produkt und Sättigung; Arbeitspunkt (.OP) mit Quellen-Hochrampen und Kleinsignalanalyse (.AC). Schwebende Teilschaltungen bekommen automatisch einen stromlosen Bezugspunkt.
+- **Gegen die Theorie geprüft:** RC-Tiefpass −3 dB bei 1591,6 Hz und −45,00° (Theorie 1591,5 Hz); Schwingkreis f₀ = 5033,6 Hz, Q = 31,63 bzw. 5,271 (31,62 bzw. 5,270); OPV-Grenzfrequenz 90,8 kHz (f_T/11 = 90,9 kHz); Emitterschaltung I_C = 1,40 mA und v = 253 (−g_m R_C = 253); Tastkopf ×1: 2/3 und t_r = 73,2 µs (73,2 µs); Diode bei 10 mA 0,689 V (Shockley 0,688 V); Messfehler 4,7619 V (4,7619 V).
 
 ## Verlauf (Oktober 2026)
 
@@ -229,6 +231,8 @@ Die Brücken-Simulation (`bruecke`) rechnet dagegen exakt über die Ersatzspannu
 - Behoben: 13 Farbvariablen im hellen Modus verwiesen auf sich selbst (z. B. waren Kabel im freien Pult unsichtbar).
 - Fachlicher Check aller Notizen, Lexikon-Einträge, Labor-Texte und Missionen: präzisere Formulierungen (Impedanz vs. Blindwiderstand, technische Stromrichtung, Ladungsquantelung, Echo bei g = 1, antiparallele Dioden u. a.), Rechenfehler in der Teiler-Simulation („% mehr“) behoben, breite Formeln der Brückenschaltung mehrzeilig.
 - Lautstärke: Belohnungs-Töne laufen über den Pegel (waren vorher am Pegel vorbei und viel zu laut), Wellenformen, Verzerrer und Echo-Rückkopplung gleichen sich aus; jede Mission startet mit eigener Sequencer-Melodie statt Dauerton.
+- Messplatz als Werkzeug fürs Labor: MOSFET, Trenntrafo, ideale Quellen, zweites Multimeter, Tastkopf ×1/×10 mit Eingangskapazität, INV, Math-Kanal, Cursor, Anstiegszeit, Bode-Diagramm, Arbeitspunkt, Messreihe, benannte Aufbauten, JSON- und SPICE-Export, Tempo-Regler, feste Bezeichner (R1, C1 …); sieben neue Versuche (16 insgesamt), sechs neue Lexikon-Einträge (MOSFET, Transformator, ideale Quellen, Arbeitspunkt, Tastkopf, Bode-Diagramm).
+- Behoben im Messplatz: Autoset setzte Triggermodus, Lauf und XY nicht zurück (ein Kommentar hatte den Code verschluckt); der Bezugspunkt für schwebende Teilschaltungen konnte in Sonderfällen einen Generator- oder OPV-Ausgang mit 1 kΩ belasten; die „?“-Knöpfe waren ungestylt; Beschriftungen lagen bei Transistoren und Poti auf einer Buchse.
 
 **Inhalte**
 - Notiz Brückenschaltung (A2.3) mit Simulation `bruecke`: Schaltplan, Potentialskala, Zweig-Tabelle mit Leistungsbilanz, Lastleistungs-Kurve.
