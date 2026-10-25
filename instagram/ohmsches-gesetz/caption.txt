@@ -1,0 +1,14 @@
+Ohm ist kein Gesetz. ∿
+
+U = R · I steht in jeder ersten Vorlesung an der Tafel. Aber was steht da eigentlich?
+
+Drei Größen, ein Verhältnis: Spannung ist Energie pro Ladung, Strom ist Ladung pro Zeit – und R ist keine dritte Zutat, sondern das, was rauskommt, wenn du beide misst. Ohmsch heißt nur: Es kommt jedes Mal dasselbe raus. Eine Gerade durch null.
+
+Warum linear? Newton im Draht: Das Feld zieht, das Gitter bremst, im Mittel bleibt eine Drift proportional zum Feld. Mehr braucht es nicht für eine Gerade.
+
+Und wo es bricht: Glühlampe, Diode, Halbleiter. Ohm ist kein Naturgesetz, sondern ein Datenblatt-Versprechen – gilt für Metall bei konstanter Temperatur.
+
+Selber nachmessen: Diodenkennlinie im XY-Betrieb und die ganze Herleitung von Newton bis Ohm.
+→ Link in Bio: br1ken.github.io
+
+#elektrotechnik #ohmschesgesetz #tuwien #electronics #grundlagen #physik #engineeringstudent #studygram #messtechnik #oszilloskop

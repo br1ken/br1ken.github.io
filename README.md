@@ -53,6 +53,7 @@ messplatz/index.html    Messplatz (Lab 1)
 favicon.svg             Logo (Signal formt ein N)
 neuigkeiten.js          Neuerungen an der Seite für das Neuigkeiten-Fenster (neue Notizen kommen von selbst)
 instagram/              Profilbild, Cover-Bilder, Story und Text für @_br1ken_ (nicht verlinkt)
+  ohmsches-gesetz/      zweites Karussell: slides.html ist die Quelle, ohm_01–06.png die gerenderten Slides, caption.txt der Posttext
 notizen/
   beitraege.js          Liste der Notizen (nur Dateinamen)
   texte/*.md            die Notizen selbst  (_vorlage.md = Vorlage)
@@ -253,6 +254,7 @@ Ein Elektroniklabor auf TU-Niveau, gedacht zum Vorbereiten von Laborübungen und
 - Notiz *Vom Sinus zum Sound*: Kurs in fünf Teilen von Schall, Sinus und Dezibel über Obertöne, Modulation, Abtasten, Bits, komplexe Zeiger und FFT bis zu Filter, Biquad, Faltung und Hall, dazu die Projekte Karplus-Strong, Stimmgerät und Mini-Synthesizer. 26 getestete Python-Programme, 14 SVG-Diagramme, Formelsammlung und Aufgaben zu jedem Teil. Checkpoints (`- [ ]`) lassen sich in jeder Notiz abhaken, der Stand bleibt im Browser (`osci-log-haken`) und steht im Kopf der Notiz. Neue Simulationen `klang` (Obertöne) und `abtastung` (Aliasing), beide mit Ton über Web Audio (ein gemeinsamer AudioContext, immer nur eine Quelle, stoppt beim Verlassen des Tabs). Codeblöcke haben einen Knopf „Kopieren“, Tabellen trennen am Handy Wörter statt seitlich zu scrollen. 16 Synth-Lexikon-Einträge verlinken auf die passenden Abschnitte. Das Inhaltsverzeichnis scrollt bei langen Notizen selbst.
 - Notizen A3.4 *Ersatzspannungsquelle mit gesteuerten Quellen* (Leerlauf und Kurzschluss statt Abschalten, Probe mit Testquelle), A3.5 *Brückenschaltung zur Messwertumsetzung* (Thévenin, Stromteiler auf zwei Wegen, Potentiale, Spannungsteiler) und A3.6 *Wirkungsgrad einer Spannungsquelle* (η über R<sub>a</sub>/R<sub>i</sub> mit Graph). Alle Zwischenschritte mit Zufallswerten gegen eine direkte Netzwerkrechnung geprüft. Schaltbilder mit farbigen Zählpfeilen (Klassen `pu`/`pi`), neuer Lexikon-Eintrag *Gesteuerte Quelle*.
 - Neues Erscheinungsbild: Schrift überall Meslo LG; Farben aus der Elektronik (Lötstopplack Ultramarin, Kupfer Mennige, Bestückungsdruck Kreide, Oszilloskop Tinte); Logo als Lissajous-Figur. Startseite als geroutete Leiterplatte mit Tastkopf und Oszilloskop (`assets/platine.js`, Beispielsignale), Karten als ICs, Titelbilder als XY-Oszillogramme, Netzlabels und Vias an den Abschnitten. Formen stehen in `assets/design.css`, das auf jeder Seite zuletzt lädt.
+- Instagram, zweites Karussell „Ohm ist kein Gesetz" (`instagram/ohmsches-gesetz/`): sechs Slides im Stil des ersten — Kennlinie als Steigung, die drei Größen, Drude-Modell als Datenblatt, Gültigkeitsbereich, Aufruf zum Nachmessen. Gebaut als HTML (`slides.html`, Schrift wie auf der Seite, Helvetica durch FreeSans ersetzt) und mit Playwright auf 1080×1350 gerendert; neue Karussells entstehen durch Kopieren dieser Datei.
 
 **Inhalte**
 - Notiz Brückenschaltung (A2.3) mit Simulation `bruecke`: Schaltplan, Potentialskala, Zweig-Tabelle mit Leistungsbilanz, Lastleistungs-Kurve.
