@@ -66,6 +66,7 @@
 /* Diagramme als SVG direkt in der Notiz: Farben aus den Variablen, damit sie hell und dunkel passen */
 .prose figure.dia { padding: 18px 12px 14px; border: 1px solid var(--hairline); background: var(--paper); }
 .prose figure.dia figcaption { text-align: center; }
+.math-nobr { white-space: nowrap; }
 .dia svg { display: block; width: 100%; max-width: 480px; height: auto; margin: 0 auto; color: var(--fg); font-family: var(--mono); overflow: visible; }
 .dia text { fill: currentColor; font-size: 13px; }
 .dia text.k { fill: var(--muted); font-size: 10px; letter-spacing: .03em; }
@@ -130,7 +131,7 @@
 .sim-kicker { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
 .sim-formula { font-family: var(--mono); font-size: 12px; }
 .sim-body { display: grid; grid-template-columns: minmax(0, 1fr) 280px; }
-.sim-plots { min-width: 0; display: grid; }
+.sim-plots { min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); }
 .sim-plot { margin: 0; padding: 12px 14px 10px; border-bottom: 1px solid var(--hairline); }
 .sim-plot:last-child { border-bottom: 0; }
 .sim-plot svg { display: block; width: 100%; height: auto; font-family: var(--mono); }
@@ -189,6 +190,16 @@
 .sim-control.is-locked { opacity: .55; }
 .sim-badge { margin: 4px 0 0; padding: 8px 10px; font-size: 12px; line-height: 1.45; background: var(--accent); border: 1px solid var(--ink); }
 .sim-badge[hidden] { display: none; }
+.sim-seg { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--ink); margin: 0 0 12px; }
+.sim-seg button { border: 0; border-left: 1px solid var(--ink); background: var(--card); color: var(--fg); font: 11px var(--mono); padding: 8px 4px; min-height: 36px; cursor: pointer; }
+.sim-seg button:first-child { border-left: 0; }
+.sim-seg button:hover { background: var(--accent); color: var(--accent-ink); }
+.sim-seg button[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); }
+.sim svg .volt { fill: none; stroke: var(--ink); stroke-width: 1.4; }
+.sim svg .open { fill: var(--card); stroke: var(--ink); stroke-width: 1.6; }
+.sim-branches .on { background: var(--accent-soft); }
+.sim-ueber svg .tick { font-size: 15px; }
+.sim-branches td.l, .sim-branches th.l { text-align: left; }
 
 
 /* ---------- Schreibstube ---------- */
@@ -218,7 +229,7 @@
   .toc { display: none; }
   .post-head { grid-template-columns: 1fr; gap: 20px; }
   .post-facts { align-self: start; }
-  .sim-body { grid-template-columns: 1fr; }
+  .sim-body { grid-template-columns: minmax(0, 1fr); }
   .sim-side { border-left: 0; border-top: 1px solid var(--ink); }
   .writer-meta, .writer-meta2 { grid-template-columns: 1fr 1fr; }
 }

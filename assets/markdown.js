@@ -21,7 +21,12 @@ const OSCIMarkdown = (() => {
     s = s.replace(/(`+)([\s\S]*?[^`])\1(?!`)/g, (_, __, code) => hold(`<code>${esc(code.trim())}</code>`));
     s = s.replace(/\\\$/g, () => hold('$'));
     s = s.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_, text, id) => hold(`<a class="lex-link" href="#lexikon-${esc(slugify(id || text))}" data-lex="${esc(slugify(id || text))}">${esc(text.trim())}</a>`));
-    s = s.replace(/\$([^\s$](?:[^$]*?[^\s$])?)\$(?!\d)/g, (_, tex) => hold(`<span class="math math-inline">${esc(tex)}</span>`));
+    /* Ein direkt folgendes Satzzeichen bleibt bei kurzen Formeln in derselben Zeile (sonst landet ein Komma allein am
+       Zeilenanfang). Lange Formeln dürfen weiter intern umbrechen, darum dort kein Klammern. */
+    s = s.replace(/\$([^\s$](?:[^$]*?[^\s$])?)\$(?!\d)([.,;:!?)]?)/g, (_, tex, punct) => {
+      const math = `<span class="math math-inline">${esc(tex)}</span>`;
+      return punct && tex.length <= 40 ? hold(`<span class="math-nobr">${math}`) + punct + hold('</span>') : hold(math) + punct;
+    });
     s = esc(s);
     s = s.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+&quot;([^&]*)&quot;)?\)/g, (_, alt, src, title) => hold(`<img src="${esc(safeUrl(src))}" alt="${alt}"${title ? ` title="${title}"` : ''} loading="lazy">`));
     s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, label, href) => {

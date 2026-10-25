@@ -32,15 +32,16 @@ Bewusst minimal: **plain HTML, CSS und JavaScript, ohne Framework und ohne Build
 | Eine Notiz | `notizen/beitrag.html?b=name` | wird aus `notizen/texte/name.md` erzeugt |
 | Schreibstube | `notizen/schreiben.html` | Editor mit Live-Vorschau für neue Notizen (nicht verlinkt) |
 | Projekte | `projekte/` | Simulationen, Schaltungen, Code |
-| Lexikon | ⋮ oben rechts auf jeder Seite, „?“ an jedem Baustein im Labor, oder `#lexikon` / `#lexikon-spannung` / `#lexikon-synth` an der Adresse | zwei Teile: **Elektro** (43 Größen, Gesetze, Bauelemente und Messgeräte: formal, physikalisch, SI-Einheit) und **Synth** (29 Bausteine und Begriffe eines Synthesizers, mit Verweis auf den passenden Labor-Baustein) |
+| Lexikon | ⋮ oben rechts auf jeder Seite, „?“ an jedem Baustein im Labor, oder `#lexikon` / `#lexikon-spannung` / `#lexikon-synth` an der Adresse | zwei Teile: **Elektro** (45 Größen, Gesetze, Bauelemente und Messgeräte: formal, physikalisch, SI-Einheit) und **Synth** (29 Bausteine und Begriffe eines Synthesizers, mit Verweis auf den passenden Labor-Baustein) |
 | Dunkelmodus | ◐ oben rechts | folgt der Systemeinstellung, per Knopf umschaltbar, wird im Browser gemerkt (`osci-log-theme`) |
 
 **Aktuelle Inhalte**
 - Notizen, Rechnungen (ET1, Rechenübung 2): *Knoten- und Maschengleichungen (A2.1)* · *Gemischte Widerstandsschaltung bei Wechselstrom (A2.2)* · *Brückenschaltung (A2.3)* · *Belastetes Potentiometer (A2.4)* · *Ersatzwiderstand mit der Dreieck-Stern-Umwandlung (A2.5)*
+- Notizen, Rechnungen (ET1, Rechenübung 3): *Überlagerungsprinzip und Leistungsbilanz (A3.1)*
 - Notizen, Theorie: *Von Newton bis Ohm* · *Widerstandsnetzwerke* · *Die Kirchhoffschen Gesetze* · *Stern-Dreieck-Umwandlung*
 - Notizen, Sonstiges: *Hallo, Labor.*
 - Projekte: Messplatz · RC-Filter-Explorer · Crashtest-Labor
-- Simulationen zum Einbetten: `rc`, `welle`, `teiler`, `bruecke` (siehe SCHREIBEN.md)
+- Simulationen zum Einbetten: `rc`, `welle`, `teiler`, `bruecke`, `ueberlagerung` (siehe SCHREIBEN.md)
 
 ```
 index.html              Startseite mit Labor-Teaser und Bio
@@ -72,7 +73,7 @@ assets/
   schreiben.js          Schreibstube mit Live-Vorschau
   projekte-liste.js     Projekt-Übersicht
   projekt.js            Projektseiten: Simulationen und Formeln
-  sims.js               Simulationen (rc, welle, teiler, bruecke)
+  sims.js               Simulationen (rc, welle, teiler, bruecke, ueberlagerung)
   lexikon.js            Einträge des Lexikons (GROESSEN und SYNTH)
   notizen.css           Notizen, Simulationen, Schreibstube
   fonts/                MesloLGS Nerd Font (Web-Versionen) + LIZENZ.md
@@ -237,6 +238,8 @@ Ein Elektroniklabor auf TU-Niveau, gedacht zum Vorbereiten von Laborübungen und
 - Behoben im Messplatz: Autoset setzte Triggermodus, Lauf und XY nicht zurück (ein Kommentar hatte den Code verschluckt); der Bezugspunkt für schwebende Teilschaltungen konnte in Sonderfällen einen Generator- oder OPV-Ausgang mit 1 kΩ belasten; die „?“-Knöpfe waren ungestylt; Beschriftungen lagen bei Transistoren und Poti auf einer Buchse.
 - Behoben im Messplatz: Falsch gesteckte OPV-Schaltungen (z. B. Ausgang nur noch an Kondensator oder Messbuchsen) trieben den Löser in endlose Fehlschläge — mit Spannungen bis 10¹⁰ V, „verbrannten“ Bauteilen und einer ruckelnden Seite. Jetzt: OPV-Ausgang und Innenzustand pro Newton-Schritt begrenzt, Klemmdioden gegen ±15 V, Startwerte nach dem Umstecken je Buchse statt 0 V, nie mehr unfertige Ergebnisse übernehmen, Stillstand-Erkennung mit Hinweis, frische Messgeräte beim Laden eines Versuchs. Geprüft mit rund 800 zufälligen Fehlverkabelungen in sieben Versuchen.
 - Aufräumen: Versionsnummern der Assets waren über drei Stände verteilt (16/17/18), jetzt überall `?v=19`; README-Inhalte nachgezogen (alle fünf Rechnungen, Instagram, `instagram/`-Ordner); Platzhalter-Projekt „Schaltungen zum Anfassen" entfernt, das ist der Messplatz; die Vorlage zeigte in der Schreibstube ein kaputtes Bild, jetzt ein Beispiel-SVG.
+- Notiz *Überlagerungsprinzip und Leistungsbilanz* (A3.1): beide Teilschaltungen mit Maschentabelle, warum Überlagerung gilt (am Gleichungssystem dieser Schaltung), Potentialbild „pro Coulomb“, warum die Spannungsquelle geladen wird, warum man Leistungen nicht überlagern darf (Kreuzterm), vorbereiteter Messplatz-Aufbau, drei Aufgaben mit Lösung. Neue Simulation `ueberlagerung` mit Umschalter (a)/(b)/beide und Leistungsbilanz; Lexikon: Überlagerungsprinzip und Zählpfeilsysteme.
+- Notizen: Ein Satzzeichen direkt nach einer kurzen Formel rutscht nicht mehr allein an den Zeilenanfang; Simulationen mit breiten Tabellen machen die Seite auf dem Handy nicht mehr breiter.
 
 **Inhalte**
 - Notiz Brückenschaltung (A2.3) mit Simulation `bruecke`: Schaltplan, Potentialskala, Zweig-Tabelle mit Leistungsbilanz, Lastleistungs-Kurve.

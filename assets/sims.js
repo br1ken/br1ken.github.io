@@ -1,6 +1,7 @@
 /* Kleine Simulationen zum Einbetten in Notizen und Projekte.
    Einbinden: <div data-sim="rc"></div>  ·  in Markdown:  ::: sim rc  (optional mit Startwerten: ::: sim rc r=10k c=22n)
-   Verfügbare Simulationen: rc (RC-Tiefpass), welle (Sinusgrößen), teiler (Spannungsteiler), bruecke (Brückenschaltung). */
+   Verfügbare Simulationen: rc (RC-Tiefpass), welle (Sinusgrößen), teiler (Spannungsteiler), bruecke (Brückenschaltung),
+   ueberlagerung (Überlagerungsprinzip mit Leistungsbilanz, Startwerte u, i, r, modus = a | b | t). */
 'use strict';
 const OSCISims = (() => {
   const PREFIX = [[1e6, 'M'], [1e3, 'k'], [1, ''], [1e-3, 'm'], [1e-6, 'µ'], [1e-9, 'n'], [1e-12, 'p']];
@@ -298,7 +299,93 @@ const OSCISims = (() => {
     [X, U, RL].forEach(sl => sl.on(update)); match.querySelector('input').addEventListener('change', update); update();
   }
 
-  const SIMS = {rc, welle, teiler, bruecke};
+  /* ---------- Überlagerung (ET1 A3.1) ----------
+     Spannungsquelle U_q links (Zählpfeil nach unten), Widerstand R oben (U_R nach links), Stromquelle I_q rechts
+     (Strom nach oben, U_Iq nach unten), alles in Reihe. I zählt gegen den Uhrzeigersinn, also in Richtung von I_q.
+     Teilschaltung (a): nur U_q, die Stromquelle wird zum Leerlauf. (b): nur I_q, die Spannungsquelle wird zum Kurzschluss. */
+  function ueberRechnen(Uq, Iq, R) {
+    const a = {I: 0, UR: 0, UIq: Uq}, b = {I: Iq, UR: R * Iq, UIq: R * Iq};
+    const t = {I: a.I + b.I, UR: a.UR + b.UR, UIq: a.UIq + b.UIq};
+    /* aufgenommene Leistung je Element, nur aus den Gesamtwerten: R und U_q im VZS, I_q im EZS */
+    const auf = {R: t.UR * t.I, Uq: Uq * t.I, Iq: -t.UIq * t.I};
+    return {a, b, t, auf};
+  }
+  function ueberlagerung(el, opts) {
+    const ui = shell(el, 'Überlagerung', 'x = x<sup>(a)</sup> + x<sup>(b)</sup> · Leistungen nur aus den Summen');
+    const num = (v, d = 3) => new Intl.NumberFormat('de-DE', {maximumSignificantDigits: d}).format(Math.abs(v) < 1e-12 ? 0 : v).replace(/^-/, '−');
+    const V = v => `${num(v)} V`, A = v => `${num(v)} A`, W = v => `${num(v)} W`;
+    const Uq = slider({label: 'Spannungsquelle U<sub>q</sub>', min: -10, max: 10, value: parseSI(opts.u, 3), unit: 'V', format: v => V(Math.round(v * 10) / 10)});
+    const Iq = slider({label: 'Stromquelle I<sub>q</sub>', min: -5, max: 5, value: parseSI(opts.i, 2), unit: 'A', format: v => A(Math.round(v * 10) / 10)});
+    const Rs = slider({label: 'Widerstand R', min: .1, max: 10, value: parseSI(opts.r, 1), log: true, unit: 'Ω'});
+    const seg = document.createElement('div');
+    seg.className = 'sim-seg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Welche Quellen sind aktiv?');
+    seg.innerHTML = '<button type="button" data-mode="a">(a) nur U<sub>q</sub></button><button type="button" data-mode="b">(b) nur I<sub>q</sub></button><button type="button" data-mode="t">beide</button>';
+    ui.controls.append(seg, Uq.el, Iq.el, Rs.el);
+    const fig = document.createElement('figure');
+    fig.className = 'sim-plot sim-schematic sim-ueber';
+    ui.plots.append(fig);
+    const badge = document.createElement('p');
+    badge.className = 'sim-badge';
+    ui.actions.append(badge);
+    let mode = ['a', 'b', 't'].includes(opts.modus) ? opts.modus : 't';
+    const sub = (b, i, sup) => `${b}<tspan dy="4" font-size="10">${i}</tspan>${sup ? `<tspan dy="-11" font-size="10">${sup}</tspan><tspan dy="7"></tspan>` : '<tspan dy="-4"></tspan>'}`;
+    /* Pfeil von (x1|y1) nach (x2|y2), Spitze als kleines Dreieck */
+    const arrow = (x1, y1, x2, y2) => {
+      const ang = Math.atan2(y2 - y1, x2 - x1), hx = x2 - 9 * Math.cos(ang), hy = y2 - 9 * Math.sin(ang);
+      const px = 4.5 * Math.sin(ang), py = -4.5 * Math.cos(ang);
+      return `<path class="volt" d="M${x1},${y1}L${hx.toFixed(1)},${hy.toFixed(1)}"/><path class="cur" d="M${x2},${y2}L${(hx + px).toFixed(1)},${(hy + py).toFixed(1)}L${(hx - px).toFixed(1)},${(hy - py).toFixed(1)}Z"/>`;
+    };
+    function update() {
+      const uq = Uq.value, iq = Iq.value, r = Rs.value, res = ueberRechnen(uq, iq, r);
+      seg.querySelectorAll('button').forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.mode === mode)));
+      const x = res[mode], sup = mode === 't' ? '' : `(${mode})`, uqHere = mode === 'b' ? 0 : uq;
+      /* Schaltplan, viewBox 460 × 240: Masche links 100, rechts 320, oben 60, unten 196 */
+      const parts = ['<g class="wire-lines"><path d="M100,60H160M210,60H320M100,196H320"/>'];
+      parts.push(mode === 'b' ? '<path d="M100,60V196"/>' : '<path d="M100,60V106M100,150V196"/>');
+      parts.push(mode === 'a' ? '<path d="M320,60V104M320,152V196"/>' : '<path d="M320,60V106M320,150V196"/>');
+      parts.push('</g>');
+      if (mode === 'b') parts.push(`<text class="tick" x="112" y="132">Kurzschluss</text><text class="tick" x="112" y="152">${sub('U', 'q')} → 0</text>`);
+      else parts.push(`<circle class="src" cx="100" cy="128" r="22"/><path class="wire-lines" d="M100,106V150"/>${arrow(64, 110, 64, 146)}<text class="tick strong" x="56" y="124" text-anchor="end">${sub('U', 'q')}</text><text class="tick" x="56" y="144" text-anchor="end">${V(uq)}</text>`);
+      if (mode === 'a') parts.push(`<circle class="open" cx="320" cy="104" r="4"/><circle class="open" cx="320" cy="152" r="4"/><text class="tick" x="330" y="186">Leerlauf</text>`);
+      else parts.push(`<circle class="src" cx="320" cy="128" r="22"/>${arrow(320, 144, 320, 112)}<text class="tick strong" x="290" y="124" text-anchor="end">${sub('I', 'q')}</text><text class="tick" x="290" y="144" text-anchor="end">${A(iq)}</text>`);
+      parts.push(`${arrow(358, 110, 358, 146)}<text class="tick strong" x="368" y="124">${sub('U', 'Iq', sup)}</text><text class="tick" x="368" y="144">${V(x.UIq)}</text>`);
+      parts.push(`<rect class="res" x="160" y="51" width="50" height="18"/><text class="tick" x="185" y="40" text-anchor="middle">R = ${num(r)} Ω</text>`);
+      parts.push(`${arrow(208, 86, 162, 86)}<text class="tick strong" x="185" y="108" text-anchor="middle">${sub('U', 'R', sup)} = ${V(x.UR)}</text>`);
+      /* Strom auf dem oberen Draht: gegen den Uhrzeigersinn heißt dort nach links; der Pfeil zeigt die tatsächliche Richtung */
+      if (Math.abs(x.I) < 1e-9) parts.push(`<text class="tick" x="265" y="48" text-anchor="middle">${sub('I', '', sup)} = 0</text>`);
+      else parts.push(`<path class="cur" d="${x.I > 0 ? 'M256,60 l11,-6 v12 z' : 'M276,60 l-11,-6 v12 z'}"/><text class="tick strong" x="265" y="46" text-anchor="middle">${sub('I', '', sup)} = ${A(Math.abs(x.I))}</text>`);
+      /* Potentiale an den oberen Ecken, unten = 0 V */
+      parts.push(`<circle class="node" cx="100" cy="60" r="4"/><circle class="node" cx="320" cy="60" r="4"/><circle class="node" cx="100" cy="196" r="4"/><circle class="node" cx="320" cy="196" r="4"/>`);
+      parts.push(`<text class="tick" x="210" y="222" text-anchor="middle">unten: φ = 0 (Bezug)</text>`);
+      parts.push(`<text class="tick" x="92" y="56" text-anchor="end">φ = ${V(uqHere)}</text><text class="tick" x="328" y="56">φ = ${V(x.UIq)}</text>`);
+      const col = m => m === mode ? ' class="on"' : '';
+      const rowsU = [['I', 'I', A], ['U<sub>R</sub>', 'UR', V], ['U<sub>Iq</sub>', 'UIq', V]].map(([n, k, f]) => `<tr><th>${n}</th><td${col('a')}>${f(res.a[k])}</td><td${col('b')}>${f(res.b[k])}</td><td${col('t')}>${f(res.t[k])}</td></tr>`).join('');
+      const pRow = (name, sys, p) => `<tr><th>${name}</th><td>${sys}</td><td>${W(Math.abs(p))}</td><td class="l">${Math.abs(p) < 1e-9 ? '—' : p > 0 ? 'nimmt auf' : 'gibt ab'}</td></tr>`;
+      const ab = -Object.values(res.auf).filter(p => p < 0).reduce((s, p) => s + p, 0), auf = Object.values(res.auf).filter(p => p > 0).reduce((s, p) => s + p, 0);
+      fig.innerHTML = `<svg viewBox="0 0 460 236" role="img" aria-label="Reihenschaltung aus Spannungsquelle, Widerstand und Stromquelle, Teilschaltung ${mode === 't' ? 'mit beiden Quellen' : mode}">${parts.join('')}</svg>
+        <div class="sim-branches"><table><thead><tr><th>Größe</th><th${col('a')}>(a) nur U<sub>q</sub></th><th${col('b')}>(b) nur I<sub>q</sub></th><th${col('t')}>Summe</th></tr></thead><tbody>${rowsU}</tbody></table></div>
+        <div class="sim-branches"><table><thead><tr><th>Element</th><th>Pfeile</th><th>|P|</th><th class="l">Rolle</th></tr></thead><tbody>${pRow('R', 'VZS', res.auf.R)}${pRow('U<sub>q</sub>', 'VZS', res.auf.Uq)}${pRow('I<sub>q</sub>', 'EZS', res.auf.Iq)}</tbody><tfoot><tr><th colspan="2">ab = auf</th><td colspan="2">${W(ab)} = ${W(auf)}</td></tr></tfoot></table></div>
+        <figcaption>Zählpfeile wie in der Angabe, in jeder Teilschaltung gleich. Leistungen nur aus den Summen, P = U·I.</figcaption>`;
+      /* falsch überlagerte Leistung der Stromquelle: Es fehlen die Kreuzterme */
+      const pa = res.a.UIq * res.a.I, pb = res.b.UIq * res.b.I, pt = res.t.UIq * res.t.I, cross = res.a.UIq * res.b.I;
+      readout(ui.readout, [
+        [`Strom I${sup ? `<sup>${sup}</sup>` : ''}`, A(x.I)],
+        [`U<sub>R</sub>${sup ? `<sup>${sup}</sup>` : ''}`, V(x.UR)],
+        [`U<sub>Iq</sub>${sup ? `<sup>${sup}</sup>` : ''}`, V(x.UIq)],
+        ['P<sub>Iq</sub> richtig: U<sub>Iq</sub>·I', W(pt)],
+        ['Teilleistungen addiert (falsch)', W(pa + pb)],
+        ['fehlender Kreuzterm U<sub>Iq</sub><sup>(a)</sup>·I<sup>(b)</sup>', W(cross)]
+      ]);
+      const role = (p, name) => Math.abs(p) < 1e-9 ? '' : `${name} ${p > 0 ? 'nimmt' : 'gibt'} ${W(Math.abs(p))} ${p > 0 ? 'auf' : 'ab'}`;
+      badge.innerHTML = mode !== 't' ? `Teilschaltung (${mode}): ${mode === 'a' ? 'Ohne Strom fällt an R nichts ab, die ganze Quellspannung liegt am Leerlauf.' : 'Die Stromquelle erzwingt ihren Strom, die kurzgeschlossene Spannungsquelle trägt nichts bei.'} Leistungen erst mit „beide“ ausrechnen.`
+        : [role(res.auf.Iq, 'Die Stromquelle'), role(res.auf.Uq, 'die Spannungsquelle'), role(res.auf.R, 'R')].filter(Boolean).join(', ') + '.' + (res.auf.Uq > 1e-9 ? ' Die Spannungsquelle wird geladen.' : res.auf.Iq > 1e-9 ? ' Hier wird die Stromquelle zum Verbraucher.' : '');
+      badge.hidden = !badge.innerHTML;
+    }
+    seg.addEventListener('click', ev => { const btn = ev.target.closest('[data-mode]'); if (btn) { mode = btn.dataset.mode; update(); } });
+    [Uq, Iq, Rs].forEach(s => s.on(update)); update();
+  }
+
+  const SIMS = {rc, welle, teiler, bruecke, ueberlagerung};
   /* Alle [data-sim]-Platzhalter in einem Bereich starten. */
   function mount(root = document) {
     root.querySelectorAll('[data-sim]').forEach(el => {

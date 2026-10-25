@@ -190,7 +190,7 @@ const OSCI = (() => {
     }
     return lexLoading.then(() => OSCILexikon.open(id));
   }
-  const LEX_VERSION = 9;
+  const LEX_VERSION = 10;
   document.addEventListener('click', e => {
     const link = e.target.closest('[data-lex]');
     if (link) { e.preventDefault(); lexikon(link.dataset.lex).catch(() => {}); }
