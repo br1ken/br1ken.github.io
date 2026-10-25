@@ -49,6 +49,7 @@ messplatz/index.html    Messplatz (Lab 1)
 404.html                Seite für falsche Links
 favicon.svg             Logo (Signal formt ein N)
 instagram/              Profilbild, Cover-Bilder, Story und Text für @_br1ken_ (nicht verlinkt)
+  ohmsches-gesetz/      zweites Karussell: slides.html ist die Quelle, ohm_01–06.png die gerenderten Slides, caption.txt der Posttext
 notizen/
   beitraege.js          Liste der Notizen (nur Dateinamen)
   texte/*.md            die Notizen selbst  (_vorlage.md = Vorlage)
@@ -237,6 +238,7 @@ Ein Elektroniklabor auf TU-Niveau, gedacht zum Vorbereiten von Laborübungen und
 - Behoben im Messplatz: Autoset setzte Triggermodus, Lauf und XY nicht zurück (ein Kommentar hatte den Code verschluckt); der Bezugspunkt für schwebende Teilschaltungen konnte in Sonderfällen einen Generator- oder OPV-Ausgang mit 1 kΩ belasten; die „?“-Knöpfe waren ungestylt; Beschriftungen lagen bei Transistoren und Poti auf einer Buchse.
 - Behoben im Messplatz: Falsch gesteckte OPV-Schaltungen (z. B. Ausgang nur noch an Kondensator oder Messbuchsen) trieben den Löser in endlose Fehlschläge — mit Spannungen bis 10¹⁰ V, „verbrannten“ Bauteilen und einer ruckelnden Seite. Jetzt: OPV-Ausgang und Innenzustand pro Newton-Schritt begrenzt, Klemmdioden gegen ±15 V, Startwerte nach dem Umstecken je Buchse statt 0 V, nie mehr unfertige Ergebnisse übernehmen, Stillstand-Erkennung mit Hinweis, frische Messgeräte beim Laden eines Versuchs. Geprüft mit rund 800 zufälligen Fehlverkabelungen in sieben Versuchen.
 - Aufräumen: Versionsnummern der Assets waren über drei Stände verteilt (16/17/18), jetzt überall `?v=19`; README-Inhalte nachgezogen (alle fünf Rechnungen, Instagram, `instagram/`-Ordner); Platzhalter-Projekt „Schaltungen zum Anfassen" entfernt, das ist der Messplatz; die Vorlage zeigte in der Schreibstube ein kaputtes Bild, jetzt ein Beispiel-SVG.
+- Instagram, zweites Karussell „Ohm ist kein Gesetz" (`instagram/ohmsches-gesetz/`): sechs Slides im Stil des ersten — Kennlinie als Steigung, die drei Größen, Drude-Modell als Datenblatt, Gültigkeitsbereich, Aufruf zum Nachmessen. Gebaut als HTML (`slides.html`, Schrift wie auf der Seite, Helvetica durch FreeSans ersetzt) und mit Playwright auf 1080×1350 gerendert; neue Karussells entstehen durch Kopieren dieser Datei.
 
 **Inhalte**
 - Notiz Brückenschaltung (A2.3) mit Simulation `bruecke`: Schaltplan, Potentialskala, Zweig-Tabelle mit Leistungsbilanz, Lastleistungs-Kurve.
