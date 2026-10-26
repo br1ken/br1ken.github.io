@@ -1,16 +1,16 @@
 ---
-titel: Widerstandsnetzwerke — Reihe, parallel und der Spannungsteiler
+titel: Widerstandsnetzwerke — Reihe, parallel, Spannungs- und Stromteiler
 datum: 2026-10-21
 fach: Grundlagen der E-Technik
 art: theorie
 tags: [Widerstand, Reihenschaltung, Parallelschaltung, Leitwert, Spannungsteiler, Stromteiler, Ersatzwiderstand]
-teaser: Wie man Widerstände zusammenfasst und warum das aus den Kirchhoffschen Gesetzen folgt. Dazu Leitwert, Strom- und Spannungsteiler, gemischte Schaltungen und was eine Last mit dem Teiler macht.
+teaser: Wie man Widerstände zusammenfasst und warum das aus den Kirchhoffschen Gesetzen folgt. Dazu Leitwert, gemischte Schaltungen, der Spannungsteiler unter Last und der Stromteiler mit Herleitung.
 welle: rechteck
 ---
 
 Viele Schaltungen bestehen aus Widerständen, die in Reihe oder parallel liegen. Solche Gruppen lassen sich durch **einen einzigen Ersatzwiderstand** ersetzen, und das Netzwerk wird Schritt für Schritt kleiner. Beide Regeln folgen direkt aus den [Kirchhoffschen Gesetzen](beitrag.html?b=kirchhoffsche-gesetze) und dem [[ohmschen Gesetz|ohmsches-gesetz]].
 
-Die wichtigste Anwendung ist der **Spannungsteiler**: Potentiometer, Sensoren, Pegelanpassung, überall stecken zwei Widerstände in Reihe.
+Die wichtigsten Anwendungen sind die zwei Teiler. Der **Spannungsteiler** steckt in Potentiometern, Sensoren und überall, wo man eine kleinere Spannung braucht: zwei Widerstände in Reihe. Sein Spiegelbild ist der **Stromteiler**: zwei Widerstände parallel, die sich einen Strom teilen.
 
 Diese Notiz folgt dem Stoff aus ET1, Kapitel 1.3.4.
 
@@ -29,7 +29,7 @@ $$G = G_1 + G_2 + \dots + G_n, \qquad G = \frac{1}{R}$$
 
 **Spannungsteiler:** In Reihe teilt sich die Spannung im Verhältnis der Widerstände, $\dfrac{U_j}{U} = \dfrac{R_j}{R}$.
 
-**Stromteiler:** Parallel teilt sich der Strom im Verhältnis der Leitwerte, $\dfrac{I_j}{I} = \dfrac{G_j}{G}$.
+**Stromteiler:** Parallel teilt sich der Strom im Verhältnis der Leitwerte, $\dfrac{I_1}{I_2} = \dfrac{G_1}{G_2} = \dfrac{R_2}{R_1}$. Für zwei Widerstände: $I_1 = I \cdot \dfrac{R_2}{R_1 + R_2}$, der **andere** Widerstand steht oben.
 :::
 
 ## Was ein Ersatzwiderstand ist
@@ -127,17 +127,7 @@ $$\boxed{G = \sum_{j=1}^{n} G_j}$$
 - Der Ersatzwiderstand ist **kleiner als jeder einzelne** Widerstand. Jeder zusätzliche parallele Zweig ist ein weiterer Weg für den Strom.
 - Ein sehr kleiner Widerstand **dominiert**: $1\,\Omega$ parallel zu $1\,\mathrm{k\Omega}$ ist praktisch $1\,\Omega$. Im Extremfall schließt ein Draht alles parallel dazu kurz.
 - **Zwei parallel:** $R_1 \parallel R_2 = \frac{R_1 R_2}{R_1 + R_2}$. **$n$ gleiche** parallel: $R / n$.
-- **Der Strom teilt sich im Verhältnis der Leitwerte.** Wegen $I_j = G_j U$ und $I = G\,U$ ist
-
-$$\frac{I_j}{I} = \frac{G_j}{G}$$
-
-Durch den kleinsten Widerstand fließt der größte Strom. Das ist die **Stromteilerregel**. Für zwei Widerstände in Widerständen geschrieben:
-
-$$I_1 = I \cdot \frac{R_2}{R_1 + R_2}$$
-
-::: achtung Über Kreuz
-Beim Stromteiler mit zwei Widerständen steht im Zähler der **andere** Widerstand: Für $I_1$ steht $R_2$ oben. Beim Spannungsteiler steht dagegen der **eigene** Widerstand oben. Wer unsicher ist, prüft mit einem Extremfall: Ist $R_1$ winzig, muss fast der ganze Strom durch $R_1$ fließen.
-:::
+- **Der Strom teilt sich auf**, und zwar so, dass durch den kleinsten Widerstand der größte Strom fließt. Wie genau, zeigt der [Stromteiler](#6-der-stromteiler) in Abschnitt 6.
 
 ## 3. Reihe und parallel sind Spiegelbilder
 
@@ -262,7 +252,109 @@ Statt der erwarteten 6 V nur noch 4 V, ein Drittel weniger.
 Mit der Ersatzquelle geht es genauso: $U_0 = 6\,\mathrm{V}$, $R_i = 500\,\Omega$, also $U_L = 6\,\mathrm{V} \cdot \frac{1000}{1500} = 4\,\mathrm{V}$ ✓
 :::
 
-## 6. Im Labor
+## 6. Der Stromteiler
+
+Jetzt umgekehrt: Zwei Widerstände liegen **parallel**, und ein Strom $I$ fließt hinein. Wie viel davon nimmt welchen Weg?
+
+<figure class="dia"><svg viewBox="0 0 360 196" role="img" aria-label="Stromteiler: Ein Strom I fließt von links in einen Knoten und teilt sich auf zwei parallele Widerstände R1 und R2 auf, mit den Teilströmen I1 und I2. Links die gemeinsame Spannung U.">
+<defs><marker id="wn-a3" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" class="f"/></marker></defs>
+<path class="s" d="M24 30H270V170H24M170 30V170"/>
+<rect class="b" x="162" y="78" width="16" height="44"/><rect class="b" x="262" y="78" width="16" height="44"/>
+<circle class="b" cx="20" cy="30" r="4"/><circle class="b" cx="20" cy="170" r="4"/>
+<circle class="f" cx="170" cy="30" r="3"/><circle class="f" cx="170" cy="170" r="3"/>
+<path class="s" d="M36 30H74" marker-end="url(#wn-a3)"/><text class="c" x="55" y="22">I</text>
+<path class="s" d="M170 40V66" marker-end="url(#wn-a3)"/><text x="180" y="60">I<tspan dy="3" font-size="9">1</tspan></text>
+<path class="s" d="M270 40V66" marker-end="url(#wn-a3)"/><text x="280" y="60">I<tspan dy="3" font-size="9">2</tspan></text>
+<text x="184" y="104">R<tspan dy="3" font-size="9">1</tspan></text><text x="284" y="104">R<tspan dy="3" font-size="9">2</tspan></text>
+<path class="m" d="M80 44V156" marker-end="url(#wn-a3)"/><text x="70" y="104" text-anchor="end">U</text>
+<text class="k c" x="170" y="190">KNOTENREGEL: I = I₁ + I₂</text>
+</svg><figcaption>Der Stromteiler: Beide Widerstände hängen zwischen denselben zwei Knoten, haben also dieselbe Spannung U. Der Strom I teilt sich in I<sub>1</sub> und I<sub>2</sub>.</figcaption></figure>
+
+### Herleitung
+
+Zwei Tatsachen reichen, beide kennt man schon aus der Parallelschaltung:
+
+1. **Knotenregel:** Was in den oberen Knoten hineinfließt, verteilt sich auf die zwei Zweige: $I = I_1 + I_2$.
+2. **Gleiche Spannung:** Beide Widerstände liegen zwischen denselben Knoten. Mit dem ohmschen Gesetz ist also
+
+$$I_1 = \frac{U}{R_1}, \qquad I_2 = \frac{U}{R_2}$$
+
+Daraus folgt alles Weitere.
+
+**Das Verhältnis der Teilströme.** Teilt man $I_1$ durch $I_2$, kürzt sich die unbekannte Spannung $U$ heraus:
+
+$$\frac{I_1}{I_2} = \frac{U / R_1}{U / R_2} = \frac{R_2}{R_1}$$
+
+Mit den Leitwerten $G = 1/R$ wird daraus die **Stromteilerregel**:
+
+$$\boxed{\frac{I_1}{I_2} = \frac{G_1}{G_2} = \frac{R_2}{R_1}}$$
+
+**Der Anteil am Gesamtstrom.** Meistens will man wissen, welcher Teil von $I$ durch $R_1$ fließt. Den Gesamtstrom bekommt man aus der Knotenregel:
+
+$$I = I_1 + I_2 = \left(\frac{1}{R_1} + \frac{1}{R_2}\right) U$$
+
+Jetzt $I_1$ durch $I$ teilen. Wieder kürzt sich $U$:
+
+$$\frac{I_1}{I} = \frac{\dfrac{1}{R_1}}{\dfrac{1}{R_1} + \dfrac{1}{R_2}}$$
+
+Doppelbrüche sind unhandlich. Man erweitert Zähler und Nenner mit $R_1 R_2$, dann verschwinden alle Brüche im Bruch:
+
+$$\begin{aligned} \frac{I_1}{I} &= \frac{\dfrac{1}{R_1} \cdot R_1 R_2}{\left(\dfrac{1}{R_1} + \dfrac{1}{R_2}\right) R_1 R_2} = \frac{R_2}{R_2 + R_1} \end{aligned}$$
+
+$$\boxed{I_1 = I \cdot \frac{R_2}{R_1 + R_2}, \qquad I_2 = I \cdot \frac{R_1}{R_1 + R_2}}$$
+
+Probe: $I_1 + I_2 = I \cdot \frac{R_2 + R_1}{R_1 + R_2} = I$ ✓
+
+::: herleitung Dasselbe auf dem Weg der Folie
+In der Vorlesung steht der Zwischenschritt etwas anders, mit dem Gesamtwiderstand $R_1 \parallel R_2$. Aus $U = I \cdot \frac{R_1 R_2}{R_1 + R_2}$ und $I_1 = \frac{U}{R_1}$ folgt
+
+$$\frac{I_1}{I} = \frac{R_1 R_2}{R_1\,(R_1 + R_2)} = \frac{R_2}{R_1 + R_2}$$
+
+Oben steht die Parallelschaltung $R_1 R_2$, unten der eigene Widerstand $R_1$ mal die Summe. Kürzt man $R_1$, bleibt dasselbe Ergebnis.
+:::
+
+::: merke
+Liegt an mehreren parallelen Widerständen dieselbe Spannung, teilen sich die Ströme im **Verhältnis der Leitwerte** auf. Der kleine Widerstand bekommt den großen Strom. Für beliebig viele Zweige gilt
+
+$$\frac{I_j}{I} = \frac{G_j}{G_1 + G_2 + \dots + G_n}$$
+:::
+
+::: achtung Über Kreuz
+Beim Stromteiler mit zwei Widerständen steht im Zähler der **andere** Widerstand: Für $I_1$ steht $R_2$ oben. Beim Spannungsteiler steht dagegen der **eigene** Widerstand oben. Wer unsicher ist, prüft mit einem Extremfall: Ist $R_1$ winzig, muss fast der ganze Strom durch $R_1$ fließen, und tatsächlich geht $\frac{R_2}{R_1 + R_2}$ dann gegen 1.
+:::
+
+### Spannungsteiler und Stromteiler nebeneinander
+
+| | Spannung teilen | Strom teilen |
+|:---|:---|:---|
+| Schaltung | Reihe | parallel |
+| gemeinsam | $I$ | $U$ |
+| geteilt | $U$ | $I$ |
+| oben im Bruch | eigener Widerstand | anderer Widerstand |
+
+**Spannungsteiler:**
+
+$$U_1 = U \cdot \frac{R_1}{R_1 + R_2}, \qquad \frac{U_1}{U_2} = \frac{R_1}{R_2}$$
+
+**Stromteiler:**
+
+$$I_1 = I \cdot \frac{R_2}{R_1 + R_2}, \qquad \frac{I_1}{I_2} = \frac{R_2}{R_1}$$
+
+Mit Leitwerten geschrieben sieht der Stromteiler aus wie der Spannungsteiler: $I_1 = I \cdot \frac{G_1}{G_1 + G_2}$. Das ist wieder die Dualität aus Abschnitt 3.
+
+### Beispiel
+
+In eine Parallelschaltung aus $R_1 = 10\,\Omega$ und $R_2 = 20\,\Omega$ fließen $I = 3\,\mathrm{A}$.
+
+$$\begin{aligned} I_1 &= 3\,\mathrm{A} \cdot \frac{20}{10 + 20} = 2\,\mathrm{A} \\ I_2 &= 3\,\mathrm{A} \cdot \frac{10}{10 + 20} = 1\,\mathrm{A} \end{aligned}$$
+
+Der halb so große Widerstand bekommt den doppelten Strom. Probe über die Spannung: $U = R_1 I_1 = 20\,\mathrm{V}$ und $U = R_2 I_2 = 20\,\mathrm{V}$, gleich wie es bei parallelen Zweigen sein muss ✓
+
+::: tipp Wo man den Stromteiler braucht
+Ein **Strommesser** misst große Ströme, indem ein kleiner Widerstand, der Shunt, parallel zum Messwerk liegt. Der Großteil des Stroms fließt am Messwerk vorbei, nur ein bekannter kleiner Anteil geht hindurch. Genau nach der Stromteilerregel.
+:::
+
+## 7. Im Labor
 
 Der Baustein **Widerstand** im [Labor](../labor/) ist genau so ein Teiler: Dein $R$ sitzt in Reihe vor einer festen Last von 10 kΩ. Bei $R = 10\,\mathrm{k\Omega}$ kommt die halbe Spannung an, das hörst du als leiseren Ton.
 
