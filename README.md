@@ -37,11 +37,11 @@ Bewusst minimal: **plain HTML, CSS und JavaScript, ohne Framework und ohne Build
 
 **Aktuelle Inhalte**
 - Notizen, Rechnungen (ET1, Rechenübung 2): *Knoten- und Maschengleichungen (A2.1)* · *Gemischte Widerstandsschaltung bei Wechselstrom (A2.2)* · *Brückenschaltung (A2.3)* · *Belastetes Potentiometer (A2.4)* · *Ersatzwiderstand mit der Dreieck-Stern-Umwandlung (A2.5)*
-- Notizen, Rechnungen (ET1, Rechenübung 3): *Überlagerungsprinzip und Leistungsbilanz (A3.1)*
+- Notizen, Rechnungen (ET1, Rechenübung 3): *Überlagerungsprinzip und Leistungsbilanz (A3.1)* · *Ersatzspannungsquelle (A3.2)*
 - Notizen, Theorie: *Von Newton bis Ohm* · *Widerstandsnetzwerke* · *Die Kirchhoffschen Gesetze* · *Stern-Dreieck-Umwandlung*
 - Notizen, Sonstiges: *Hallo, Labor.*
 - Projekte: Messplatz · RC-Filter-Explorer · Crashtest-Labor
-- Simulationen zum Einbetten: `rc`, `welle`, `teiler`, `bruecke`, `ueberlagerung` (siehe SCHREIBEN.md)
+- Simulationen zum Einbetten: `rc`, `welle`, `teiler`, `bruecke`, `ueberlagerung`, `ersatzquelle` (siehe SCHREIBEN.md)
 
 ```
 index.html              Startseite mit Labor-Teaser und Bio
@@ -73,7 +73,7 @@ assets/
   schreiben.js          Schreibstube mit Live-Vorschau
   projekte-liste.js     Projekt-Übersicht
   projekt.js            Projektseiten: Simulationen und Formeln
-  sims.js               Simulationen (rc, welle, teiler, bruecke, ueberlagerung)
+  sims.js               Simulationen (rc, welle, teiler, bruecke, ueberlagerung, ersatzquelle)
   lexikon.js            Einträge des Lexikons (GROESSEN und SYNTH)
   notizen.css           Notizen, Simulationen, Schreibstube
   fonts/                MesloLGS Nerd Font (Web-Versionen) + LIZENZ.md
@@ -109,10 +109,10 @@ Wichtig: Die versteckte Datei **`.nojekyll`** muss im Repo bleiben. Ohne sie ble
 
 ### Wenn Design oder Code geändert wurde
 
-Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer (aktuell `?v=19`, in allen HTML-Dateien dieselbe). Nach Änderungen in `assets/` diese Zahl überall um eins erhöhen, zum Beispiel von 19 auf 20:
+Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer `?v=N`. Nach einer Änderung an einer Datei in `assets/` deren Nummer in allen HTML-Dateien um eins erhöhen. Stand 26.10.2026: `sims.js` und `notizen.css` 21, `site.js` und `markdown.js` 20, alles andere 19. Zum Beispiel für `sims.js` von 21 auf 22:
 
 ```bash
-grep -rl '?v=19"' --include='*.html' . | xargs sed -i '' 's/?v=19"/?v=20"/g'
+grep -rl 'sims.js?v=21' --include='*.html' . | xargs sed -i '' 's/sims.js?v=21/sims.js?v=22/g'
 ```
 
 Für `assets/lexikon.js` gilt stattdessen `LEX_VERSION` in `assets/site.js`. Für neue Notizen oder Projekte ist beides nicht nötig.
@@ -240,6 +240,7 @@ Ein Elektroniklabor auf TU-Niveau, gedacht zum Vorbereiten von Laborübungen und
 - Aufräumen: Versionsnummern der Assets waren über drei Stände verteilt (16/17/18), jetzt überall `?v=19`; README-Inhalte nachgezogen (alle fünf Rechnungen, Instagram, `instagram/`-Ordner); Platzhalter-Projekt „Schaltungen zum Anfassen" entfernt, das ist der Messplatz; die Vorlage zeigte in der Schreibstube ein kaputtes Bild, jetzt ein Beispiel-SVG.
 - Notiz *Überlagerungsprinzip und Leistungsbilanz* (A3.1): beide Teilschaltungen mit Maschentabelle, warum Überlagerung gilt (am Gleichungssystem dieser Schaltung), Potentialbild „pro Coulomb“, warum die Spannungsquelle geladen wird, warum man Leistungen nicht überlagern darf (Kreuzterm), vorbereiteter Messplatz-Aufbau, drei Aufgaben mit Lösung. Neue Simulation `ueberlagerung` mit Umschalter (a)/(b)/beide und Leistungsbilanz; Lexikon: Überlagerungsprinzip und Zählpfeilsysteme.
 - Notizen: Ein Satzzeichen direkt nach einer kurzen Formel rutscht nicht mehr allein an den Zeilenanfang; Simulationen mit breiten Tabellen machen die Seite auf dem Handy nicht mehr breiter.
+- Notiz *Ersatzspannungsquelle* (A3.2): Kennlinie mit Leerlauf- und Kurzschlusspunkt, Gegenbeispiel „ein Punkt reicht nicht“, alle vier Teile hergeleitet (Spannungsteiler, Stromteiler mit Herleitung, beliebige Last, null gesetzte Quelle), Beweis des Satzes von Thévenin mit Überlagerung, was die Ersatzquelle nicht kann (Wirkungsgrad 10 % statt 50 %), Feinheiten (0/0, gesteuerte Quellen), vier Aufgaben mit Lösung. Acht Bilder, Beispielwerte 12 V, 1 kΩ, 1 kΩ, 500 Ω. Neue Simulation `ersatzquelle`: Original und Ersatzquelle an derselben Last, Umschalter Leerlauf/Last/Kurzschluss, Kennlinie mit Arbeitspunkt.
 
 **Inhalte**
 - Notiz Brückenschaltung (A2.3) mit Simulation `bruecke`: Schaltplan, Potentialskala, Zweig-Tabelle mit Leistungsbilanz, Lastleistungs-Kurve.

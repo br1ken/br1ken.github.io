@@ -127,6 +127,7 @@ Optionaler Satz unter der Simulation.
 | `teiler` | Spannungsteiler mit Schaltplan, optional belastet | `u=12 r1=10k r2=10k rl=10k last` |
 | `bruecke` | Brückenschaltung (R₂ = R₃ gekoppelt) mit Potentialen, Strömen, Wirkungsgrad und Lastleistungs-Kurve | `x=30 u=30 rl=15 r1=10 anpassen` |
 | `ueberlagerung` | Überlagerungsprinzip: U_q, R und I_q in Reihe, Umschalter (a) nur U_q / (b) nur I_q / beide, Teiltabelle und Leistungsbilanz | `u=3 i=2 r=1 modus=t` (`a`, `b` oder `t`) |
+| `ersatzquelle` | Ersatzspannungsquelle: Original (U_q, R₁, R₂, R₃) und Ersatzquelle (U₀, Rᵢ) an derselben Last, Umschalter Leerlauf / Last / Kurzschluss, Kennlinie mit Arbeitspunkt | `u=12 r1=1k r2=1k r3=500 rl=1k modus=last` (`leer`, `last` oder `kurz`) |
 
 Einheiten-Kürzel für Werte: `p n u µ m k M` (z. B. `4.7u` = 4,7 µF, `2k2` geht nicht, nimm `2.2k`).
 Neue Simulationen kommen in `assets/sims.js`. Jede Funktion dort bekommt ein Element und die Startwerte.

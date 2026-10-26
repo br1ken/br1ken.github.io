@@ -1,7 +1,8 @@
 /* Kleine Simulationen zum Einbetten in Notizen und Projekte.
    Einbinden: <div data-sim="rc"></div>  ·  in Markdown:  ::: sim rc  (optional mit Startwerten: ::: sim rc r=10k c=22n)
    Verfügbare Simulationen: rc (RC-Tiefpass), welle (Sinusgrößen), teiler (Spannungsteiler), bruecke (Brückenschaltung),
-   ueberlagerung (Überlagerungsprinzip mit Leistungsbilanz, Startwerte u, i, r, modus = a | b | t). */
+   ueberlagerung (Überlagerungsprinzip mit Leistungsbilanz, Startwerte u, i, r, modus = a | b | t),
+   ersatzquelle (Ersatzspannungsquelle mit Kennlinie, Startwerte u, r1, r2, r3, rl, modus = leer | last | kurz). */
 'use strict';
 const OSCISims = (() => {
   const PREFIX = [[1e6, 'M'], [1e3, 'k'], [1, ''], [1e-3, 'm'], [1e-6, 'µ'], [1e-9, 'n'], [1e-12, 'p']];
@@ -385,7 +386,105 @@ const OSCISims = (() => {
     [Uq, Iq, Rs].forEach(s => s.on(update)); update();
   }
 
-  const SIMS = {rc, welle, teiler, bruecke, ueberlagerung};
+  /* ---------- Ersatzspannungsquelle (ET1 A3.2) ----------
+     Original: U_q links, R1 oben zum Knoten, R2 vom Knoten nach unten, R3 oben zur Klemme. Ersatz: U_0 mit R_i in Reihe.
+     Beide hängen an derselben Last. Das Original wird direkt aus der Schaltung gerechnet, nicht aus den Formeln. */
+  function ersatzRechnen(Uq, R1, R2, R3, RL) {
+    const par = (a, b) => a * b / (a + b), S = R1 * R2 + R1 * R3 + R2 * R3;
+    const U0 = Uq * R2 / (R1 + R2), Ri = R3 + par(R1, R2), Ik = Uq * R2 / S;
+    let ILo, ILe;
+    if (RL === Infinity) { ILo = 0; ILe = 0; }
+    else { const Rp = par(R2, R3 + RL); ILo = Uq / (R1 + Rp) * Rp / (R3 + RL); ILe = U0 / (Ri + RL); }
+    return {U0, Ri, Ik, RiQuot: Ik ? U0 / Ik : NaN, ILo, ILe, UL: RL === Infinity ? U0 : ILe * RL};
+  }
+  function ersatzquelle(el, opts) {
+    const ui = shell(el, 'Ersatzspannungsquelle', 'U<sub>0</sub> = U<sub>q</sub>·R<sub>2</sub>/(R<sub>1</sub>+R<sub>2</sub>) · R<sub>i</sub> = R<sub>3</sub> + R<sub>1</sub>||R<sub>2</sub>');
+    const num = (v, d = 3) => new Intl.NumberFormat('de-DE', {maximumSignificantDigits: d}).format(Math.abs(v) < 1e-15 ? 0 : v).replace(/^-/, '−');
+    const U = slider({label: 'Quelle U<sub>q</sub>', min: 0, max: 24, value: parseSI(opts.u, 12), unit: 'V', format: v => `${num(Math.round(v * 10) / 10)} V`});
+    const R1 = slider({label: 'R<sub>1</sub>', min: 10, max: 100e3, value: parseSI(opts.r1, 1e3), log: true, unit: 'Ω'});
+    const R2 = slider({label: 'R<sub>2</sub>', min: 10, max: 100e3, value: parseSI(opts.r2, 1e3), log: true, unit: 'Ω'});
+    const R3 = slider({label: 'R<sub>3</sub>', min: 10, max: 100e3, value: parseSI(opts.r3, 500), log: true, unit: 'Ω'});
+    const RL = slider({label: 'Last R<sub>L</sub>', min: 1, max: 1e6, value: parseSI(opts.rl, 1e3), log: true, unit: 'Ω'});
+    const seg = document.createElement('div');
+    seg.className = 'sim-seg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Was hängt an den Klemmen?');
+    seg.innerHTML = '<button type="button" data-mode="leer">Leerlauf</button><button type="button" data-mode="last">Last R<sub>L</sub></button><button type="button" data-mode="kurz">Kurzschluss</button>';
+    ui.controls.append(seg, U.el, R1.el, R2.el, R3.el, RL.el);
+    const fig = document.createElement('figure');
+    fig.className = 'sim-plot sim-schematic sim-ersatz';
+    ui.plots.append(fig);
+    const kl = plot(ui.plots, 'Kennlinie an den Klemmen: U über I. Gestrichelt die Last U = R<sub>L</sub>·I, der Punkt ist der Arbeitspunkt.');
+    const badge = document.createElement('p');
+    badge.className = 'sim-badge';
+    ui.actions.append(badge);
+    let mode = ['leer', 'last', 'kurz'].includes(opts.modus) ? opts.modus : 'last';
+    const sub = (b, i) => `${b}<tspan dy="4" font-size="10">${i}</tspan><tspan dy="-4"></tspan>`;
+    const arrow = (x1, y1, x2, y2) => {
+      const ang = Math.atan2(y2 - y1, x2 - x1), hx = x2 - 9 * Math.cos(ang), hy = y2 - 9 * Math.sin(ang), px = 4.5 * Math.sin(ang), py = -4.5 * Math.cos(ang);
+      return `<path class="volt" d="M${x1},${y1}L${hx.toFixed(1)},${hy.toFixed(1)}"/><path class="cur" d="M${x2},${y2}L${(hx + px).toFixed(1)},${(hy + py).toFixed(1)}L${(hx - px).toFixed(1)},${(hy - py).toFixed(1)}Z"/>`;
+    };
+    /* Last an den Klemmen bei x = 300, gezeichnet bei x = 350; y0 = obere Leitung */
+    const lastTeil = (y0, I) => {
+      const yb = y0 + 120;
+      if (mode === 'leer') return `<circle class="open" cx="300" cy="${y0}" r="4"/><circle class="open" cx="300" cy="${yb}" r="4"/><text class="tick" x="312" y="${y0 + 66}">Leerlauf</text>`;
+      const cur = Math.abs(I) < 1e-15 ? '' : `<path class="cur" d="M330,${y0} l-11,-6 v12 z"/><text class="tick strong" x="344" y="${y0 + 24}" text-anchor="end">${sub('I', mode === 'kurz' ? 'k' : 'L')} = ${si(I, 'A')}</text>`;
+      if (mode === 'kurz') return `<g class="wire-lines"><path d="M300,${y0}H350V${yb}H300"/></g>${cur}`;
+      return `<g class="wire-lines"><path d="M300,${y0}H350V${y0 + 35}M350,${y0 + 85}V${yb}H300"/></g><rect class="res load" x="341" y="${y0 + 35}" width="18" height="50"/><text class="tick" x="368" y="${y0 + 56}">${sub('R', 'L')}</text><text class="tick" x="368" y="${y0 + 74}">${si(RL.value, 'Ω')}</text>${cur}`;
+    };
+    function update() {
+      const uq = U.value, r1 = R1.value, r2 = R2.value, r3 = R3.value, rl = mode === 'leer' ? Infinity : mode === 'kurz' ? 0 : RL.value;
+      const r = ersatzRechnen(uq, r1, r2, r3, rl);
+      seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
+      RL.el.classList.toggle('is-locked', mode !== 'last');
+      RL.el.querySelector('input').disabled = mode !== 'last';
+      const ul = mode === 'leer' ? r.U0 : mode === 'kurz' ? 0 : r.UL, il = mode === 'leer' ? 0 : mode === 'kurz' ? r.Ik : r.ILe;
+      /* oben das Original (obere Leitung y = 40), unten die Ersatzquelle (y = 250) */
+      const P = [];
+      P.push('<g class="wire-lines"><path d="M60,40H100M150,40H230M280,40H300M60,160H300M60,40V80M60,120V160M190,40V75M190,125V160"/></g>');
+      P.push(`<circle class="src" cx="60" cy="100" r="20"/><path class="wire-lines" d="M60,80V120"/>${arrow(26, 84, 26, 116)}<text class="tick strong" x="20" y="98" text-anchor="end">${sub('U', 'q')}</text><text class="tick" x="20" y="116" text-anchor="end">${si(uq, 'V')}</text>`);
+      P.push(`<rect class="res" x="100" y="32" width="50" height="16"/><text class="tick" x="125" y="24" text-anchor="middle">${sub('R', '1')} ${si(r1, 'Ω')}</text>`);
+      P.push(`<rect class="res" x="182" y="75" width="16" height="50"/><text class="tick" x="206" y="96">${sub('R', '2')}</text><text class="tick" x="206" y="114">${si(r2, 'Ω')}</text>`);
+      P.push(`<rect class="res" x="230" y="32" width="50" height="16"/><text class="tick" x="255" y="24" text-anchor="middle">${sub('R', '3')} ${si(r3, 'Ω')}</text>`);
+      P.push(`<circle class="node" cx="190" cy="40" r="3.5"/><circle class="node" cx="190" cy="160" r="3.5"/>${lastTeil(40, mode === 'kurz' ? r.Ik : r.ILo)}`);
+      P.push(`<text class="tick" x="230" y="196" text-anchor="middle">gleich an den Klemmen ⇣</text>`);
+      P.push('<g class="wire-lines"><path d="M60,250H130M180,250H300M60,370H300M60,250V290M60,330V370"/></g>');
+      P.push(`<circle class="src" cx="60" cy="310" r="20"/><path class="wire-lines" d="M60,290V330"/>${arrow(26, 294, 26, 326)}<text class="tick strong" x="20" y="308" text-anchor="end">${sub('U', '0')}</text><text class="tick" x="20" y="326" text-anchor="end">${si(r.U0, 'V')}</text>`);
+      P.push(`<rect class="res" x="130" y="242" width="50" height="16"/><text class="tick" x="155" y="234" text-anchor="middle">${sub('R', 'i')} ${si(r.Ri, 'Ω')}</text>${lastTeil(250, mode === 'kurz' ? r.Ik : r.ILe)}`);
+      fig.innerHTML = `<svg viewBox="-24 6 460 372" role="img" aria-label="Oben das Original mit R1, R2, R3, unten die Ersatzspannungsquelle, beide mit derselben Last">${P.join('')}</svg><figcaption>Oben das Original, unten die Ersatzquelle. Der Strom im Original wird direkt aus der Schaltung gerechnet.</figcaption>`;
+      /* Kennlinie U(I) mit Lastgerade */
+      const {W, H, pad} = kl, iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
+      /* Achsen auf runde Teilungen (1, 2, 2,5, 5 · 10ⁿ), rechts bleibt Platz für die Kurzschluss-Beschriftung */
+      const nice = x => { const e = 10 ** Math.floor(Math.log10(x)), m = x / e - 1e-9; return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10) * e; };
+      const imax = 4 * nice((r.Ik || 1e-3) * 1.3 / 4), umax = 4 * nice((r.U0 || 1) * 1.2 / 4);
+      const px = i => pad.l + i / imax * iw, py = u => pad.t + (1 - u / umax) * ih;
+      const parts = [];
+      for (let k = 0; k <= 4; k++) parts.push(`<path class="grid${k ? '' : ' major'}" d="M${px(imax * k / 4)},${pad.t}V${pad.t + ih}"/><text class="tick" x="${px(imax * k / 4)}" y="${H - 10}" text-anchor="${k === 4 ? 'end' : 'middle'}">${si(imax * k / 4, 'A', 2)}</text>`);
+      for (let k = 0; k <= 4; k++) parts.push(`<path class="grid${k ? '' : ' major'}" d="M${pad.l},${py(umax * k / 4)}H${pad.l + iw}"/><text class="tick" x="${pad.l - 6}" y="${py(umax * k / 4) + 3}" text-anchor="end">${si(umax * k / 4, 'V', 2)}</text>`);
+      if (mode === 'last' && rl > 0) { const ie = Math.min(imax, umax / rl); parts.push(`<path class="ghost" d="M${px(0)},${py(0)}L${px(ie)},${py(ie * rl)}"/>`); }
+      parts.push(`<path class="trace" d="M${px(0)},${py(r.U0)}L${px(r.Ik)},${py(0)}"/>`);
+      parts.push(`<circle class="dot dot-2" cx="${px(0)}" cy="${py(r.U0)}" r="4.5"/><text class="tag-label" x="${px(0) + 9}" y="${py(r.U0) - 8}">Leerlauf: U<tspan dy="3" font-size="9">0</tspan><tspan dy="-3"> = ${si(r.U0, 'V')}</tspan></text>`);
+      parts.push(`<circle class="dot dot-2" cx="${px(r.Ik)}" cy="${py(0)}" r="4.5"/><text class="tag-label" x="${px(r.Ik) - 4}" y="${py(0) - 28}">Kurzschluss</text><text class="tag-label" x="${px(r.Ik) - 4}" y="${py(0) - 12}">I<tspan dy="3" font-size="9">k</tspan><tspan dy="-3"> = ${si(r.Ik, 'A')}</tspan></text>`);
+      parts.push(`<circle class="dot" cx="${px(il)}" cy="${py(ul)}" r="5.5"/>`);
+      kl.draw(parts);
+      readout(ui.readout, [
+        ['Leerlaufspannung U<sub>0</sub>', si(r.U0, 'V', 4)],
+        ['Kurzschlussstrom I<sub>k</sub>', si(r.Ik, 'A', 4)],
+        ['R<sub>i</sub> = U<sub>0</sub>/I<sub>k</sub>', Number.isNaN(r.RiQuot) ? '0/0, unbestimmt' : si(r.RiQuot, 'Ω', 4)],
+        ['R<sub>i</sub> = R<sub>3</sub> + R<sub>1</sub>||R<sub>2</sub>', si(r.Ri, 'Ω', 4)],
+        ['Strom im Original', si(mode === 'kurz' ? r.Ik : r.ILo, 'A', 4)],
+        ['Strom an der Ersatzquelle', si(mode === 'kurz' ? r.Ik : r.ILe, 'A', 4)],
+        ['Klemmenspannung U<sub>L</sub>', si(ul, 'V', 4)],
+        ['Leistung in R<sub>L</sub>', si(ul * il, 'W', 3)]
+      ]);
+      const match = mode === 'last' && Math.abs(rl - r.Ri) / r.Ri < .03;
+      badge.innerHTML = mode === 'leer' ? 'Leerlauf: Durch R<sub>3</sub> fließt nichts, an den Klemmen liegt U<sub>0</sub> — links wie rechts.'
+        : mode === 'kurz' ? 'Kurzschluss: Beide liefern denselben Strom I<sub>k</sub>. Damit liegen beide Endpunkte der Kennlinie fest.'
+        : `Beide Schaltungen liefern ${si(r.ILe, 'A', 4)} an die Last.${match ? ' R<sub>L</sub> ≈ R<sub>i</sub>: Leistungsanpassung, die Last bekommt das Maximum.' : ''}`;
+    }
+    seg.addEventListener('click', ev => { const b = ev.target.closest('[data-mode]'); if (b) { mode = b.dataset.mode; update(); } });
+    [U, R1, R2, R3, RL].forEach(s => s.on(update)); update();
+  }
+
+  const SIMS = {rc, welle, teiler, bruecke, ueberlagerung, ersatzquelle};
   /* Alle [data-sim]-Platzhalter in einem Bereich starten. */
   function mount(root = document) {
     root.querySelectorAll('[data-sim]').forEach(el => {

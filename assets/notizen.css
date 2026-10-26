@@ -198,7 +198,7 @@
 .sim svg .volt { fill: none; stroke: var(--ink); stroke-width: 1.4; }
 .sim svg .open { fill: var(--card); stroke: var(--ink); stroke-width: 1.6; }
 .sim-branches .on { background: var(--accent-soft); }
-.sim-ueber svg .tick { font-size: 15px; }
+.sim-ueber svg .tick, .sim-ersatz svg .tick { font-size: 15px; }
 .sim-branches td.l, .sim-branches th.l { text-align: left; }
 
 
