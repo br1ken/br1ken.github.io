@@ -9,7 +9,7 @@ teaser: Aufgabe 3.3 komplett, Schritt für Schritt: Zwei Spannungsquellen, eine 
 welle: rechteck
 ---
 
-In [A3.2](beitrag.html?b=ersatzspannungsquelle) war das Netzwerk hinter den Klemmen noch klein: eine Quelle, drei Widerstände. Hier stecken drei Quellen drin, davon eine Stromquelle, und fünf Widerstände. Das Ziel ist dasselbe: Von den Klemmen A und B aus soll das Ganze durch eine einzige [[Ersatzquelle|ersatzquelle]] ersetzt werden, einmal als Spannungsquelle mit Widerstand in Reihe (Thévenin), einmal als Stromquelle mit Widerstand parallel (Norton).
+In [A3.2](beitrag.html?b=ersatzspannungsquelle) war das Netzwerk hinter den Klemmen noch klein: eine Quelle, drei Widerstände. Hier stecken drei Quellen drin, davon eine Stromquelle, und fünf Widerstände. Das Ziel ist dasselbe: Von den Klemmen A und B aus soll das Ganze durch eine einzige [[Ersatzquelle|ersatzquelle]] ersetzt werden, einmal als Spannungsquelle mit Widerstand in Reihe (Thévenin), einmal als [[Stromquelle mit Widerstand parallel|ersatzstromquelle]] (Norton).
 
 Das klingt nach viel Rechnerei, ist aber überschaubar, sobald man eine Sache sieht: Die Schaltung hat nur **einen** Knoten, dessen Potential unbekannt ist. Eine Unbekannte, eine Gleichung. Wer das erkennt, braucht kein Gleichungssystem.
 
@@ -358,7 +358,7 @@ Hängen an einem Knoten nur Zweige zum Bezugsknoten, jeder mit einer Spannungsqu
 
 $$U_K = \frac{\sum U_k / R_k + \sum I_k}{\sum 1/R_k}$$
 
-Das ist der Satz von Millman. Er spart in der Prüfung die ganze Herleitung 3a und 3b, aber nur, wenn die Vorzeichen stimmen: $+U_k$, wenn das $+$ der Quelle zum Knoten zeigt, $+I_k$, wenn der Strom in den Knoten fließt. Stromquellenzweige zählen im Nenner nicht mit, ihr Leitwert ist null. Hier: $\sum 1/R_k = \frac{1}{R_1 + R_4} + \frac{1}{R_2} = \frac{1}{R_p}$, und es kommt genau die Lösungsform heraus.
+Das ist der [[Satz von Millman|knotenpotentialverfahren]]. Er spart in der Prüfung die ganze Herleitung 3a und 3b, aber nur, wenn die Vorzeichen stimmen: $+U_k$, wenn das $+$ der Quelle zum Knoten zeigt, $+I_k$, wenn der Strom in den Knoten fließt. Stromquellenzweige zählen im Nenner nicht mit, ihr Leitwert ist null. Hier: $\sum 1/R_k = \frac{1}{R_1 + R_4} + \frac{1}{R_2} = \frac{1}{R_p}$, und es kommt genau die Lösungsform heraus.
 :::
 
 ::: beispiel Gegenprobe mit Überlagerung

@@ -6,7 +6,8 @@
    unit    Einheit in Worten  si   Zerlegung in SI-Basiseinheiten (LaTeX)
    formal  Definitionen/Beziehungen (LaTeX, je eine Zeile)
    phys    physikalische Bedeutung (Text, $…$ für Formeln; als R`…`, damit Backslashes erhalten bleiben)
-   alias   weitere Suchbegriffe */
+   alias   weitere Suchbegriffe
+   notiz   Notizen zum Nachlesen: [['slug', 'Linktext'], …], slug darf einen #Abschnitt enthalten */
 'use strict';
 const OSCILexikon = (() => {
   const R = String.raw;
@@ -134,7 +135,18 @@ const OSCILexikon = (() => {
     {id: 'effektivwert', name: 'Effektivwert', sym: R`U_\text{eff},\ I_\text{eff}`, cat: 'Wechselgrößen', unit: 'V bzw. A', si: R`[U_\text{eff}] = 1\,\mathrm{V}`,
       formal: [R`U_\text{eff} = \sqrt{\frac{1}{T} \int_0^T u^2(t)\,\mathrm{d}t}`, R`U_\text{eff} = \frac{\hat{u}}{\sqrt{2}} \quad \text{(Sinus)}`],
       phys: R`Die Gleichspannung, die in einem ohmschen Widerstand im Mittel dieselbe Leistung umsetzen würde. „230 V“ an der Steckdose ist ein Effektivwert; die Spitze liegt bei etwa 325 V.`,
+      notiz: [['periodische-groessen', 'Periodische Größen']],
       alias: ['rms', 'ueff']},
+    {id: 'mittelwert', name: 'Mittelwert (Gleichanteil)', sym: R`\overline{u}`, cat: 'Wechselgrößen', unit: 'V bzw. A', si: R`[\overline{u}] = 1\,\mathrm{V}`,
+      formal: [R`\overline{u} = \frac{1}{T} \int_0^T u(t)\,\mathrm{d}t`, R`\overline{u} = 0 \quad \text{(Sinus, symmetrisches Rechteck)}`],
+      phys: R`Was im Schnitt über eine Periode übrig bleibt: Fläche unter der Kurve durch die Periodendauer. Positive und negative Flächen heben sich auf, darum hat jede symmetrische Wechselgröße den Mittelwert null. Der Mittelwert ist der Gleichanteil, den ein Kondensator in Reihe abblockt und den ein Multimeter im DC-Bereich anzeigt.`,
+      notiz: [['periodische-groessen', 'Periodische Größen']],
+      alias: ['gleichanteil', 'arithmetischer mittelwert', 'linearer mittelwert', 'dc-anteil', 'gleichwert']},
+    {id: 'gleichrichtwert', name: 'Gleichrichtwert', sym: R`\overline{|u|}`, cat: 'Wechselgrößen', unit: 'V bzw. A', si: R`[\overline{|u|}] = 1\,\mathrm{V}`,
+      formal: [R`\overline{|u|} = \frac{1}{T} \int_0^T |u(t)|\,\mathrm{d}t`, R`\overline{|u|} = \frac{2}{\pi}\,\hat{u} \approx 0{,}637\,\hat{u} \quad \text{(Sinus)}`, R`\text{Formfaktor } F = \frac{U_\text{eff}}{\overline{|u|}} = \frac{\pi}{2\sqrt{2}} \approx 1{,}11 \quad \text{(Sinus)}`],
+      phys: R`Der Mittelwert des Betrags, also das, was nach einem Brückengleichrichter im Schnitt ankommt. Einfache Multimeter messen im AC-Bereich den Gleichrichtwert und multiplizieren mit dem Formfaktor $1{,}11$ des Sinus. Bei Rechteck, Dreieck oder verzerrten Signalen zeigen sie dann falsch an; richtig misst nur ein „True RMS“-Gerät.`,
+      notiz: [['periodische-groessen', 'Periodische Größen']],
+      alias: ['formfaktor', 'betragsmittelwert', 'gleichgerichteter mittelwert', 'true rms']},
     {id: 'impedanz', name: 'Impedanz (komplexer Widerstand)', sym: R`\underline{Z}`, cat: 'Wechselgrößen', unit: 'Ohm, Ω', si: R`1\,\Omega`,
       formal: [R`\underline{Z} = \frac{\underline{U}}{\underline{I}} = R + jX`, R`\underline{Z}_R = R, \quad \underline{Z}_L = j\omega L, \quad \underline{Z}_C = \frac{1}{j\omega C}`, R`\text{Blindwiderstand: } X_L = \omega L, \quad X_C = -\frac{1}{\omega C}`],
       phys: R`Der Widerstand bei sinusförmigem Wechselstrom im eingeschwungenen Zustand: Betrag (wie stark) und Phase (wie weit Strom und Spannung gegeneinander verschoben sind). Spulen und Kondensatoren werden dadurch frequenzabhängig.`,
@@ -144,30 +156,37 @@ const OSCILexikon = (() => {
     {id: 'ohmsches-gesetz', name: 'Ohmsches Gesetz', sym: R`U = R\,I`, cat: 'Netzwerke', unit: '—', si: R`1\,\mathrm{V} = 1\,\Omega \cdot 1\,\mathrm{A}`,
       formal: [R`U = R\, I`, R`\vec{J} = \kappa\, \vec{E} \quad \text{(lokale Form)}`],
       phys: R`Bei einem ohmschen Bauteil ist der Strom proportional zur Spannung. Gilt für Metalle bei konstanter Temperatur, nicht für Dioden oder Lampen im Allgemeinen.`,
+      notiz: [['von-newton-zu-ohm', 'Von Newton bis Ohm']],
       alias: ['ohm-gesetz']},
     {id: 'knotenregel', name: 'Knotenregel (1. Kirchhoffsches Gesetz)', sym: R`\sum I = 0`, cat: 'Netzwerke', unit: '—', si: '',
       formal: [R`\sum_{k} I_k = 0`, R`\text{zufließend } +, \quad \text{abfließend } -`],
       phys: R`In einem Knoten kann sich keine Ladung ansammeln: Was hineinfließt, fließt auch wieder heraus. Folgt aus der Ladungserhaltung.`,
+      notiz: [['kirchhoffsche-gesetze', 'Kirchhoffsche Gesetze'], ['knoten-und-maschengleichungen', 'Rechnung A2.1']],
       alias: ['kirchhoff', 'knoten', 'kcl']},
     {id: 'maschenregel', name: 'Maschenregel (2. Kirchhoffsches Gesetz)', sym: R`\sum U = 0`, cat: 'Netzwerke', unit: '—', si: '',
       formal: [R`\sum_{k} U_k = 0 \quad \text{(Umlauf in einer Masche)}`],
       phys: R`Wer einmal im Kreis läuft, kommt am selben Potential an — die Spannungen entlang einer geschlossenen Masche heben sich auf. Gilt, solange sich kein magnetischer Fluss durch die Masche ändert.`,
+      notiz: [['kirchhoffsche-gesetze', 'Kirchhoffsche Gesetze'], ['knoten-und-maschengleichungen', 'Rechnung A2.1']],
       alias: ['masche', 'kvl']},
     {id: 'reihe-parallel', name: 'Reihen- und Parallelschaltung', sym: R`R_1 \parallel R_2`, cat: 'Netzwerke', unit: '—', si: '',
       formal: [R`R_\text{Reihe} = R_1 + R_2`, R`R_1 \parallel R_2 = \frac{R_1 R_2}{R_1 + R_2}`, R`G_\text{parallel} = G_1 + G_2`],
       phys: R`In Reihe fließt derselbe Strom, die Spannungen teilen sich auf. Parallel liegt dieselbe Spannung an, die Ströme teilen sich auf. Der Ersatzwiderstand einer Parallelschaltung ist immer kleiner als ihr kleinster Einzelwiderstand.`,
+      notiz: [['spannungsteiler', 'Widerstandsnetzwerke'], ['kurzschlussaufgabe', 'Rechnung A2.6']],
       alias: ['parallelschaltung', 'reihenschaltung', 'serienschaltung']},
     {id: 'spannungsteiler', name: 'Spannungsteiler', sym: R`\frac{R_2}{R_1 + R_2}`, cat: 'Netzwerke', unit: '—', si: '',
       formal: [R`U_2 = U \cdot \frac{R_2}{R_1 + R_2} \quad \text{(unbelastet)}`],
       phys: R`Zwei Widerstände in Reihe teilen eine Spannung im Verhältnis ihrer Werte. Sobald eine Last parallel zu $R_2$ hängt, sinkt $U_2$.`,
+      notiz: [['spannungsteiler', 'Widerstandsnetzwerke'], ['belastetes-potentiometer', 'Rechnung A2.4'], ['kurzschlussaufgabe', 'Rechnung A2.6']],
       alias: ['teiler']},
     {id: 'ersatzquelle', name: 'Ersatzspannungsquelle (Thévenin)', sym: R`U_0,\ R_i`, cat: 'Netzwerke', unit: '—', si: '',
       formal: [R`U_0 = U_{\text{Leerlauf}}, \qquad R_i = \frac{U_0}{I_k}`, R`I_L = \frac{U_0}{R_i + R_L}`],
       phys: R`Jedes lineare Netzwerk verhält sich an zwei Klemmen wie eine ideale Quelle $U_0$ in Reihe mit einem Innenwiderstand $R_i$. $R_i$ bestimmt man, indem man alle unabhängigen Spannungsquellen kurzschließt, unabhängige Stromquellen auftrennt und den Widerstand zwischen den Klemmen berechnet.`,
+      notiz: [['ersatzspannungsquelle', 'Rechnung A3.2'], ['ersatzquellen', 'Rechnung A3.3']],
       alias: ['thevenin', 'innenwiderstand', 'leerlaufspannung', 'kurzschlussstrom', 'zweipol']},
     {id: 'leistungsanpassung', name: 'Leistungsanpassung', sym: R`R_L = R_i`, cat: 'Netzwerke', unit: '—', si: '',
       formal: [R`R_L = R_i \;\Rightarrow\; P_{L,\max} = \frac{U_0^2}{4 R_i}`, R`\eta_\text{Ersatzquelle} = 50\,\%`],
       phys: R`Die Last bekommt die größtmögliche Leistung, wenn sie so groß ist wie der Innenwiderstand. Das maximiert die Leistung an der Last, nicht den Wirkungsgrad — in der echten Schaltung kann er deutlich unter 50 % liegen.`,
+      notiz: [['brueckenschaltung', 'Rechnung A2.3'], ['ersatzspannungsquelle', 'Rechnung A3.2']],
       alias: ['anpassung', 'maximale leistung']},
     {id: 'quelle', name: 'Ideale Spannungs- und Stromquelle', sym: R`U_q,\ I_q`, cat: 'Netzwerke', unit: 'V bzw. A', si: '',
       formal: [R`\text{Spannungsquelle: } U = U_q \text{ bei jedem Strom} \quad (R_i = 0)`, R`\text{Stromquelle: } I = I_q \text{ bei jeder Spannung} \quad (R_i \to \infty)`, R`\text{real: } U = U_0 - R_i\,I`],
@@ -178,6 +197,7 @@ const OSCILexikon = (() => {
       formal: [R`A\,\vec{x} = \vec{b}_1 + \vec{b}_2 \;\Rightarrow\; \vec{x} = A^{-1}\vec{b}_1 + A^{-1}\vec{b}_2`, R`\text{Spannungsquelle aus: Kurzschluss } (U = 0), \quad \text{Stromquelle aus: Leerlauf } (I = 0)`, R`P \neq P^{(a)} + P^{(b)}`],
       phys: R`In einem linearen Netz wirkt jede unabhängige Quelle so, als wären die anderen nicht da. Man rechnet mit einer Quelle nach der anderen und addiert die Teilströme und Teilspannungen vorzeichenrichtig; die Zählpfeile bleiben dabei wie im Original. Eine Quelle abzuschalten heißt, ihren Wert auf null zu setzen: Eine Spannungsquelle mit $U = 0$ ist ein Draht, eine Stromquelle mit $I = 0$ eine Unterbrechung. Gesteuerte Quellen bleiben stehen. Leistungen lassen sich nicht überlagern, weil $P = U I$ das Produkt zweier Summen ist — die Kreuzterme fehlen sonst.`,
       mess: 'Notiz A3.1 mit Simulation: Teilschaltungen umschalten und die Leistungsbilanz verfolgen.',
+      notiz: [['ueberlagerung-leistungsbilanz', 'Rechnung A3.1']],
       alias: ['superposition', 'überlagerung', 'helmholtz', 'teilschaltung', 'quellen abschalten']},
     {id: 'zaehlpfeile', name: 'Zählpfeilsysteme (VZS und EZS)', sym: R`P = U \cdot I`, cat: 'Netzwerke', unit: 'Watt, das Vorzeichen zeigt die Richtung', si: '',
       formal: [R`\text{VZS: } U \text{ und } I \text{ gleich gerichtet} \;\Rightarrow\; P = UI \text{ aufgenommen}`, R`\text{EZS: } U \text{ und } I \text{ entgegen} \;\Rightarrow\; P = UI \text{ abgegeben}`, R`\textstyle\sum P_\text{ab} = \sum P_\text{auf}`],
@@ -189,6 +209,36 @@ const OSCILexikon = (() => {
       phys: R`Dioden und Transistoren haben gekrümmte Kennlinien. Der Arbeitspunkt ist der Gleichstromzustand, um den herum eine Schaltung arbeitet; für ihn sind Kondensatoren offen und Spulen kurzgeschlossen. Für kleine Wechselsignale darf man die Kennlinie dort durch ihre Tangente ersetzen: Aus der Diode wird ein Widerstand $r_d$, aus dem Transistor eine gesteuerte Stromquelle mit der Steilheit $g_m$. So rechnen SPICE (.OP, dann .AC) und die Kleinsignal-Ersatzschaltbilder im Studium.`,
       mess: 'Tab „Arbeitspunkt“ unter dem Messplatz: alle Knotenpotentiale, Ströme und der Bereich jedes Transistors.',
       alias: ['op', 'gleichstromarbeitspunkt', 'kleinsignal', 'linearisierung', 'steilheit', 'gm']},
+    {id: 'stromteiler', name: 'Stromteiler', sym: R`\frac{R_1}{R_1 + R_2}`, cat: 'Netzwerke', unit: '—', si: '',
+      formal: [R`I_2 = I \cdot \frac{R_1}{R_1 + R_2} \quad \text{(zwei parallele Widerstände)}`, R`I_k = I \cdot \frac{G_k}{G_1 + G_2 + \dots + G_n}`],
+      phys: R`Parallele Widerstände teilen einen Strom auf, und zwar umgekehrt zu ihren Werten: Durch den kleineren fließt mehr. Darum steht bei zwei Widerständen im Zähler der jeweils andere Widerstand. Mit Leitwerten wird es wieder übersichtlich: Jeder Zweig bekommt den Anteil seines Leitwerts am Gesamtleitwert.`,
+      notiz: [['spannungsteiler#6-der-stromteiler', 'Widerstandsnetzwerke, Stromteiler']],
+      alias: ['stromteilerregel', 'stromaufteilung']},
+    {id: 'stern-dreieck', name: 'Stern-Dreieck-Umwandlung', sym: R`Y \leftrightarrow \Delta`, cat: 'Netzwerke', unit: '—', si: '',
+      formal: [R`\Delta \to Y\!: \quad R_1 = \frac{R_{12}\,R_{13}}{R_{12} + R_{13} + R_{23}}`, R`Y \to \Delta\!: \quad R_{12} = R_1 + R_2 + \frac{R_1 R_2}{R_3}`, R`\text{alle gleich: } R_Y = \frac{R_\Delta}{3}`],
+      phys: R`Drei Widerstände zwischen drei Knoten lassen sich als Dreieck oder als Stern mit einem zusätzlichen Sternpunkt schreiben, beide verhalten sich an den drei Klemmen gleich. Das hilft, wenn eine Schaltung weder Reihe noch parallel ist, typisch bei einer Brücke mit Querwiderstand. Dreieck nach Stern: Produkt der zwei anliegenden durch die Summe aller drei. Stern nach Dreieck geht genauso einfach mit Leitwerten: $G_{12} = \frac{G_1 G_2}{G_1 + G_2 + G_3}$.`,
+      notiz: [['stern-dreieck', 'How-to Stern-Dreieck'], ['ersatzwiderstand-dreieck-stern', 'Rechnung A2.5']],
+      alias: ['dreieck stern', 'stern dreieck', 'y delta', 'sternschaltung', 'dreieckschaltung', 'kennelly', 'netzumformung']},
+    {id: 'ersatzstromquelle', name: 'Ersatzstromquelle (Norton)', sym: R`I_q,\ R_i`, cat: 'Netzwerke', unit: '—', si: '',
+      formal: [R`I_q = I_k \quad \text{(Kurzschlussstrom)}, \qquad R_i' = R_i`, R`U_0 = I_q \cdot R_i`, R`I_L = I_q \cdot \frac{R_i}{R_i + R_L}`],
+      phys: R`Dasselbe lineare Netzwerk, diesmal als ideale Stromquelle mit dem Innenwiderstand parallel. Ersatzstromquelle und Ersatzspannungsquelle haben dieselbe Kennlinie und sind an den Klemmen nicht zu unterscheiden. Umgerechnet wird mit $U_0 = I_q R_i$; der Pfeil von $I_q$ zeigt zu der Klemme, an der bei der Spannungsquelle das Plus liegt. Bei $R_i = 0$ gibt es keine Ersatzstromquelle, bei $R_i \to \infty$ keine Ersatzspannungsquelle.`,
+      notiz: [['ersatzquellen', 'Rechnung A3.3']],
+      alias: ['norton', 'stromquellen-ersatzschaltung', 'thevenin norton']},
+    {id: 'knotenpotentialverfahren', name: 'Knotenpotentialverfahren', sym: R`\varphi_k`, cat: 'Netzwerke', unit: '—', si: '',
+      formal: [R`I_{ab} = \frac{\varphi_a - \varphi_b}{R_{ab}}`, R`n \text{ Knoten} \;\Rightarrow\; n - 1 \text{ Gleichungen}`, R`\text{Millman: } \varphi_K = \frac{\sum U_k / R_k + \sum I_k}{\sum 1 / R_k}`],
+      phys: R`Ein Knoten wird Bezugsknoten mit $0\,\mathrm{V}$, alle anderen bekommen ein unbekanntes Potential. Jeder Zweigstrom lässt sich durch die Potentiale an seinen beiden Enden ausdrücken, und die Knotenregel an jedem Knoten liefert die Gleichungen. Bei $n$ Knoten sind es $n - 1$ Gleichungen, oft deutlich weniger als mit Maschen. Hängen alle Zweige zwischen einem einzigen Knoten und dem Bezugsknoten, reicht eine Gleichung: der Satz von Millman. Vorzeichen dort: $+U_k$, wenn das Plus der Quelle zum Knoten zeigt, $+I_k$, wenn der Strom hineinfließt.`,
+      notiz: [['knoten-und-maschengleichungen', 'Rechnung A2.1'], ['ersatzquellen', 'Rechnung A3.3']],
+      alias: ['knotenanalyse', 'knotenspannungsanalyse', 'nodalanalyse', 'millman', 'knotengleichung']},
+    {id: 'knoten-faerben', name: 'Knoten erkennen (Einfärben)', sym: R`\varphi_1 = \varphi_2`, cat: 'Netzwerke', unit: '—', si: '',
+      formal: [R`\text{idealer Draht: } \varphi \text{ überall gleich}`, R`\text{dieselben zwei Knoten} \;\Rightarrow\; \text{parallel}`, R`\text{beide Enden am selben Knoten} \;\Rightarrow\; U = 0,\ I = 0`],
+      phys: R`Alles, was nur durch Draht verbunden ist, ist ein einziger Knoten, egal wie die Leitung in der Zeichnung verläuft. Färbt man jeden Knoten in einer eigenen Farbe ein, liegt jeder Widerstand zwischen zwei Farben. Gleiche zwei Farben heißt parallel. Ein Kurzschluss verschmilzt zwei Farben zu einer, und ein Widerstand mit beiden Enden an derselben Farbe fällt weg. In jeder neuen Situation neu färben, denn ob etwas in Reihe oder parallel liegt, hängt davon ab, was an den Klemmen hängt.`,
+      notiz: [['kurzschlussaufgabe', 'Rechnung A2.6']],
+      alias: ['knotenmethode', 'einfärben', 'knoten färben', 'topologie', 'schaltung entwirren']},
+    {id: 'leerlauf-kurzschluss', name: 'Leerlauf und Kurzschluss', sym: R`I = 0,\ U = 0`, cat: 'Netzwerke', unit: '—', si: '',
+      formal: [R`\text{Leerlauf: } I = 0, \quad U = U_0`, R`\text{Kurzschluss: } U = 0, \quad I = I_k`, R`R_i = \frac{U_0}{I_k}`],
+      phys: R`Die beiden Grenzfälle einer Last: Klemmen offen, also ein unendlich großer Lastwiderstand, oder Klemmen mit einem Draht verbunden, also Lastwiderstand null. Zusammen legen sie die gerade Kennlinie eines linearen Zweipols fest. Nicht verwechseln mit dem Abschalten einer Quelle: Dort wird die Quelle selbst ersetzt, eine Spannungsquelle durch einen Draht und eine Stromquelle durch eine Unterbrechung, und die Klemmen bleiben offen.`,
+      notiz: [['ersatzspannungsquelle', 'Rechnung A3.2'], ['kurzschlussaufgabe', 'Rechnung A2.6']],
+      alias: ['leerlaufspannung', 'kurzschlussstrom', 'offene klemmen', 'kurzschließen', 'kurzschluss']},
 
     // ---------- Messtechnik ----------
     {id: 'multimeter', name: 'Multimeter und Innenwiderstand', sym: R`R_i`, cat: 'Messtechnik', unit: 'V, A, Ω', si: '',
@@ -220,7 +270,14 @@ const OSCILexikon = (() => {
       formal: [R`\underline{H}(j\omega) = \frac{\underline{U}_2}{\underline{U}_1}, \quad |H|_\mathrm{dB} = 20 \lg |\underline{H}|, \quad \varphi = \arg \underline{H}`, R`\text{Pol 1. Ordnung: } -20\,\mathrm{dB} \text{ pro Dekade}, \ -45° \text{ bei } f_g`, R`\text{Grenzfrequenz: } |\underline{H}| = \tfrac{1}{\sqrt{2}}\,|\underline{H}|_\text{max} \ (-3\,\mathrm{dB})`],
       phys: R`Betrag und Phase der Übertragungsfunktion, beide über der Frequenz auf logarithmischer Achse. In Dezibel werden aus Produkten Summen: Jeder Pol erster Ordnung knickt den Betrag um −20 dB pro Dekade ab und dreht die Phase um −90°, jede Nullstelle wirkt umgekehrt. Die Grenzfrequenz liegt dort, wo der Betrag 3 dB unter dem Maximum liegt. Gemessen wird Punkt für Punkt: Sinus einstellen, Amplitudenverhältnis und Phase am Oszilloskop ablesen, nächste Frequenz.`,
       mess: 'Tab „Frequenzgang“ unter dem Messplatz (Kleinsignalanalyse wie SPICE .AC). Punkte aus der Messreihe erscheinen darin.',
-      alias: ['bode', 'frequenzgang', 'amplitudengang', 'phasengang', 'dezibel', 'grenzfrequenz', 'ac-analyse']}
+      alias: ['bode', 'frequenzgang', 'amplitudengang', 'phasengang', 'dezibel', 'grenzfrequenz', 'ac-analyse']},
+
+    // ---------- Elektrochemie ----------
+    {id: 'faraday', name: 'Faradaysche Gesetze (Elektrolyse)', sym: R`m = \frac{M\,Q}{z\,F}`, cat: 'Elektrochemie', unit: 'Masse in kg, Ladung in C', si: R`[F] = 1\,\mathrm{C/mol} = 1\,\mathrm{A\,s/mol}`,
+      formal: [R`m = \frac{M}{z \cdot F} \cdot I \cdot t = \frac{M}{z \cdot F} \cdot Q`, R`F = e \cdot N_A \approx 96\,485\,\mathrm{C/mol}`, R`\frac{m_1}{m_2} = \frac{M_1 / z_1}{M_2 / z_2} \quad \text{(gleiche Ladung)}`],
+      phys: R`In Flüssigkeiten tragen Ionen den Strom. An den Elektroden geben sie ihre Ladung ab und scheiden sich als Stoff ab. Die abgeschiedene Masse wächst proportional mit der durchgeflossenen Ladung (1. Gesetz) und mit der molaren Masse $M$ geteilt durch die Wertigkeit $z$ (2. Gesetz). Die Faraday-Konstante $F$ ist die Ladung von einem Mol Elektronen. Merkhilfe: Kationen wandern zur Kathode, Anionen zur Anode.`,
+      notiz: [['elektrolyse', 'Strom in Flüssigkeiten']],
+      alias: ['elektrolyse', 'faraday-konstante', 'ionenleitung', 'abscheidung', 'galvanik', 'wertigkeit']},
   ];
   /* ---------- Zweiter Teil: Synthesizer & Klang (lab = wo man es im Crashtest-Labor ausprobiert) ---------- */
   const SYNTH = [
@@ -398,6 +455,7 @@ const OSCILexikon = (() => {
         <h4>Formal</h4>${g.formal.map(f => `<div class="math math-display">${f}</div>`).join('')}
         <h4>${tab === 'synth' ? 'Was dahintersteckt' : 'Physikalisch'}</h4><p>${textMath(g.phys)}</p>
         ${g.si ? `<h4>Einheit</h4><div class="math math-display lex-unit">${g.si}</div>` : ''}
+        ${g.notiz ? `<h4>In den Notizen</h4><p class="lex-lab">${g.notiz.map(([slug, text]) => { const [b, anker] = slug.split('#'); return `<a href="${OSCI.url(`notizen/beitrag.html?b=${encodeURIComponent(b)}${anker ? '#' + anker : ''}`)}">${esc(text)} ↗︎</a>`; }).join(' · ')}</p>` : ''}
         ${g.lab ? `<h4>Im Labor</h4><p class="lex-lab">${textMath(g.lab)}${location.pathname.includes('/labor/') ? '' : ` <a href="${OSCI.url('labor/')}">Zum Labor ↗︎</a>`}</p>` : ''}
         ${g.mess ? `<h4>Am Messplatz</h4><p class="lex-lab">${textMath(g.mess)}${location.pathname.includes('/messplatz/') ? '' : ` <a href="${OSCI.url('messplatz/')}">Zum Messplatz ↗︎</a>`}</p>` : ''}
       </div></details>`;

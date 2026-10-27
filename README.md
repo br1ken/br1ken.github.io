@@ -32,7 +32,8 @@ Bewusst minimal: **plain HTML, CSS und JavaScript, ohne Framework und ohne Build
 | Eine Notiz | `notizen/beitrag.html?b=name` | wird aus `notizen/texte/name.md` erzeugt |
 | Schreibstube | `notizen/schreiben.html` | Editor mit Live-Vorschau für neue Notizen (nicht verlinkt) |
 | Projekte | `projekte/` | Simulationen, Schaltungen, Code |
-| Lexikon | ⋮ oben rechts auf jeder Seite, „?“ an jedem Baustein im Labor, oder `#lexikon` / `#lexikon-spannung` / `#lexikon-synth` an der Adresse | zwei Teile: **Elektro** (45 Größen, Gesetze, Bauelemente und Messgeräte: formal, physikalisch, SI-Einheit) und **Synth** (29 Bausteine und Begriffe eines Synthesizers, mit Verweis auf den passenden Labor-Baustein) |
+| Lexikon | ⋮ oben rechts auf jeder Seite, „?“ an jedem Baustein im Labor, oder `#lexikon` / `#lexikon-spannung` / `#lexikon-synth` an der Adresse | zwei Teile: **Elektro** (54 Größen, Gesetze, Bauelemente und Messgeräte: formal, physikalisch, SI-Einheit) und **Synth** (29 Bausteine und Begriffe eines Synthesizers, mit Verweis auf den passenden Labor-Baustein) |
+| Neuigkeiten | Rufzeichen unten rechts auf jeder Seite, „Neuigkeiten“ in Fußzeile und Menü, oder `#neuigkeiten` | neue Notizen kommen von selbst, Neuerungen an der Seite stehen in `neuigkeiten.js`; ungelesen ist das Rufzeichen groß und gelb, danach klein in der Ecke |
 | Dunkelmodus | ◐ oben rechts | folgt der Systemeinstellung, per Knopf umschaltbar, wird im Browser gemerkt (`osci-log-theme`) |
 
 **Aktuelle Inhalte**
@@ -49,6 +50,7 @@ labor/index.html        Crashtest-Labor (Lab 0)
 messplatz/index.html    Messplatz (Lab 1)
 404.html                Seite für falsche Links
 favicon.svg             Logo (Signal formt ein N)
+neuigkeiten.js          Neuerungen an der Seite für das Neuigkeiten-Fenster (neue Notizen kommen von selbst)
 instagram/              Profilbild, Cover-Bilder, Story und Text für @_br1ken_ (nicht verlinkt)
 notizen/
   beitraege.js          Liste der Notizen (nur Dateinamen)
@@ -75,6 +77,7 @@ assets/
   projekt.js            Projektseiten: Simulationen und Formeln
   sims.js               Simulationen (rc, welle, teiler, bruecke, ueberlagerung, ersatzquelle)
   lexikon.js            Einträge des Lexikons (GROESSEN und SYNTH)
+  neuigkeiten.js        Rufzeichen unten rechts und Neuigkeiten-Fenster
   notizen.css           Notizen, Simulationen, Schreibstube
   fonts/                MesloLGS Nerd Font (Web-Versionen) + LIZENZ.md
   vendor/katex/         Formelsatz
@@ -241,6 +244,10 @@ Ein Elektroniklabor auf TU-Niveau, gedacht zum Vorbereiten von Laborübungen und
 - Notiz *Überlagerungsprinzip und Leistungsbilanz* (A3.1): beide Teilschaltungen mit Maschentabelle, warum Überlagerung gilt (am Gleichungssystem dieser Schaltung), Potentialbild „pro Coulomb“, warum die Spannungsquelle geladen wird, warum man Leistungen nicht überlagern darf (Kreuzterm), vorbereiteter Messplatz-Aufbau, drei Aufgaben mit Lösung. Neue Simulation `ueberlagerung` mit Umschalter (a)/(b)/beide und Leistungsbilanz; Lexikon: Überlagerungsprinzip und Zählpfeilsysteme.
 - Notizen: Ein Satzzeichen direkt nach einer kurzen Formel rutscht nicht mehr allein an den Zeilenanfang; Simulationen mit breiten Tabellen machen die Seite auf dem Handy nicht mehr breiter.
 - Notiz *Ersatzspannungsquelle* (A3.2): Kennlinie mit Leerlauf- und Kurzschlusspunkt, Gegenbeispiel „ein Punkt reicht nicht“, alle vier Teile hergeleitet (Spannungsteiler, Stromteiler mit Herleitung, beliebige Last, null gesetzte Quelle), Beweis des Satzes von Thévenin mit Überlagerung, was die Ersatzquelle nicht kann (Wirkungsgrad 10 % statt 50 %), Feinheiten (0/0, gesteuerte Quellen), vier Aufgaben mit Lösung. Acht Bilder, Beispielwerte 12 V, 1 kΩ, 1 kΩ, 500 Ω. Neue Simulation `ersatzquelle`: Original und Ersatzquelle an derselben Last, Umschalter Leerlauf/Last/Kurzschluss, Kennlinie mit Arbeitspunkt.
+- Notizen A3.3 *Ersatzspannungs- und Ersatzstromquelle* (jeder Rechenschritt wie in der Übung, Satz von Millman, Gegenprobe mit Überlagerung) und A2.6 *Kurzschlussaufgabe* (Knoten einfärben, drei Situationen an denselben Klemmen); Theorie-Notizen *Strom in Flüssigkeiten* (Elektrolyse, Faraday) und *Mittelwert, Gleichrichtwert, Effektivwert*.
+- Notizen: Formeln in Überschriften stehen im Inhaltsverzeichnis richtig; lange Formeln bleiben einzeilig und werden am Handy auf höchstens 70 % verkleinert; Farbklassen `n0`–`n2` und `t0`–`t2` für eingefärbte Knoten in Schaltbildern.
+- Neuigkeiten: Rufzeichen unten rechts auf jeder Seite mit Fenster für neue Notizen und Neuerungen (`neuigkeiten.js`).
+- Lexikon: neun neue Einträge (Stromteiler, Stern-Dreieck-Umwandlung, Ersatzstromquelle, Knotenpotentialverfahren mit Millman, Knoten einfärben, Leerlauf und Kurzschluss, Mittelwert, Gleichrichtwert, Faradaysche Gesetze); Einträge verlinken unter „In den Notizen“ auf die passenden Notizen (Feld `notiz`).
 
 **Inhalte**
 - Notiz Brückenschaltung (A2.3) mit Simulation `bruecke`: Schaltplan, Potentialskala, Zweig-Tabelle mit Leistungsbilanz, Lastleistungs-Kurve.

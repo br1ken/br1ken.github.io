@@ -11,7 +11,7 @@ welle: dreieck
 
 Vier Widerstände, drei Klemmen und eine Zeichnung, die einen bewusst in die Irre führt. Die Aufgabe fragt dreimal nach etwas anderem: einmal nach einer Spannung, zweimal nach einem Ersatzwiderstand, jedes Mal an anderen Klemmen und mit etwas anderem angeschlossen. Wer jedes Mal neu überlegt, was wo hängt, verheddert sich schnell.
 
-Das Werkzeug, mit dem alle drei Teile fast von selbst gehen, ist die **Knotenmethode**: Man färbt die Knoten ein und liest dann nur noch ab, zwischen welchen Farben jeder Widerstand liegt. Gebraucht werden [[Reihe und parallel|reihe-parallel]] und der [[Spannungsteiler|spannungsteiler]], ausführlich in der Notiz [Widerstandsnetzwerke](beitrag.html?b=spannungsteiler).
+Das Werkzeug, mit dem alle drei Teile fast von selbst gehen, ist die [[Knotenmethode|knoten-faerben]]: Man färbt die Knoten ein und liest dann nur noch ab, zwischen welchen Farben jeder Widerstand liegt. Gebraucht werden [[Reihe und parallel|reihe-parallel]] und der [[Spannungsteiler|spannungsteiler]], ausführlich in der Notiz [Widerstandsnetzwerke](beitrag.html?b=spannungsteiler).
 
 ## Die Aufgabe
 
@@ -153,7 +153,7 @@ An $U_2$ nichts, an der Quelle schon. Durch $R_1$ und $R_3$ fließen je $\frac{1
 
 ## Teil (ii): Ersatzwiderstand $R_{10}$ im Leerlauf
 
-Leerlauf heißt hier: An Klemme 2 hängt nichts, dort fließt kein Strom heraus. Und an 1–0 sitzt statt der Quelle nur das Ohmmeter.
+[[Leerlauf|leerlauf-kurzschluss]] heißt hier: An Klemme 2 hängt nichts, dort fließt kein Strom heraus. Und an 1–0 sitzt statt der Quelle nur das Ohmmeter.
 
 ### Schritt 1: Quelle entfernen
 

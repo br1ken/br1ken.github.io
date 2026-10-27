@@ -7,6 +7,7 @@
      text:    ein, zwei Sätze
      link:    optional, relativ zur Startseite (z. B. 'messplatz/') oder eine volle Adresse */
 OSCINeuigkeiten.liste([
+  {datum: '2026-10-27', bereich: 'Lexikon', titel: 'Neun neue Lexikon-Einträge', text: 'Stromteiler, Stern-Dreieck, Ersatzstromquelle, Knotenpotentialverfahren, Knoten einfärben, Leerlauf und Kurzschluss, Mittelwert, Gleichrichtwert und Faraday. Jeder Eintrag verlinkt jetzt die Notizen, in denen es ausführlich steht.', link: '#lexikon'},
   {datum: '2026-10-27', bereich: 'Seite', titel: 'Neuigkeiten auf einen Blick', text: 'Das gelbe Rufzeichen unten rechts zeigt an, wenn es neue Notizen oder Neuerungen gibt. Nach dem Öffnen wartet es klein und grau in der Ecke, bis wieder etwas dazukommt.'},
   {datum: '2026-10-27', bereich: 'Notizen', titel: 'Formeln passen aufs Handy', text: 'Lange Formeln werden am Handy verkleinert statt umbrochen, und das Inhaltsverzeichnis zeigt Formeln in Überschriften richtig an.'},
   {datum: '2026-10-26', bereich: 'Notizen', titel: 'Stromteiler mit Herleitung', text: 'Die Notiz zu Widerstandsnetzwerken hat einen neuen Abschnitt: der Stromteiler, hergeleitet und mit Beispiel.', link: 'notizen/beitrag.html?b=spannungsteiler#6-der-stromteiler'},

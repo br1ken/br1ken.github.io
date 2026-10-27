@@ -375,7 +375,7 @@ $$U = U^{(a)} + U^{(b)} = U_0 - R_i \cdot I$$
 
 Das ist genau die Kennlinie der Ersatzquelle. Jede Last sucht sich auf dieser Geraden ihren Punkt, und der ist für Original und Ersatzquelle derselbe. Nebenbei erklärt der Beweis, warum Teil 2 und Teil 4 dasselbe $R_i$ liefern: In beiden Fällen ist es der Widerstand des Netzes ohne Quellen. Im Kurzschluss gilt $U = 0$, also $I_k = U_0 / R_i$.
 
-Voraussetzung ist ein **lineares** Netzwerk: Widerstände, ideale Quellen, lineare gesteuerte Quellen. Eine Diode hat eine gekrümmte Kennlinie. Dann gilt die Ersatzquelle nur noch näherungsweise in der Nähe eines [[Arbeitspunkts|arbeitspunkt]]. Ein Sonderfall: Liegt eine ideale Stromquelle direkt in Reihe mit einer Klemme, legt sie den Klemmenstrom fest. Leerlauf ist dann gar nicht möglich, denn die Quelle müsste ihren Strom durch eine Unterbrechung treiben, und $R_i$ wäre unendlich. Eine Ersatzspannungsquelle gibt es dann nicht, wohl aber die Ersatzstromquelle aus der ersten Aufgabe unten.
+Voraussetzung ist ein **lineares** Netzwerk: Widerstände, ideale Quellen, lineare gesteuerte Quellen. Eine Diode hat eine gekrümmte Kennlinie. Dann gilt die Ersatzquelle nur noch näherungsweise in der Nähe eines [[Arbeitspunkts|arbeitspunkt]]. Ein Sonderfall: Liegt eine ideale Stromquelle direkt in Reihe mit einer Klemme, legt sie den Klemmenstrom fest. Leerlauf ist dann gar nicht möglich, denn die Quelle müsste ihren Strom durch eine Unterbrechung treiben, und $R_i$ wäre unendlich. Eine Ersatzspannungsquelle gibt es dann nicht, wohl aber die [[Ersatzstromquelle|ersatzstromquelle]] aus der ersten Aufgabe unten.
 
 ## Was die Ersatzquelle nicht kann
 
