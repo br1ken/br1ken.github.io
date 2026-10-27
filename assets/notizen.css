@@ -81,6 +81,14 @@
 .dia .hl { fill: var(--accent); fill-opacity: .35; stroke: none; }
 .dia .f { fill: currentColor; stroke: none; }
 .dia .fm { fill: var(--muted); stroke: none; }
+/* Knoten einfärben (Knotenmethode): breite, halb durchsichtige Bänder unter den Leitungen, dazu passende Schrift */
+.dia .n0, .dia .n1, .dia .n2 { fill: none; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; stroke-opacity: .5; }
+.dia .n0 { stroke: #23a06e; }
+.dia .n1 { stroke: #3a86dc; }
+.dia .n2 { stroke: #e3901f; }
+.dia text.t0 { fill: #1f9467; }
+.dia text.t1 { fill: #3a80d0; }
+.dia text.t2 { fill: #d4840f; }
 .prose img { height: auto; }
 .table-wrap { overflow-x: auto; margin: 1.6em 0; border: 1px solid var(--ink); }
 .prose table { width: 100%; border-collapse: collapse; font-size: 14px; }
