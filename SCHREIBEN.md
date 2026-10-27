@@ -112,6 +112,21 @@ Lange Rechnung, standardmäßig zugeklappt.
 
 Jeder Kasten endet mit einer Zeile, auf der nur `:::` steht. Kästen dürfen Formeln, Listen und Tabellen enthalten.
 
+**Checkpoints zum Abhaken:** Listenpunkte mit `- [ ]` lassen sich in der fertigen Notiz anklicken. Der Browser merkt sich die Häkchen pro Notiz, und im Kopf steht „Abgehakt: 3 von 58“. Am besten in einen Kasten:
+
+```
+::: tipp Checkpoint
+- [ ] Ich kann erklären, was eine Impulsantwort ist.
+- [ ] Ich habe das Beispiel laufen lassen und eine Zahl verändert.
+:::
+```
+
+**Teil-Banner** für lange Notizen, die wie ein Kurs aufgebaut sind (eine Zeile, ohne Leerzeile):
+
+```
+<div class="teil"><span>Teil II · etwa 2 Stunden</span><strong>Digitales Audio</strong><p>Worum es in diesem Teil geht.</p></div>
+```
+
 ## 5. Simulationen
 
 ```
@@ -127,10 +142,13 @@ Optionaler Satz unter der Simulation.
 | `teiler` | Spannungsteiler mit Schaltplan, optional belastet | `u=12 r1=10k r2=10k rl=10k last` |
 | `bruecke` | Brückenschaltung (R₂ = R₃ gekoppelt) mit Potentialen, Strömen, Wirkungsgrad und Lastleistungs-Kurve | `x=30 u=30 rl=15 r1=10 anpassen` |
 | `ueberlagerung` | Überlagerungsprinzip: U_q, R und I_q in Reihe, Umschalter (a) nur U_q / (b) nur I_q / beide, Teiltabelle und Leistungsbilanz | `u=3 i=2 r=1 modus=t` (`a`, `b` oder `t`) |
+| `klang` | Obertöne: Rechteck, Sägezahn oder Dreieck aus bis zu 60 Sinustönen, Zeitverlauf, Spektrum, Spitzen- und Effektivwert, mit Knopf zum Anhören | `f=220 n=9 form=rechteck` (`rechteck`, `saege` oder `dreieck`) |
+| `abtastung` | Abtastung und Aliasing: Original, Abtastwerte und der Sinus, den ein idealer D/A-Wandler daraus macht, Faltung auf der Frequenzachse, Original und abgetastet zum Anhören | `f=5k fs=8k` |
 | `ersatzquelle` | Ersatzspannungsquelle: Original (U_q, R₁, R₂, R₃) und Ersatzquelle (U₀, Rᵢ) an derselben Last, Umschalter Leerlauf / Last / Kurzschluss, Kennlinie mit Arbeitspunkt | `u=12 r1=1k r2=1k r3=500 rl=1k modus=last` (`leer`, `last` oder `kurz`) |
 
 Einheiten-Kürzel für Werte: `p n u µ m k M` (z. B. `4.7u` = 4,7 µF, `2k2` geht nicht, nimm `2.2k`).
 Neue Simulationen kommen in `assets/sims.js`. Jede Funktion dort bekommt ein Element und die Startwerte.
+Simulationen mit Ton spielen über den gemeinsamen Helfer `ton` in `sims.js`: Es klingt immer nur eine gleichzeitig, und alles stoppt, wenn man den Tab verlässt.
 
 ## 6. Lexikon-Links
 
@@ -174,3 +192,15 @@ Eine Zeile, die mit einem HTML-Tag wie `<div`, `<iframe`, `<video` oder `<figure
 ```
 
 Klassen: `s` Linie, `m` graue Linie, `d` gestrichelt, `b` Kasten, `a` Akzent-Fläche, `hl` zarte Markierung, `f` gefüllt; bei Text `c` zentriert, `k` kleine graue Beschriftung, `ai` Text auf Akzent. Etwa 360 breit zeichnen, dann bleibt die Schrift auf dem Handy lesbar.
+
+## 9. Code und Dateien
+
+Code steht zwischen drei Backticks, dahinter die Sprache. Jeder Codeblock bekommt in der Notiz oben rechts einen Knopf „Kopieren“.
+
+````
+```python
+print("Hallo, Labor")
+```
+````
+
+Dateien zum Herunterladen (zum Beispiel ein Python-Modul) kommen nach `notizen/dateien/` und werden normal verlinkt: `[werkzeug.py](dateien/werkzeug.py)`.

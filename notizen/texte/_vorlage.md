@@ -49,7 +49,7 @@ Längere Rechnungen, die man aufklappen kann.
 :::
 
 ::: sim rc r=10k c=22n
-Optionaler Satz unter der Simulation. Verfügbar: rc, welle, teiler, bruecke, ueberlagerung, ersatzquelle.
+Optionaler Satz unter der Simulation. Verfügbar: rc, welle, teiler, bruecke, ueberlagerung, ersatzquelle, klang, abtastung.
 :::
 
 | Größe | Formelzeichen | Einheit |

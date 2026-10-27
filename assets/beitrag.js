@@ -64,6 +64,52 @@
 
   OSCIMarkdown.typeset(main);
   OSCISims.mount(main);
+
+  /* Codeblöcke: Knopf zum Kopieren, damit sich Beispiele direkt nachmachen lassen */
+  main.querySelectorAll('pre.code').forEach(pre => {
+    const knopf = document.createElement('button');
+    knopf.type = 'button'; knopf.className = 'code-copy'; knopf.textContent = 'Kopieren';
+    knopf.addEventListener('click', async () => {
+      const code = pre.querySelector('code');
+      try { await navigator.clipboard.writeText(code.textContent); knopf.textContent = 'Kopiert ✓'; }
+      catch {
+        /* Ohne Zugriff auf die Zwischenablage wenigstens alles markieren, dann reicht ⌘C bzw. Strg+C */
+        const bereich = document.createRange();
+        bereich.selectNodeContents(code);
+        getSelection().removeAllRanges(); getSelection().addRange(bereich);
+        knopf.textContent = 'Markiert ✓';
+      }
+      setTimeout(() => { knopf.textContent = 'Kopieren'; }, 1800);
+    });
+    pre.classList.add('has-copy');
+    pre.append(knopf);
+  });
+
+  /* Abhakelisten (- [ ] …) lassen sich anklicken. Der Stand bleibt pro Notiz im Browser, im Kopf steht der Fortschritt. */
+  const haken = [...main.querySelectorAll('#text li.task > input[type="checkbox"]')];
+  if (haken.length) {
+    const SPEICHER = 'osci-log-haken';
+    let alle = {};
+    try { alle = JSON.parse(localStorage.getItem(SPEICHER)) || {}; } catch { /* privat oder gesperrt */ }
+    if (Array.isArray(alle[slug])) haken.forEach((box, i) => { box.checked = alle[slug].includes(i); });
+    main.querySelector('.post-facts').insertAdjacentHTML('beforeend', '<div><dt>Abgehakt</dt><dd class="fortschritt"></dd></div>');
+    const anzeige = main.querySelector('.fortschritt');
+    const zeigen = () => { anzeige.textContent = `${haken.filter(box => box.checked).length} von ${haken.length}`; };
+    haken.forEach(box => {
+      /* Kästchen und Text in ein Label, damit auch ein Klick auf den Text abhakt (Links darin bleiben Links) */
+      const li = box.parentElement, label = document.createElement('label'), text = document.createElement('span');
+      while (box.nextSibling && !/^(UL|OL|P|DIV|PRE)$/.test(box.nextSibling.tagName || '')) text.append(box.nextSibling);
+      box.disabled = false;
+      label.append(box, text);
+      li.prepend(label);
+      box.addEventListener('change', () => {
+        alle[slug] = haken.flatMap((b, i) => b.checked ? [i] : []);
+        try { localStorage.setItem(SPEICHER, JSON.stringify(alle)); } catch { /* dann gilt es nur für diesen Besuch */ }
+        zeigen();
+      });
+    });
+    zeigen();
+  }
   if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();
 
   document.getElementById('teilen').addEventListener('click', async () => {
@@ -78,6 +124,8 @@
   const bar = document.getElementById('progress'), text = document.getElementById('text');
   const tocLinks = [...main.querySelectorAll('.toc a')];
   const heads = tocLinks.map(a => document.getElementById(a.hash.slice(1)));
+  const toc = main.querySelector('.toc');
+  let zuletzt = -1;
   function onScroll() {
     const r = text.getBoundingClientRect();
     const p = Math.min(1, Math.max(0, (innerHeight * .4 - r.top) / r.height));
@@ -85,6 +133,12 @@
     let current = -1;
     heads.forEach((h, i) => { if (h && h.getBoundingClientRect().top < 140) current = i; });
     tocLinks.forEach((a, i) => a.classList.toggle('active', i === current));
+    /* Ist das Inhaltsverzeichnis länger als der Bildschirm, läuft es mit, damit der aktive Abschnitt sichtbar bleibt */
+    if (current !== zuletzt && current >= 0 && toc.scrollHeight > toc.clientHeight) {
+      const a = tocLinks[current];
+      if (a.offsetTop < toc.scrollTop || a.offsetTop + a.offsetHeight > toc.scrollTop + toc.clientHeight) toc.scrollTop = a.offsetTop - toc.clientHeight / 3;
+    }
+    zuletzt = current;
   }
   addEventListener('scroll', onScroll, {passive: true});
   onScroll();

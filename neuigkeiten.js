@@ -7,6 +7,7 @@
      text:    ein, zwei Sätze
      link:    optional, relativ zur Startseite (z. B. 'messplatz/') oder eine volle Adresse */
 OSCINeuigkeiten.liste([
+  {datum: '2026-10-27', bereich: 'Notizen', titel: 'Abhaken, kopieren, anhören', text: 'Checkpoints in Notizen lassen sich abhaken, der Browser merkt sich den Fortschritt. Codeblöcke haben einen Knopf zum Kopieren, und zwei neue Simulationen spielen ihren Ton direkt ab: Obertöne und Abtastung mit Aliasing.', link: 'notizen/beitrag.html?b=vom-sinus-zum-sound#6-obertoene-woraus-klangfarbe-besteht'},
   {datum: '2026-10-28', bereich: 'Notizen', titel: 'A3.2 überarbeitet', text: 'Die Ersatzspannungsquelle ist jetzt kompakt wie in der Übung gerechnet: Leerlauf, Kurzschluss, beliebige Last und null gesetzte Quellen, jeder Schritt mit Bild.', link: 'notizen/beitrag.html?b=ersatzspannungsquelle'},
   {datum: '2026-10-28', bereich: 'Notizen', titel: 'A3.3 überarbeitet', text: 'Die Ersatzquellen-Aufgabe ist jetzt kompakt wie in der Übung gerechnet: Thévenin und Norton mit Knotengleichungen, jeder Schritt mit Bild, ohne Ballast.', link: 'notizen/beitrag.html?b=ersatzquellen'},
   {datum: '2026-10-27', bereich: 'Lexikon', titel: 'Neun neue Lexikon-Einträge', text: 'Stromteiler, Stern-Dreieck, Ersatzstromquelle, Knotenpotentialverfahren, Knoten einfärben, Leerlauf und Kurzschluss, Mittelwert, Gleichrichtwert und Faraday. Jeder Eintrag verlinkt jetzt die Notizen, in denen es ausführlich steht.', link: '#lexikon'},

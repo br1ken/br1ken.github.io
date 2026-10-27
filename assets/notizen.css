@@ -27,7 +27,7 @@
 .post-facts dd { margin: 0; text-align: right; }
 .post-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 18px; }
 .post-layout { max-width: var(--max); margin: 0 auto; padding: 40px var(--gutter) 60px; display: grid; grid-template-columns: 200px minmax(0, 720px); gap: 60px; justify-content: center; }
-.toc { position: sticky; top: 110px; align-self: start; font-size: 12px; }
+.toc { position: sticky; top: 110px; align-self: start; font-size: 12px; max-height: calc(100vh - 130px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 .toc ol { list-style: none; margin: 12px 0 0; padding: 0; counter-reset: toc; }
 .toc li { counter-increment: toc; }
 .toc a { display: grid; grid-template-columns: 26px 1fr; padding: 7px 0; color: var(--muted); text-decoration: none; border-top: 1px solid var(--hairline); line-height: 1.35; }
@@ -54,10 +54,21 @@
 .prose pre.code { font-family: var(--mono); font-size: 13px; line-height: 1.6; background: var(--code-bg); color: var(--code-fg); padding: 18px 20px; overflow-x: auto; margin: 1.6em 0; position: relative; }
 .prose pre.code code { background: none; border: 0; padding: 0; font-size: inherit; color: inherit; }
 .prose pre.code[data-lang]::before { content: attr(data-lang); position: absolute; right: 12px; top: 8px; font-size: 10px; color: var(--plot-text); text-transform: uppercase; }
+.prose pre.code.has-copy { padding-top: 38px; }
+.prose pre.code.has-copy[data-lang]::before { right: auto; left: 20px; top: 13px; }
+.code-copy { position: absolute; top: 7px; right: 7px; font: 10px var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--code-fg); background: transparent; border: 1px solid var(--plot-text); padding: 4px 8px; cursor: pointer; }
+.code-copy:hover, .code-copy:focus-visible { background: var(--code-fg); color: var(--code-bg); }
 .prose ul, .prose ol { padding-left: 1.3em; margin: 0 0 1.2em; }
 .prose li { margin: .35em 0; }
 .prose li::marker { color: var(--muted); }
 .prose li.task { list-style: none; margin-left: -1.3em; }
+.prose li.task label { display: flex; gap: 10px; align-items: baseline; cursor: pointer; }
+.prose li.task input { flex: none; width: 15px; height: 15px; margin: 0; accent-color: var(--ink); cursor: pointer; transform: translateY(2px); }
+.prose li.task input:checked + span { color: var(--muted); }
+.prose .teil { margin: 3.4em 0 1.4em; padding: 20px 22px; background: var(--ink); color: var(--on-ink); }
+.prose .teil span { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; opacity: .75; }
+.prose .teil strong { display: block; font-family: var(--sans); font-size: 30px; font-weight: 300; letter-spacing: -.04em; line-height: 1.1; margin: 6px 0 8px; }
+.prose .teil p { margin: 0; font-size: 13.5px; line-height: 1.55; }
 .prose blockquote { margin: 1.8em 0; padding: 4px 0 4px 24px; border-left: 3px solid var(--ink); font-size: 1.15em; line-height: 1.55; color: var(--ink); }
 .prose blockquote p:last-child { margin-bottom: 0; }
 .prose hr { border: 0; height: 1px; background: var(--hairline); margin: 2.4em 0; }
@@ -196,6 +207,13 @@
 .sim svg .tick.strong { fill: var(--ink); }
 .sim svg .ul { stroke: var(--ink); stroke-width: 6; stroke-opacity: .25; }
 .sim svg .dot.dot-2 { fill: var(--card); }
+.sim svg .orig { fill: none; stroke: var(--soft); stroke-width: 1.2; }
+.sim svg .stem { stroke: var(--ink); stroke-width: 1; stroke-opacity: .45; }
+.sim svg .band { fill: var(--accent); fill-opacity: .3; }
+.sim svg .bar-off { fill: none; stroke: var(--soft); stroke-dasharray: 3 3; }
+.sim-seg[hidden] { display: none; }
+.sim-actions .button[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); }
+.sim-actions .button + .sim-badge { margin-top: 10px; }
 .sim-control.is-locked { opacity: .55; }
 .sim-badge { margin: 4px 0 0; padding: 8px 10px; font-size: 12px; line-height: 1.45; background: var(--accent); border: 1px solid var(--ink); }
 .sim-badge[hidden] { display: none; }
@@ -247,6 +265,7 @@
   .post-cover { aspect-ratio: 16 / 7; }
   .prose { font-size: 14.5px; }
   .prose .anchor { display: none; }
+  .prose th, .prose td { hyphens: auto; -webkit-hyphens: auto; }
   .callout { padding: 16px 16px 4px; }
   .solution { margin: 4px -16px 0; padding: 0 16px; }
   .post-nav { grid-template-columns: 1fr; }

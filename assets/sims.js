@@ -2,7 +2,9 @@
    Einbinden: <div data-sim="rc"></div>  ·  in Markdown:  ::: sim rc  (optional mit Startwerten: ::: sim rc r=10k c=22n)
    Verfügbare Simulationen: rc (RC-Tiefpass), welle (Sinusgrößen), teiler (Spannungsteiler), bruecke (Brückenschaltung),
    ueberlagerung (Überlagerungsprinzip mit Leistungsbilanz, Startwerte u, i, r, modus = a | b | t),
-   ersatzquelle (Ersatzspannungsquelle mit Kennlinie, Startwerte u, r1, r2, r3, rl, modus = leer | last | kurz). */
+   ersatzquelle (Ersatzspannungsquelle mit Kennlinie, Startwerte u, r1, r2, r3, rl, modus = leer | last | kurz),
+   klang (Obertöne zum Anhören, Startwerte f, n, form = rechteck | saege | dreieck),
+   abtastung (Abtastung und Aliasing zum Anhören, Startwerte f, fs). */
 'use strict';
 const OSCISims = (() => {
   const PREFIX = [[1e6, 'M'], [1e3, 'k'], [1, ''], [1e-3, 'm'], [1e-6, 'µ'], [1e-9, 'n'], [1e-12, 'p']];
@@ -484,7 +486,238 @@ const OSCISims = (() => {
     [U, R1, R2, R3, RL].forEach(s => s.on(update)); update();
   }
 
-  const SIMS = {rc, welle, teiler, bruecke, ueberlagerung, ersatzquelle};
+  /* ---------- Ton für die Klang-Simulationen ----------
+     Ein gemeinsamer AudioContext, der erst beim ersten Klick entsteht. Es klingt immer nur eine Simulation,
+     leise und mit kurzen Rampen gegen Knacksen. Wer den Tab verlässt, schaltet den Ton ab. */
+  const ton = (() => {
+    const Context = window.AudioContext || window.webkitAudioContext;
+    let ctx = null, now = null;
+    function stop() {
+      if (!now) return;
+      const {osc, gain, aus} = now, t = ctx.currentTime;
+      now = null;
+      gain.gain.cancelScheduledValues(t);
+      gain.gain.setTargetAtTime(0, t, .012);
+      osc.stop(t + .1);
+      aus();
+    }
+    /* Spielt einen Oszillator, bis stop() kommt. aus() sagt der Simulation, dass ihr Ton aus ist. */
+    function start(aus) {
+      stop();
+      try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch { /* ältere Browser */ }
+      ctx ||= new Context();
+      ctx.resume();
+      const osc = ctx.createOscillator(), gain = ctx.createGain();
+      gain.gain.value = 0;
+      osc.connect(gain).connect(ctx.destination);
+      osc.start();
+      now = {osc, gain, aus};
+      return {osc, ctx, laut: v => gain.gain.setTargetAtTime(v, ctx.currentTime, .015)};
+    }
+    addEventListener('pagehide', stop);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
+    return {start, stop, geht: !!Context};
+  })();
+  const LEISE = .12;
+  const NOTEN = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'H'];
+  function notenname(f) {
+    const m = 69 + 12 * Math.log2(f / 440), n = Math.round(m), cent = Math.round((m - n) * 100);
+    return `${NOTEN[(n % 12 + 12) % 12]}${Math.floor(n / 12) - 1}${cent ? ` ${cent > 0 ? '+' : '−'}${Math.abs(cent)} ct` : ''}`;
+  }
+  const zahl = (v, d = 3) => new Intl.NumberFormat('de-DE', {maximumSignificantDigits: d}).format(v);
+
+  /* ---------- Obertöne: Rechteck, Sägezahn und Dreieck aus Sinustönen ---------- */
+  const FORMEN = {
+    rechteck: {name: 'Rechteck', b: n => n % 2 ? 4 / (Math.PI * n) : 0, ideal: p => p < Math.PI ? 1 : -1,
+      text: 'Rechteck: nur ungerade Obertöne, jeder mit 1/n. Klingt hohl, ähnlich wie eine Klarinette in der Tiefe.'},
+    saege: {name: 'Sägezahn', b: n => 2 / (Math.PI * n) * (n % 2 ? 1 : -1), ideal: p => (p < Math.PI ? p : p - 2 * Math.PI) / Math.PI,
+      text: 'Sägezahn: alle Obertöne, jeder mit 1/n. Klingt hell und schnarrend, die Grundlage vieler Streicher- und Bläserklänge im Synthesizer.'},
+    dreieck: {name: 'Dreieck', b: n => n % 2 ? 8 / (Math.PI ** 2 * n * n) * ((n - 1) / 2 % 2 ? -1 : 1) : 0, ideal: p => 2 / Math.PI * Math.asin(Math.sin(p)),
+      text: 'Dreieck: nur ungerade Obertöne, jeder mit 1/n². Sie werden so schnell leiser, dass es weich klingt, fast wie ein Sinus.'}
+  };
+  function klang(el, opts) {
+    const ui = shell(el, 'Obertöne', 'x(t) = Σ b<sub>n</sub> · sin(2π·n·f<sub>0</sub>·t)');
+    const F0 = slider({label: 'Grundton f<sub>0</sub>', min: 55, max: 1760, value: parseSI(opts.f, 220), log: true, unit: 'Hz'});
+    const N = slider({label: 'Teiltöne bis n', min: 1, max: 60, value: parseSI(opts.n, 9), format: v => String(Math.round(v))});
+    const seg = document.createElement('div');
+    seg.className = 'sim-seg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Welche Wellenform?');
+    seg.innerHTML = Object.entries(FORMEN).map(([k, v]) => `<button type="button" data-form="${k}">${v.name}</button>`).join('');
+    ui.controls.append(seg, F0.el, N.el);
+    const zeitbild = plot(ui.plots, 'Zwei Perioden: die Summe der Teiltöne, gestrichelt die ideale Wellenform');
+    const spek = plot(ui.plots, 'Spektrum: Amplitude b<sub>n</sub> jedes Teiltons bei n · f<sub>0</sub>, gestrichelt die weggelassenen');
+    const play = document.createElement('button');
+    play.type = 'button'; play.className = 'button small'; play.textContent = '▶ Anhören'; play.setAttribute('aria-pressed', 'false');
+    play.hidden = !ton.geht;
+    const badge = document.createElement('p');
+    badge.className = 'sim-badge';
+    ui.actions.append(play, badge);
+    let form = FORMEN[opts.form] ? opts.form : 'rechteck', laeuft = null;
+    const koeff = (n) => Array.from({length: n}, (_, i) => FORMEN[form].b(i + 1));
+    function welle(ctx, b) {
+      const real = new Float32Array(b.length + 1), imag = new Float32Array(b.length + 1);
+      b.forEach((v, i) => { imag[i + 1] = v; });
+      return ctx.createPeriodicWave(real, imag);
+    }
+    function update() {
+      const f0 = F0.value, n = Math.round(N.value), b = koeff(n), fm = FORMEN[form];
+      seg.querySelectorAll('button').forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.form === form)));
+      // Zeitverlauf über zwei Perioden
+      const {W, H, pad} = zeitbild, iw = W - pad.l - pad.r, ih = H - pad.t - pad.b, ymax = 1.4;
+      const px = p => pad.l + p / (4 * Math.PI) * iw, py = v => pad.t + ih / 2 - v / ymax * (ih / 2);
+      const parts = [];
+      for (let k = 0; k <= 4; k++) parts.push(`<path class="grid${k % 2 ? '' : ' major'}" d="M${px(k * Math.PI).toFixed(1)},${pad.t}V${pad.t + ih}"/><text class="tick" x="${px(k * Math.PI).toFixed(1)}" y="${H - 10}" text-anchor="${k === 4 ? 'end' : 'middle'}">${['0', 'T/2', 'T', '3T/2', '2T'][k]}</text>`);
+      for (const v of [-1, 0, 1]) parts.push(`<path class="grid major" d="M${pad.l},${py(v).toFixed(1)}H${pad.l + iw}"/><text class="tick" x="${pad.l - 6}" y="${(py(v) + 3).toFixed(1)}" text-anchor="end">${v === -1 ? '−1' : v}</text>`);
+      const summeBei = p => b.reduce((a, v, k) => v ? a + v * Math.sin((k + 1) * p) : a, 0);
+      const ideal = [], summe = [];
+      for (let i = 0; i <= 640; i++) {
+        const p = i / 640 * 4 * Math.PI;
+        summe.push([px(p), py(summeBei(p))]);
+        ideal.push([px(p), py(fm.ideal(p % (2 * Math.PI)))]);
+      }
+      /* Der Überschwinger ist schmal, darum den Spitzenwert fein abgetastet suchen. Alle drei Formen sind
+         punktsymmetrisch, eine halbe Periode reicht. */
+      let spitze = 0;
+      for (let i = 0; i <= 3000; i++) spitze = Math.max(spitze, Math.abs(summeBei(i / 3000 * Math.PI)));
+      parts.push(`<path class="ghost" d="${line(ideal)}"/><path class="trace" d="${line(summe)}"/>`);
+      zeitbild.draw(parts);
+      // Spektrum als Balken
+      const s = spek, sw = s.W - s.pad.l - s.pad.r, sh = s.H - s.pad.t - s.pad.b, M = Math.max(12, Math.ceil(n / 4) * 4), bmax = 1.4;
+      const bx = k => s.pad.l + (k - .5) / M * sw, by = v => s.pad.t + (1 - v / bmax) * sh, bw = Math.max(2, sw / M * .62);
+      const sp = [];
+      for (const v of [0, .5, 1]) sp.push(`<path class="grid major" d="M${s.pad.l},${by(v).toFixed(1)}H${s.pad.l + sw}"/><text class="tick" x="${s.pad.l - 6}" y="${(by(v) + 3).toFixed(1)}" text-anchor="end">${String(v).replace('.', ',')}</text>`);
+      const step = M <= 12 ? 1 : M <= 24 ? 4 : M <= 40 ? 5 : 10;
+      for (let k = 1; k <= M; k++) {
+        const v = Math.abs(fm.b(k));
+        if (k === 1 || k % step === 0) sp.push(`<text class="tick" x="${bx(k).toFixed(1)}" y="${s.H - 10}" text-anchor="middle">${k}</text>`);
+        if (!v) continue;
+        sp.push(`<rect class="${k <= n ? 'bar-low' : 'bar-off'}" x="${(bx(k) - bw / 2).toFixed(1)}" y="${by(v).toFixed(1)}" width="${bw.toFixed(1)}" height="${(by(0) - by(v)).toFixed(1)}"/>`);
+      }
+      const hoerbar = 20e3 / f0;
+      if (hoerbar < M + .5) sp.push(`<path class="ref" d="M${bx(hoerbar + .5).toFixed(1)},${s.pad.t}V${s.pad.t + sh}"/><text class="tick ref-label" x="${(bx(hoerbar + .5) - 4).toFixed(1)}" y="${s.pad.t + 12}" text-anchor="end">20 kHz</text>`);
+      sp.push(`<text class="axis" x="${s.pad.l + sw}" y="${s.pad.t + 12}" text-anchor="end">n</text>`);
+      spek.draw(sp);
+      const teile = b.filter(Boolean).length, hoechster = b.reduce((m, v, i) => v ? i + 1 : m, 1);
+      const rms = Math.sqrt(b.reduce((a, v) => a + v * v / 2, 0)), rmsIdeal = form === 'rechteck' ? 1 : 1 / Math.sqrt(3);
+      readout(ui.readout, [
+        ['Grundton f<sub>0</sub>', `${si(f0, 'Hz')} · ${notenname(f0)}`],
+        ['Periode T = 1/f<sub>0</sub>', si(1 / f0, 's')],
+        ['Teiltöne im Klang', String(teile)],
+        ['Höchster Teilton', `${hoechster} · f<sub>0</sub> = ${si(hoechster * f0, 'Hz')}`],
+        ['Spitzenwert der Summe', `${zahl(spitze)} (Ziel 1)`],
+        ['Effektivwert', `${zahl(rms)} (Ziel ${zahl(rmsIdeal)})`]
+      ]);
+      badge.innerHTML = (n === 1 ? 'Nur der Grundton: ein reiner Sinus. Erst die Obertöne machen daraus eine andere Wellenform.' : fm.text)
+        + (hoechster * f0 > 20e3 ? ' Teiltöne über 20 kHz hörst du nicht mehr.' : '');
+      if (laeuft) {
+        laeuft.osc.setPeriodicWave(welle(laeuft.ctx, b));
+        laeuft.osc.frequency.setTargetAtTime(f0, laeuft.ctx.currentTime, .01);
+      }
+    }
+    function aus() { laeuft = null; play.textContent = '▶ Anhören'; play.setAttribute('aria-pressed', 'false'); }
+    play.addEventListener('click', () => {
+      if (laeuft) { ton.stop(); return; }
+      laeuft = ton.start(aus);
+      laeuft.osc.frequency.value = F0.value;
+      laeuft.laut(LEISE);
+      play.textContent = '■ Stopp'; play.setAttribute('aria-pressed', 'true');
+      update();
+    });
+    seg.addEventListener('click', ev => { const btn = ev.target.closest('[data-form]'); if (btn) { form = btn.dataset.form; update(); } });
+    F0.on(update); N.on(update); update();
+  }
+
+  /* ---------- Abtastung und Aliasing ---------- */
+  function abtastung(el, opts) {
+    const ui = shell(el, 'Abtastung und Aliasing', 'f<sub>a</sub> = |f − k · f<sub>s</sub>|');
+    const F = slider({label: 'Signalfrequenz f', min: 100, max: 20e3, value: parseSI(opts.f, 5e3), log: true, unit: 'Hz'});
+    const FS = slider({label: 'Abtastrate f<sub>s</sub>', min: 2e3, max: 48e3, value: parseSI(opts.fs, 8e3), log: true, unit: 'Hz'});
+    const seg = document.createElement('div');
+    seg.className = 'sim-seg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Was soll klingen?');
+    seg.innerHTML = '<button type="button" data-mode="aus">Aus</button><button type="button" data-mode="orig">Original</button><button type="button" data-mode="abg">Abgetastet</button>';
+    const hoeren = document.createElement('div');
+    hoeren.className = 'sim-control'; hoeren.innerHTML = '<span class="sim-control-row"><span>▶ Anhören</span></span>';
+    seg.hidden = hoeren.hidden = !ton.geht;
+    ui.controls.append(F.el, FS.el, hoeren, seg);
+    const zeitbild = plot(ui.plots, 'Dünn das Original, Punkte die Abtastwerte, dick der Sinus, den ein idealer D/A-Wandler daraus macht');
+    const fbild = plot(ui.plots, 'Frequenzachse: Nur bis f<sub>s</sub>/2 (gelb) kommt heraus, was hineinging. Gestrichelt die Spiegelfrequenzen k·f<sub>s</sub> ± f');
+    const badge = document.createElement('p');
+    badge.className = 'sim-badge';
+    ui.actions.append(badge);
+    let mode = 'aus', laeuft = null;
+    function rechnen() {
+      const f = F.value, fs = FS.value, k = Math.round(f / fs), fv = f - k * fs, fa = Math.abs(fv);
+      return {f, fs, fv, fa, grenze: Math.abs(fa - fs / 2) < 1e-9 * fs, stumm: fa < 1e-9 * fs, alias: f > fs / 2};
+    }
+    /* Übliche Abtastraten rasten ein, sonst landet der logarithmische Regler knapp daneben */
+    const RATEN = [8e3, 11025, 16e3, 22050, 32e3, 44100, 48e3];
+    function einrasten() { const v = RATEN.find(x => Math.abs(FS.value / x - 1) < .006); if (v) FS.value = v; update(); }
+    function update() {
+      const r = rechnen(), {f, fs, fv, fa} = r;
+      seg.querySelectorAll('button').forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.mode === mode)));
+      // Zeitbild: genug Abtastwerte, dass man den gehörten Sinus erkennt
+      const ns = Math.round(clamp(fa > 0 ? 1.5 * fs / fa : 24, 12, 96)), tmax = ns / fs;
+      const {W, H, pad} = zeitbild, iw = W - pad.l - pad.r, ih = H - pad.t - pad.b, ymax = 1.25;
+      const tx = t => pad.l + t / tmax * iw, uy = v => pad.t + ih / 2 - v / ymax * (ih / 2);
+      const parts = [];
+      for (let k = 0; k <= 4; k++) parts.push(`<path class="grid${k % 2 ? '' : ' major'}" d="M${tx(k * tmax / 4).toFixed(1)},${pad.t}V${pad.t + ih}"/><text class="tick" x="${tx(k * tmax / 4).toFixed(1)}" y="${H - 10}" text-anchor="${k === 4 ? 'end' : k ? 'middle' : 'start'}">${k ? si(k * tmax / 4, 's') : '0'}</text>`);
+      for (const v of [-1, 0, 1]) parts.push(`<path class="grid major" d="M${pad.l},${uy(v).toFixed(1)}H${pad.l + iw}"/><text class="tick" x="${pad.l - 6}" y="${(uy(v) + 3).toFixed(1)}" text-anchor="end">${v === -1 ? '−1' : v}</text>`);
+      const np = Math.round(clamp(24 * f * tmax, 200, 2400)), orig = [], rek = [];
+      for (let i = 0; i <= np; i++) {
+        const t = i / np * tmax;
+        orig.push([tx(t), uy(Math.sin(2 * Math.PI * f * t))]);
+        rek.push([tx(t), uy(r.grenze ? 0 : Math.sin(2 * Math.PI * fv * t))]);
+      }
+      parts.push(`<path class="orig" d="${line(orig)}"/><path class="trace" d="${line(rek)}"/>`);
+      const rad = ns > 48 ? 2.5 : 3.5;
+      for (let n = 0; n <= ns; n++) {
+        const v = Math.sin(2 * Math.PI * f * n / fs), x = tx(n / fs).toFixed(1);
+        parts.push(`<path class="stem" d="M${x},${uy(0).toFixed(1)}V${uy(v).toFixed(1)}"/><circle class="dot" cx="${x}" cy="${uy(v).toFixed(1)}" r="${rad}"/>`);
+      }
+      zeitbild.draw(parts);
+      // Frequenzachse mit Faltung
+      const s = fbild, sw = s.W - s.pad.l - s.pad.r, sh = s.H - s.pad.t - s.pad.b;
+      const fmax = Math.max(1.12 * f, 2.1 * fs), fx = v => s.pad.l + v / fmax * sw, hy = v => s.pad.t + (1 - v) * sh;
+      const sp = [`<rect class="band" x="${s.pad.l}" y="${s.pad.t}" width="${(fx(fs / 2) - s.pad.l).toFixed(1)}" height="${sh}"/>`];
+      sp.push(`<path class="grid major" d="M${s.pad.l},${hy(0)}H${s.pad.l + sw}"/>`);
+      for (let k = 1; k * fs / 2 <= fmax; k++) {
+        const x = fx(k * fs / 2).toFixed(1);
+        sp.push(`<path class="${k % 2 ? 'ref' : 'grid major'}" d="M${x},${s.pad.t}V${s.pad.t + sh}"/><text class="tick" x="${x}" y="${s.H - 10}" text-anchor="middle">${k === 1 ? 'f<tspan dy="3" font-size="8">s</tspan><tspan dy="-3">/2</tspan>' : k === 2 ? 'f<tspan dy="3" font-size="8">s</tspan>' : k % 2 ? '' : `${k / 2} f<tspan dy="3" font-size="8">s</tspan>`}</text>`);
+      }
+      sp.push(`<text class="tick" x="${s.pad.l}" y="${s.H - 10}" text-anchor="middle">0</text>`);
+      for (let k = 1; k * fs - f <= fmax; k++) for (const g of [k * fs - f, k * fs + f]) if (g > 0 && g <= fmax && Math.abs(g - fa) > 1e-6 * fs) sp.push(`<path class="ghost" d="M${fx(g).toFixed(1)},${hy(0)}V${hy(.35).toFixed(1)}"/>`);
+      /* Original etwas niedriger als das Gehörte, damit sich die Beschriftungen nie überdecken */
+      const lx = (x, y, t) => `<text class="tag-label" x="${(x > s.pad.l + sw - 90 ? x - 8 : x + 8).toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="${x > s.pad.l + sw - 90 ? 'end' : 'start'}">${t}</text>`;
+      if (r.alias) sp.push(`<path class="trace" d="M${fx(f).toFixed(1)},${hy(0)}V${hy(.55).toFixed(1)}"/><circle class="dot dot-2" cx="${fx(f).toFixed(1)}" cy="${hy(.55).toFixed(1)}" r="4"/>${lx(fx(f), hy(.55), 'f')}`);
+      sp.push(`<path class="trace" d="M${fx(fa).toFixed(1)},${hy(0)}V${hy(.85).toFixed(1)}"/><circle class="dot" cx="${fx(fa).toFixed(1)}" cy="${hy(.85).toFixed(1)}" r="5"/>${lx(fx(fa), hy(.85), r.alias ? 'gehört' : 'f = gehört')}`);
+      fbild.draw(sp);
+      readout(ui.readout, [
+        ['Nyquist-Frequenz f<sub>s</sub>/2', si(fs / 2, 'Hz')],
+        ['Abtastwerte pro Periode', zahl(fs / f)],
+        ['Gehörte Frequenz f<sub>a</sub>', r.grenze || r.stumm ? 'Stille (siehe unten)' : si(fa, 'Hz')],
+        ['Zustand', r.grenze ? 'genau an der Grenze' : r.alias ? 'Aliasing' : 'kein Aliasing']
+      ]);
+      badge.innerHTML = r.grenze ? 'Genau f<sub>s</sub>/2: Jeder Abtastwert trifft einen Nulldurchgang, übrig bleibt Stille. Darum muss f echt kleiner als f<sub>s</sub>/2 sein.'
+        : r.stumm ? 'f ist ein Vielfaches von f<sub>s</sub>: Jeder Abtastwert trifft dieselbe Stelle der Schwingung, hier den Nulldurchgang. Heraus kommt eine Konstante, der Ton ist komplett verschwunden.'
+        : r.alias ? `Aliasing: Die Punkte sind dieselben wie die eines Sinus mit ${si(fa, 'Hz')}. Nach dem Abtasten ist nicht mehr zu erkennen, dass es einmal ${si(f, 'Hz')} waren.${fv < 0 ? ' Er läuft sogar mit umgekehrtem Vorzeichen, wie ein Wagenrad im Film, das sich rückwärts dreht.' : ''}${fa < 20 ? ' Unter 20 Hz hörst du davon nichts mehr.' : ''}`
+        : `Kein Aliasing: ${si(f, 'Hz')} liegt unter f<sub>s</sub>/2 = ${si(fs / 2, 'Hz')}. Die Punkte legen den Sinus eindeutig fest.${fs / f < 4 ? ' Mit so wenigen Punkten pro Periode sieht das Bild zackig aus, der D/A-Wandler macht trotzdem wieder den glatten Sinus daraus.' : ''}`;
+      if (laeuft) {
+        laeuft.osc.frequency.setTargetAtTime(mode === 'orig' ? f : Math.max(fa, 1), laeuft.ctx.currentTime, .01);
+        laeuft.laut(mode === 'abg' && (r.grenze || fa < 20) ? 0 : LEISE);
+      }
+    }
+    function aus() { laeuft = null; mode = 'aus'; update(); }
+    seg.addEventListener('click', ev => {
+      const btn = ev.target.closest('[data-mode]');
+      if (!btn) return;
+      if (btn.dataset.mode === 'aus') { ton.stop(); mode = 'aus'; update(); return; }
+      if (!laeuft) laeuft = ton.start(aus);
+      mode = btn.dataset.mode;
+      update();
+    });
+    F.on(update); FS.on(einrasten); update();
+  }
+
+  const SIMS = {rc, welle, teiler, bruecke, ueberlagerung, ersatzquelle, klang, abtastung};
   /* Alle [data-sim]-Platzhalter in einem Bereich starten. */
   function mount(root = document) {
     root.querySelectorAll('[data-sim]').forEach(el => {

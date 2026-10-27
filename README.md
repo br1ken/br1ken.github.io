@@ -37,12 +37,13 @@ Bewusst minimal: **plain HTML, CSS und JavaScript, ohne Framework und ohne Build
 | Dunkelmodus | ◐ oben rechts | folgt der Systemeinstellung, per Knopf umschaltbar, wird im Browser gemerkt (`osci-log-theme`) |
 
 **Aktuelle Inhalte**
-- Notizen, Rechnungen (ET1, Rechenübung 2): *Knoten- und Maschengleichungen (A2.1)* · *Gemischte Widerstandsschaltung bei Wechselstrom (A2.2)* · *Brückenschaltung (A2.3)* · *Belastetes Potentiometer (A2.4)* · *Ersatzwiderstand mit der Dreieck-Stern-Umwandlung (A2.5)*
-- Notizen, Rechnungen (ET1, Rechenübung 3): *Überlagerungsprinzip und Leistungsbilanz (A3.1)* · *Ersatzspannungsquelle (A3.2)*
-- Notizen, Theorie: *Von Newton bis Ohm* · *Widerstandsnetzwerke* · *Die Kirchhoffschen Gesetze* · *Stern-Dreieck-Umwandlung*
+- Notizen, Rechnungen (ET1, Rechenübung 2): *Knoten- und Maschengleichungen (A2.1)* · *Gemischte Widerstandsschaltung bei Wechselstrom (A2.2)* · *Brückenschaltung (A2.3)* · *Belastetes Potentiometer (A2.4)* · *Ersatzwiderstand mit der Dreieck-Stern-Umwandlung (A2.5)* · *Kurzschlussaufgabe (A2.6)*
+- Notizen, Rechnungen (ET1, Rechenübung 3): *Überlagerungsprinzip und Leistungsbilanz (A3.1)* · *Ersatzspannungsquelle (A3.2)* · *Ersatzspannungs- und Ersatzstromquelle (A3.3)*
+- Notizen, Theorie: *Von Newton bis Ohm* · *Widerstandsnetzwerke* · *Die Kirchhoffschen Gesetze* · *Stern-Dreieck-Umwandlung* · *Strom in Flüssigkeiten* · *Mittelwert, Gleichrichtwert, Effektivwert*
+- Notizen, Audiotechnik: *Vom Sinus zum Sound*, ein Kurs in fünf Teilen (19 Abschnitte, 58 Checkpoints, 26 getestete Python-Programme, drei Projekte; `werkzeug.py` in `notizen/dateien/`)
 - Notizen, Sonstiges: *Hallo, Labor.*
 - Projekte: Messplatz · RC-Filter-Explorer · Crashtest-Labor
-- Simulationen zum Einbetten: `rc`, `welle`, `teiler`, `bruecke`, `ueberlagerung`, `ersatzquelle` (siehe SCHREIBEN.md)
+- Simulationen zum Einbetten: `rc`, `welle`, `teiler`, `bruecke`, `ueberlagerung`, `ersatzquelle`, `klang` und `abtastung` (die letzten beiden zum Anhören, siehe SCHREIBEN.md)
 
 ```
 index.html              Startseite mit Labor-Teaser und Bio
@@ -56,6 +57,7 @@ notizen/
   beitraege.js          Liste der Notizen (nur Dateinamen)
   texte/*.md            die Notizen selbst  (_vorlage.md = Vorlage)
   bilder/               Bilder für Notizen
+  dateien/              Dateien zum Herunterladen, z. B. werkzeug.py für die Audio-Notiz
   schreiben.html        Schreibstube
 projekte/
   projekte.js           Liste der Projekte
@@ -75,7 +77,7 @@ assets/
   schreiben.js          Schreibstube mit Live-Vorschau
   projekte-liste.js     Projekt-Übersicht
   projekt.js            Projektseiten: Simulationen und Formeln
-  sims.js               Simulationen (rc, welle, teiler, bruecke, ueberlagerung, ersatzquelle)
+  sims.js               Simulationen (rc, welle, teiler, bruecke, ueberlagerung, ersatzquelle, klang, abtastung)
   lexikon.js            Einträge des Lexikons (GROESSEN und SYNTH)
   neuigkeiten.js        Rufzeichen unten rechts und Neuigkeiten-Fenster
   notizen.css           Notizen, Simulationen, Schreibstube
@@ -112,10 +114,10 @@ Wichtig: Die versteckte Datei **`.nojekyll`** muss im Repo bleiben. Ohne sie ble
 
 ### Wenn Design oder Code geändert wurde
 
-Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer `?v=N`. Nach einer Änderung an einer Datei in `assets/` deren Nummer in allen HTML-Dateien um eins erhöhen. Stand 26.10.2026: `sims.js` und `notizen.css` 21, `site.js` und `markdown.js` 20, alles andere 19. Zum Beispiel für `sims.js` von 21 auf 22:
+Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer `?v=N`. Nach einer Änderung an einer Datei in `assets/` deren Nummer in allen HTML-Dateien um eins erhöhen. Stand 27.10.2026: `notizen.css` 24, `site.js` 23, `sims.js` 22, `markdown.js` und `beitrag.js` 21, `site.css` 20, alles andere 19. Zum Beispiel für `sims.js` von 22 auf 23:
 
 ```bash
-grep -rl 'sims.js?v=21' --include='*.html' . | xargs sed -i '' 's/sims.js?v=21/sims.js?v=22/g'
+grep -rl 'sims.js?v=22' --include='*.html' . | xargs sed -i '' 's/sims.js?v=22/sims.js?v=23/g'
 ```
 
 Für `assets/lexikon.js` gilt stattdessen `LEX_VERSION` in `assets/site.js`. Für neue Notizen oder Projekte ist beides nicht nötig.
@@ -248,6 +250,7 @@ Ein Elektroniklabor auf TU-Niveau, gedacht zum Vorbereiten von Laborübungen und
 - Notizen: Formeln in Überschriften stehen im Inhaltsverzeichnis richtig; lange Formeln bleiben einzeilig und werden am Handy auf höchstens 70 % verkleinert; Farbklassen `n0`–`n2` und `t0`–`t2` für eingefärbte Knoten in Schaltbildern.
 - Neuigkeiten: Rufzeichen unten rechts auf jeder Seite mit Fenster für neue Notizen und Neuerungen (`neuigkeiten.js`).
 - Lexikon: neun neue Einträge (Stromteiler, Stern-Dreieck-Umwandlung, Ersatzstromquelle, Knotenpotentialverfahren mit Millman, Knoten einfärben, Leerlauf und Kurzschluss, Mittelwert, Gleichrichtwert, Faradaysche Gesetze); Einträge verlinken unter „In den Notizen“ auf die passenden Notizen (Feld `notiz`).
+- Notiz *Vom Sinus zum Sound*: Kurs in fünf Teilen von Schall, Sinus und Dezibel über Obertöne, Modulation, Abtasten, Bits, komplexe Zeiger und FFT bis zu Filter, Biquad, Faltung und Hall, dazu die Projekte Karplus-Strong, Stimmgerät und Mini-Synthesizer. 26 getestete Python-Programme, 14 SVG-Diagramme, Formelsammlung und Aufgaben zu jedem Teil. Checkpoints (`- [ ]`) lassen sich in jeder Notiz abhaken, der Stand bleibt im Browser (`osci-log-haken`) und steht im Kopf der Notiz. Neue Simulationen `klang` (Obertöne) und `abtastung` (Aliasing), beide mit Ton über Web Audio (ein gemeinsamer AudioContext, immer nur eine Quelle, stoppt beim Verlassen des Tabs). Codeblöcke haben einen Knopf „Kopieren“, Tabellen trennen am Handy Wörter statt seitlich zu scrollen. 16 Synth-Lexikon-Einträge verlinken auf die passenden Abschnitte. Das Inhaltsverzeichnis scrollt bei langen Notizen selbst.
 
 **Inhalte**
 - Notiz Brückenschaltung (A2.3) mit Simulation `bruecke`: Schaltplan, Potentialskala, Zweig-Tabelle mit Leistungsbilanz, Lastleistungs-Kurve.
