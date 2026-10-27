@@ -34,6 +34,7 @@
 .toc a::before { content: counter(toc, decimal-leading-zero); font-family: var(--mono); font-size: 10px; padding-top: 2px; }
 .toc a:hover, .toc a.active { color: var(--ink); }
 .toc a.active::before { color: var(--ink); }
+.toc .katex { font-size: 1.05em; }
 
 /* Fließtext */
 .prose { font-size: 15px; line-height: 1.75; color: var(--prose); min-width: 0; }
