@@ -251,13 +251,13 @@ $$I_{q3} = \frac{I_{q3}\,(R_1 + R_4)\,R_2}{(R_1 + R_4)\,R_2}$$
 
 **4. Alles auf einen Bruchstrich**
 
-$$\frac{\begin{gathered} (U_{q1} - U_K)R_2 - (U_K - U_{q2})(R_1 + R_4) \\ {} + I_{q3}(R_1 + R_4)R_2 \end{gathered}}{(R_1 + R_4)\,R_2} = 0$$
+$$\frac{(U_{q1} - U_K)R_2 - (U_K - U_{q2})(R_1 + R_4) + I_{q3}(R_1 + R_4)R_2}{(R_1 + R_4)\,R_2} = 0$$
 
 **5. Ein Bruch ist null, wenn der Zähler null ist**
 
 Der Nenner ist nie null, also:
 
-$$\begin{aligned} &(U_{q1} - U_K)R_2 - (U_K - U_{q2})(R_1 + R_4) \\ &\quad + I_{q3}(R_1 + R_4)R_2 = 0 \end{aligned}$$
+$$(U_{q1} - U_K)R_2 - (U_K - U_{q2})(R_1 + R_4) + I_{q3}(R_1 + R_4)R_2 = 0$$
 
 **6. Erste Klammer ausmultiplizieren**
 
@@ -265,11 +265,11 @@ $$(U_{q1} - U_K)R_2 = U_{q1} R_2 - U_K R_2$$
 
 **7. Zweite Klammer ausmultiplizieren, Minus davor beachten**
 
-$$\begin{aligned} &-(U_K - U_{q2})(R_1 + R_4) \\ &= -U_K (R_1 + R_4) + U_{q2} (R_1 + R_4) \end{aligned}$$
+$$-(U_K - U_{q2})(R_1 + R_4) = -U_K (R_1 + R_4) + U_{q2} (R_1 + R_4)$$
 
 **8. Eingesetzt**
 
-$$\begin{aligned} &U_{q1} R_2 - U_K R_2 - U_K (R_1 + R_4) \\ &\quad + U_{q2} (R_1 + R_4) + I_{q3} (R_1 + R_4) R_2 = 0 \end{aligned}$$
+$$U_{q1} R_2 - U_K R_2 - U_K (R_1 + R_4) + U_{q2} (R_1 + R_4) + I_{q3} (R_1 + R_4) R_2 = 0$$
 
 **9. Die beiden $U_K$-Terme zusammenfassen**
 
@@ -277,16 +277,16 @@ $$-U_K R_2 - U_K (R_1 + R_4) = -U_K\,(R_1 + R_2 + R_4)$$
 
 Also:
 
-$$\begin{aligned} &U_{q1} R_2 + U_{q2} (R_1 + R_4) + I_{q3} (R_1 + R_4) R_2 \\ &\quad - U_K (R_1 + R_2 + R_4) = 0 \end{aligned}$$
+$$U_{q1} R_2 + U_{q2} (R_1 + R_4) + I_{q3} (R_1 + R_4) R_2 - U_K (R_1 + R_2 + R_4) = 0$$
 
 **10. $U_K$-Term auf die andere Seite**
 
-$$\begin{aligned} &U_K (R_1 + R_2 + R_4) \\ &= U_{q1} R_2 + U_{q2} (R_1 + R_4) + I_{q3} (R_1 + R_4) R_2 \end{aligned}$$
+$$U_K (R_1 + R_2 + R_4) = U_{q1} R_2 + U_{q2} (R_1 + R_4) + I_{q3} (R_1 + R_4) R_2$$
 
 **11. Durch $(R_1 + R_2 + R_4)$ dividieren**
 
 ::: merke Quellenspannung
-$$U_q = U_K = \frac{\begin{gathered} U_{q1} R_2 + U_{q2}(R_1 + R_4) \\ {} + I_{q3}(R_1 + R_4)R_2 \end{gathered}}{R_1 + R_2 + R_4}$$
+$$U_q = U_K = \frac{U_{q1} R_2 + U_{q2}(R_1 + R_4) + I_{q3}(R_1 + R_4)R_2}{R_1 + R_2 + R_4}$$
 
 Im Beispiel: $U_q = \frac{12 \cdot 4 + 4 \cdot 4 + 1 \cdot 4 \cdot 4}{8}\,\mathrm{V} = \frac{80}{8}\,\mathrm{V} = 10\,\mathrm{V}$.
 :::
@@ -313,11 +313,11 @@ Der Nenner passt schon. Im Zähler fehlt in jedem Summanden der Faktor $(R_1 + R
 
 **3. Erster Summand im Zähler, mit $\frac{R_1 + R_4}{R_1 + R_4} = 1$ multiplizieren**
 
-$$\begin{aligned} U_{q1} R_2 &= U_{q1} R_2 \cdot \frac{R_1 + R_4}{R_1 + R_4} \\ &= (R_1 + R_4)R_2 \cdot \frac{U_{q1}}{R_1 + R_4} \end{aligned}$$
+$$U_{q1} R_2 = U_{q1} R_2 \cdot \frac{R_1 + R_4}{R_1 + R_4} = (R_1 + R_4)R_2 \cdot \frac{U_{q1}}{R_1 + R_4}$$
 
 **4. Zweiter Summand im Zähler, mit $\frac{R_2}{R_2} = 1$ multiplizieren**
 
-$$\begin{aligned} U_{q2}(R_1 + R_4) &= U_{q2}(R_1 + R_4) \cdot \frac{R_2}{R_2} \\ &= (R_1 + R_4)R_2 \cdot \frac{U_{q2}}{R_2} \end{aligned}$$
+$$U_{q2}(R_1 + R_4) = U_{q2}(R_1 + R_4) \cdot \frac{R_2}{R_2} = (R_1 + R_4)R_2 \cdot \frac{U_{q2}}{R_2}$$
 
 **5. Dritter Summand im Zähler, der Faktor steht schon da**
 
@@ -325,7 +325,7 @@ $$I_{q3}(R_1 + R_4)R_2 = (R_1 + R_4)R_2 \cdot I_{q3}$$
 
 **6. Zähler eingesetzt**
 
-$$U_K = \frac{\begin{gathered} (R_1 + R_4)R_2 \cdot \frac{U_{q1}}{R_1 + R_4} \\ {} + (R_1 + R_4)R_2 \cdot \frac{U_{q2}}{R_2} \\ {} + (R_1 + R_4)R_2 \cdot I_{q3} \end{gathered}}{R_1 + R_2 + R_4}$$
+$$U_K = \frac{(R_1 + R_4)R_2 \cdot \frac{U_{q1}}{R_1 + R_4} + (R_1 + R_4)R_2 \cdot \frac{U_{q2}}{R_2} + (R_1 + R_4)R_2 \cdot I_{q3}}{R_1 + R_2 + R_4}$$
 
 **7. Gemeinsamen Faktor im Zähler herausheben**
 
@@ -338,7 +338,7 @@ $$U_K = \frac{(R_1 + R_4)R_2}{R_1 + R_2 + R_4} \cdot \left( \frac{U_{q1}}{R_1 + 
 **9. Der erste Faktor ist die Parallelschaltung aus Schritt 2**
 
 ::: merke Lösungsform
-$$\begin{aligned} U_q &= \bigl(R_2 \parallel (R_1 + R_4)\bigr) \\ &\quad \cdot \left( \frac{U_{q1}}{R_1 + R_4} + \frac{U_{q2}}{R_2} + I_{q3} \right) \end{aligned}$$
+$$U_q = \bigl(R_2 \parallel (R_1 + R_4)\bigr) \left( \frac{U_{q1}}{R_1 + R_4} + \frac{U_{q2}}{R_2} + I_{q3} \right)$$
 
 Im Beispiel: $U_q = 2\,\Omega \cdot (3\,\mathrm{A} + 1\,\mathrm{A} + 1\,\mathrm{A}) = 10\,\mathrm{V}$ ✓
 :::
@@ -592,15 +592,15 @@ $$-\frac{U_K' - U_{q2}}{R_2} = -\frac{U_K'}{R_2} + \frac{U_{q2}}{R_2}$$
 
 **4. Eingesetzt**
 
-$$\begin{aligned} &\frac{U_{q1}}{R_1 + R_4} - \frac{U_K'}{R_1 + R_4} - \frac{U_K'}{R_2} \\ &\quad + \frac{U_{q2}}{R_2} - \frac{U_K'}{R_5} + I_{q3} = 0 \end{aligned}$$
+$$\frac{U_{q1}}{R_1 + R_4} - \frac{U_K'}{R_1 + R_4} - \frac{U_K'}{R_2} + \frac{U_{q2}}{R_2} - \frac{U_K'}{R_5} + I_{q3} = 0$$
 
 **5. Alle $U_K'$-Terme auf die rechte Seite**
 
-$$\begin{aligned} &\frac{U_{q1}}{R_1 + R_4} + \frac{U_{q2}}{R_2} + I_{q3} \\ &= \frac{U_K'}{R_1 + R_4} + \frac{U_K'}{R_2} + \frac{U_K'}{R_5} \end{aligned}$$
+$$\frac{U_{q1}}{R_1 + R_4} + \frac{U_{q2}}{R_2} + I_{q3} = \frac{U_K'}{R_1 + R_4} + \frac{U_K'}{R_2} + \frac{U_K'}{R_5}$$
 
 **6. $U_K'$ herausheben**
 
-$$\begin{aligned} &\frac{U_{q1}}{R_1 + R_4} + \frac{U_{q2}}{R_2} + I_{q3} \\ &= U_K' \left( \frac{1}{R_1 + R_4} + \frac{1}{R_2} + \frac{1}{R_5} \right) \end{aligned}$$
+$$\frac{U_{q1}}{R_1 + R_4} + \frac{U_{q2}}{R_2} + I_{q3} = U_K' \left( \frac{1}{R_1 + R_4} + \frac{1}{R_2} + \frac{1}{R_5} \right)$$
 
 Links stehen nur Quellen, rechts nur die Unbekannte. Das ist wieder der Satz von Millman, diesmal mit $R_5$ als drittem Zweig.
 
@@ -621,7 +621,7 @@ $$\begin{aligned} \frac{1}{R_1 + R_4} \cdot (R_1 + R_4)R_2R_5 &= R_2 R_5 \\ \fra
 **9. Ergebnis**
 
 ::: merke Knotenspannung im Kurzschluss
-$$\begin{gathered} U_K' = \\ \frac{\begin{gathered} U_{q1} R_2 R_5 + U_{q2}(R_1 + R_4)R_5 \\ {} + I_{q3}(R_1 + R_4)R_2 R_5 \end{gathered}}{R_2 R_5 + (R_1 + R_4)R_5 + (R_1 + R_4)R_2} \end{gathered}$$
+$$U_K' = \frac{U_{q1} R_2 R_5 + U_{q2}(R_1 + R_4)R_5 + I_{q3}(R_1 + R_4)R_2 R_5}{R_2 R_5 + (R_1 + R_4)R_5 + (R_1 + R_4)R_2}$$
 
 Im Beispiel: $U_K' = \frac{144 + 48 + 48}{12 + 12 + 16}\,\mathrm{V} = \frac{240}{40}\,\mathrm{V} = 6\,\mathrm{V}$.
 :::
@@ -634,24 +634,24 @@ $$I_k = \frac{U_K'}{R_5}$$
 
 **2. $U_K'$ einsetzen**
 
-$$I_k = \frac{1}{R_5} \cdot \frac{\begin{gathered} U_{q1} R_2 R_5 + U_{q2}(R_1 + R_4)R_5 \\ {} + I_{q3}(R_1 + R_4)R_2 R_5 \end{gathered}}{R_2 R_5 + (R_1 + R_4)R_5 + (R_1 + R_4)R_2}$$
+$$I_k = \frac{1}{R_5} \cdot \frac{U_{q1} R_2 R_5 + U_{q2}(R_1 + R_4)R_5 + I_{q3}(R_1 + R_4)R_2 R_5}{R_2 R_5 + (R_1 + R_4)R_5 + (R_1 + R_4)R_2}$$
 
 **3. $\frac{1}{R_5}$ in den Nenner ziehen**
 
-$$I_k = \frac{\begin{gathered} U_{q1} R_2 R_5 + U_{q2}(R_1 + R_4)R_5 \\ {} + I_{q3}(R_1 + R_4)R_2 R_5 \end{gathered}}{R_5 \bigl(R_2 R_5 + (R_1 + R_4)R_5 + (R_1 + R_4)R_2\bigr)}$$
+$$I_k = \frac{U_{q1} R_2 R_5 + U_{q2}(R_1 + R_4)R_5 + I_{q3}(R_1 + R_4)R_2 R_5}{R_5 \bigl(R_2 R_5 + (R_1 + R_4)R_5 + (R_1 + R_4)R_2\bigr)}$$
 
 **4. Im Zähler steckt in jedem Term $R_5$. Herausheben**
 
-$$\begin{aligned} &U_{q1} R_2 R_5 + U_{q2}(R_1 + R_4)R_5 + I_{q3}(R_1 + R_4)R_2 R_5 \\ &= R_5 \bigl(U_{q1} R_2 + U_{q2}(R_1 + R_4) + I_{q3}(R_1 + R_4)R_2\bigr) \end{aligned}$$
+$$U_{q1} R_2 R_5 + U_{q2}(R_1 + R_4)R_5 + I_{q3}(R_1 + R_4)R_2 R_5 = R_5 \bigl(U_{q1} R_2 + U_{q2}(R_1 + R_4) + I_{q3}(R_1 + R_4)R_2\bigr)$$
 
 **5. Eingesetzt**
 
-$$I_k = \frac{\begin{gathered} R_5 \bigl(U_{q1} R_2 + U_{q2}(R_1 + R_4) \\ {} + I_{q3}(R_1 + R_4)R_2\bigr) \end{gathered}}{R_5 \bigl(R_2 R_5 + (R_1 + R_4)R_5 + (R_1 + R_4)R_2\bigr)}$$
+$$I_k = \frac{R_5 \bigl(U_{q1} R_2 + U_{q2}(R_1 + R_4) + I_{q3}(R_1 + R_4)R_2\bigr)}{R_5 \bigl(R_2 R_5 + (R_1 + R_4)R_5 + (R_1 + R_4)R_2\bigr)}$$
 
 **6. $R_5$ kürzen**
 
 ::: merke Kurzschlussstrom
-$$\begin{gathered} I_q = I_k = \\ \frac{\begin{gathered} U_{q1} R_2 + U_{q2}(R_1 + R_4) \\ {} + I_{q3}(R_1 + R_4)R_2 \end{gathered}}{R_2 R_5 + (R_1 + R_4)R_5 + (R_1 + R_4)R_2} \end{gathered}$$
+$$I_q = I_k = \frac{U_{q1} R_2 + U_{q2}(R_1 + R_4) + I_{q3}(R_1 + R_4)R_2}{R_2 R_5 + (R_1 + R_4)R_5 + (R_1 + R_4)R_2}$$
 
 Der Zähler ist derselbe wie bei $U_q$ im Leerlauf. Nur der Nenner ist anders.
 
@@ -666,7 +666,7 @@ Man sieht schön, wie sich die Ströme umverteilen. Im Leerlauf floss $I_2 = 1{,
 
 Ausgangspunkt ist Schritt 6 aus Abschnitt 5:
 
-$$\begin{aligned} &\frac{U_{q1}}{R_1 + R_4} + \frac{U_{q2}}{R_2} + I_{q3} \\ &= U_K' \left( \frac{1}{R_1 + R_4} + \frac{1}{R_2} + \frac{1}{R_5} \right) \end{aligned}$$
+$$\frac{U_{q1}}{R_1 + R_4} + \frac{U_{q2}}{R_2} + I_{q3} = U_K' \left( \frac{1}{R_1 + R_4} + \frac{1}{R_2} + \frac{1}{R_5} \right)$$
 
 **Kehrwert der Parallelschaltung**
 
@@ -759,13 +759,13 @@ Der häufigste Fehler in dieser Aufgabe: Man rechnet im Kurzschluss mit $U_K = U
 
 **Beide Größen als einfacher Bruch**
 
-$$U_q = \frac{\begin{gathered} U_{q1} R_2 + U_{q2}(R_1 + R_4) \\ {} + I_{q3}(R_1 + R_4)R_2 \end{gathered}}{R_1 + R_2 + R_4}$$
+$$U_q = \frac{U_{q1} R_2 + U_{q2}(R_1 + R_4) + I_{q3}(R_1 + R_4)R_2}{R_1 + R_2 + R_4}$$
 
 $$\begin{aligned} R_i &= R_5 + \frac{(R_1 + R_4)R_2}{R_1 + R_2 + R_4} \\ &= \frac{R_5 (R_1 + R_2 + R_4) + (R_1 + R_4)R_2}{R_1 + R_2 + R_4} \end{aligned}$$
 
 **Dividieren: der Nenner $(R_1 + R_2 + R_4)$ kürzt sich**
 
-$$\begin{aligned} I_q &= \frac{U_q}{R_i} \\ &= \frac{\begin{gathered} U_{q1} R_2 + U_{q2}(R_1 + R_4) \\ {} + I_{q3}(R_1 + R_4)R_2 \end{gathered}}{R_5 (R_1 + R_2 + R_4) + (R_1 + R_4)R_2} \end{aligned}$$
+$$I_q = \frac{U_q}{R_i} = \frac{U_{q1} R_2 + U_{q2}(R_1 + R_4) + I_{q3}(R_1 + R_4)R_2}{R_5 (R_1 + R_2 + R_4) + (R_1 + R_4)R_2}$$
 
 **Probe gegen $I_k = U_K' / R_5$ aus Abschnitt 6**
 
@@ -775,7 +775,7 @@ $$R_5 (R_1 + R_2 + R_4) = R_2 R_5 + (R_1 + R_4) R_5$$
 
 Also:
 
-$$\begin{aligned} &R_5 (R_1 + R_2 + R_4) + (R_1 + R_4)R_2 \\ &= R_2 R_5 + (R_1 + R_4) R_5 + (R_1 + R_4) R_2 \end{aligned}$$
+$$R_5 (R_1 + R_2 + R_4) + (R_1 + R_4)R_2 = R_2 R_5 + (R_1 + R_4) R_5 + (R_1 + R_4) R_2$$
 
 Beide Wege landen beim selben $I_q$. Mit Zahlen: $3 \cdot 8 + 16 = 40$ und $12 + 12 + 16 = 40$ ✓
 
@@ -855,7 +855,7 @@ Der Pfeil von $I_q$ zeigt zu der Klemme, an der bei $U_q$ das $+$ liegt. Die Str
 ::: merke Ergebnisse
 $$R_i = R_5 + R_2 \parallel (R_1 + R_4)$$
 
-$$\begin{aligned} U_q &= \bigl(R_2 \parallel (R_1 + R_4)\bigr) \\ &\quad \cdot \left( \frac{U_{q1}}{R_1 + R_4} + \frac{U_{q2}}{R_2} + I_{q3} \right) \end{aligned}$$
+$$U_q = \bigl(R_2 \parallel (R_1 + R_4)\bigr) \left( \frac{U_{q1}}{R_1 + R_4} + \frac{U_{q2}}{R_2} + I_{q3} \right)$$
 
 $$R_i' = R_i \qquad I_q = \frac{U_q}{R_i}$$
 

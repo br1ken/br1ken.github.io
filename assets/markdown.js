@@ -227,6 +227,28 @@ const OSCIMarkdown = (() => {
       el.dataset.done = '1'; el.dataset.tex = tex;
       try { window.katex.render(tex, el, {displayMode: el.classList.contains('math-display'), throwOnError: false, strict: 'ignore'}); } catch { el.textContent = tex; }
     });
+    fit(root);
+    if (document.fonts) document.fonts.ready.then(() => fit(root));
+    if (!fitBound) {
+      fitBound = true;
+      let frame = 0;
+      addEventListener('resize', () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(() => fit(document)); });
+      document.addEventListener('toggle', e => { if (e.target.open) fit(e.target); }, true);
+    }
+  }
+
+  /* Formeln, die breiter als die Spalte sind (am Handy), werden verkleinert statt umbrochen, höchstens auf 70 %. Was dann noch übersteht, lässt sich in seinem Kasten seitlich wischen. Auf breiten Bildschirmen bleibt alles in Originalgröße. */
+  let fitBound = false;
+  function fit(root) {
+    root.querySelectorAll('.math-display[data-done] .katex-display').forEach(box => {
+      const k = box.querySelector('.katex');
+      if (!k) return;
+      k.style.fontSize = '';
+      const avail = box.clientWidth, need = box.scrollWidth;
+      if (!avail || need <= avail) return;
+      const scale = Math.max(0.7, avail / need * 0.98);
+      k.style.fontSize = `${parseFloat(getComputedStyle(k).fontSize) * scale}px`;
+    });
   }
   return {render, typeset, slugify, inline};
 })();
