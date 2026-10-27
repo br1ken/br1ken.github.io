@@ -31,7 +31,7 @@ const OSCI = (() => {
     const slot = document.querySelector('[data-site-header]');
     if (!slot) return;
     const links = NAV.map(n => `<a class="nav-link" href="${url(n.href)}"${n.id === page ? ' aria-current="page"' : ''}>${n.title}</a>`).join('');
-    const items = NAV.map(n => `<a class="menu-item" href="${url(n.href)}"><b>${n.title}</b><span>${n.text}</span></a>`).join('');
+    const items = NAV.map(n => `<a class="menu-item" href="${url(n.href)}"><b>${n.title}</b><span>${n.text}</span></a>`).join('') + '<a class="menu-item" href="#neuigkeiten" data-news><b>Neuigkeiten</b><span>Neue Notizen und Neuerungen an der Seite.</span></a>';
     slot.outerHTML = `<header class="chrome"><a class="brand-mini" href="${page === 'home' ? '#top' : root}" aria-label="osci//log Startseite"><span class="brand-top">osci//log</span><span class="brand-line"></span></a><nav class="nav" aria-label="Hauptnavigation">${links}<button class="menu-pill" id="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-panel">Menü</button><button class="theme-toggle" type="button" id="theme-toggle" aria-label="Hell oder dunkel umschalten" title="Hell / Dunkel"><span></span></button><button class="lex-toggle" type="button" data-lex="" aria-label="Lexikon öffnen: elektrische Größen und Synthesizer" title="Lexikon: nachschlagen"><span></span><span></span><span></span></button></nav></header><div class="menu-panel" id="menu-panel" inert>${items}</div>`;
     const toggle = document.getElementById('menu-toggle'), panel = document.getElementById('menu-panel');
     const setMenu = (open, focus = false) => {
@@ -66,7 +66,7 @@ const OSCI = (() => {
     if (c.instagram) social.push(`<a href="https://instagram.com/${escape(c.instagram)}" rel="noopener">Instagram</a>`);
     if (c.github) social.push(`<a href="https://github.com/${escape(c.github)}" rel="noopener">GitHub</a>`);
     if (c.email) social.push(`<a href="mailto:${escape(c.email)}">E-Mail</a>`);
-    slot.outerHTML = `<footer class="site-footer"><div class="site-footer-inner"><span>osci//log · ${escape(c.name)} · ${new Date().getFullYear()}</span><nav aria-label="Fußzeile">${NAV.map(n => `<a href="${url(n.href)}">${n.title}</a>`).join('')}${social.join('')}<a href="#top">Nach oben ↑</a></nav></div></footer>`;
+    slot.outerHTML = `<footer class="site-footer"><div class="site-footer-inner"><span>osci//log · ${escape(c.name)} · ${new Date().getFullYear()}</span><nav aria-label="Fußzeile">${NAV.map(n => `<a href="${url(n.href)}">${n.title}</a>`).join('')}<a href="#neuigkeiten" data-news>Neuigkeiten</a>${social.join('')}<a href="#top">Nach oben ↑</a></nav></div></footer>`;
   }
 
   /* Kleiner, deterministischer Zufall: gleiche Notiz → gleiches Titelbild. */
@@ -201,13 +201,36 @@ const OSCI = (() => {
   }
   addEventListener('hashchange', lexFromHash);
 
+  /* Neuigkeiten: Rufzeichen unten rechts (assets/neuigkeiten.js, Einträge in neuigkeiten.js).
+     Wird auf jeder Seite nachgeladen, sobald der Browser Zeit hat; „Neuigkeiten“ in Fußzeile und Menü oder #neuigkeiten öffnen das Fenster. */
+  let newsLoading = null;
+  function neuigkeiten() {
+    if (!newsLoading) {
+      newsLoading = new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = url(`assets/neuigkeiten.js?v=${NEWS_VERSION}`); s.onload = resolve; s.onerror = () => { newsLoading = null; reject(); };
+        document.head.append(s);
+      });
+    }
+    return newsLoading;
+  }
+  const NEWS_VERSION = 1;
+  const newsOeffnen = () => neuigkeiten().then(() => OSCINeuigkeiten.open()).catch(() => {});
+  document.addEventListener('click', e => {
+    if (e.target.closest('[data-news]')) { e.preventDefault(); newsOeffnen(); }
+  });
+  addEventListener('hashchange', () => { if (location.hash === '#neuigkeiten') newsOeffnen(); });
+
   header();
   footer();
   syncThemeColor();
   lexFromHash();
+  if (location.hash === '#neuigkeiten') newsOeffnen();
+  else (window.requestIdleCallback || (f => setTimeout(f, 600)))(() => neuigkeiten().then(() => OSCINeuigkeiten.start()).catch(() => {}));
   return {
     url, escape, cover, date, frontMatter, notizenLaden, notizKarte, projektKarte, loadKatex, lexikon, isDark, ARTEN,
     projekte: () => store.projekte.slice(),
+    notizenSlugs: () => store.notizen.slice(),
     /* Wird von notizen/beitraege.js und projekte/projekte.js aufgerufen. */
     beitraege: list => { store.notizen = Array.isArray(list) ? list.map(x => String(x).replace(/\.md$/, '')) : []; },
     projekteListe: list => { store.projekte = Array.isArray(list) ? list : []; }
