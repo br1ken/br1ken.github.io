@@ -3,6 +3,9 @@
    Neue Notiz: Datei in texte/ anlegen (oder in schreiben.html erstellen) und den Namen hier ergänzen.
    Reihenfolge egal — sortiert wird automatisch nach Datum. */
 OSCI.beitraege([
+  'gesteuerte-quellen',
+  'messbruecke',
+  'wirkungsgrad-spannungsquelle',
   'vom-sinus-zum-sound',
   'kurzschlussaufgabe',
   'ersatzquellen',

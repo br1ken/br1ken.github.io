@@ -32,13 +32,13 @@ Bewusst minimal: **plain HTML, CSS und JavaScript, ohne Framework und ohne Build
 | Eine Notiz | `notizen/beitrag.html?b=name` | wird aus `notizen/texte/name.md` erzeugt |
 | Schreibstube | `notizen/schreiben.html` | Editor mit Live-Vorschau für neue Notizen (nicht verlinkt) |
 | Projekte | `projekte/` | Simulationen, Schaltungen, Code |
-| Lexikon | ⋮ oben rechts auf jeder Seite, „?“ an jedem Baustein im Labor, oder `#lexikon` / `#lexikon-spannung` / `#lexikon-synth` an der Adresse | zwei Teile: **Elektro** (54 Größen, Gesetze, Bauelemente und Messgeräte: formal, physikalisch, SI-Einheit) und **Synth** (29 Bausteine und Begriffe eines Synthesizers, mit Verweis auf den passenden Labor-Baustein) |
+| Lexikon | ⋮ oben rechts auf jeder Seite, „?“ an jedem Baustein im Labor, oder `#lexikon` / `#lexikon-spannung` / `#lexikon-synth` an der Adresse | zwei Teile: **Elektro** (55 Größen, Gesetze, Bauelemente und Messgeräte: formal, physikalisch, SI-Einheit) und **Synth** (29 Bausteine und Begriffe eines Synthesizers, mit Verweis auf den passenden Labor-Baustein) |
 | Neuigkeiten | Rufzeichen unten rechts auf jeder Seite, „Neuigkeiten“ in Fußzeile und Menü, oder `#neuigkeiten` | neue Notizen kommen von selbst, Neuerungen an der Seite stehen in `neuigkeiten.js`; ungelesen ist das Rufzeichen groß und gelb, danach klein in der Ecke |
 | Dunkelmodus | ◐ oben rechts | folgt der Systemeinstellung, per Knopf umschaltbar, wird im Browser gemerkt (`osci-log-theme`) |
 
 **Aktuelle Inhalte**
 - Notizen, Rechnungen (ET1, Rechenübung 2): *Knoten- und Maschengleichungen (A2.1)* · *Gemischte Widerstandsschaltung bei Wechselstrom (A2.2)* · *Brückenschaltung (A2.3)* · *Belastetes Potentiometer (A2.4)* · *Ersatzwiderstand mit der Dreieck-Stern-Umwandlung (A2.5)* · *Kurzschlussaufgabe (A2.6)*
-- Notizen, Rechnungen (ET1, Rechenübung 3): *Überlagerungsprinzip und Leistungsbilanz (A3.1)* · *Ersatzspannungsquelle (A3.2)* · *Ersatzspannungs- und Ersatzstromquelle (A3.3)*
+- Notizen, Rechnungen (ET1, Rechenübung 3): *Überlagerungsprinzip und Leistungsbilanz (A3.1)* · *Ersatzspannungsquelle (A3.2)* · *Ersatzspannungs- und Ersatzstromquelle (A3.3)* · *Ersatzspannungsquelle mit gesteuerten Quellen (A3.4)* · *Brückenschaltung zur Messwertumsetzung (A3.5)* · *Wirkungsgrad einer Spannungsquelle (A3.6)*
 - Notizen, Theorie: *Von Newton bis Ohm* · *Widerstandsnetzwerke* · *Die Kirchhoffschen Gesetze* · *Stern-Dreieck-Umwandlung* · *Strom in Flüssigkeiten* · *Mittelwert, Gleichrichtwert, Effektivwert*
 - Notizen, Audiotechnik: *Vom Sinus zum Sound*, ein Kurs in fünf Teilen (19 Abschnitte, 58 Checkpoints, 26 getestete Python-Programme, drei Projekte; `werkzeug.py` in `notizen/dateien/`)
 - Notizen, Sonstiges: *Hallo, Labor.*
@@ -114,7 +114,7 @@ Wichtig: Die versteckte Datei **`.nojekyll`** muss im Repo bleiben. Ohne sie ble
 
 ### Wenn Design oder Code geändert wurde
 
-Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer `?v=N`. Nach einer Änderung an einer Datei in `assets/` deren Nummer in allen HTML-Dateien um eins erhöhen. Stand 27.10.2026: `notizen.css` 24, `site.js` 23, `sims.js` 22, `markdown.js` und `beitrag.js` 21, `site.css` 20, alles andere 19. Zum Beispiel für `sims.js` von 22 auf 23:
+Browser (vor allem auf dem iPhone) speichern CSS- und JS-Dateien bis zu 10 Minuten zwischen. Damit nach einer Änderung in `assets/` niemand eine halb alte Seite sieht, hängt an jedem Verweis eine Versionsnummer `?v=N`. Nach einer Änderung an einer Datei in `assets/` deren Nummer in allen HTML-Dateien um eins erhöhen. Stand 29.10.2026: `notizen.css` 25, `site.js` 24, `sims.js` 22, `markdown.js` und `beitrag.js` 21, `site.css` 20, alles andere 19. Zum Beispiel für `sims.js` von 22 auf 23:
 
 ```bash
 grep -rl 'sims.js?v=22' --include='*.html' . | xargs sed -i '' 's/sims.js?v=22/sims.js?v=23/g'
@@ -251,6 +251,7 @@ Ein Elektroniklabor auf TU-Niveau, gedacht zum Vorbereiten von Laborübungen und
 - Neuigkeiten: Rufzeichen unten rechts auf jeder Seite mit Fenster für neue Notizen und Neuerungen (`neuigkeiten.js`).
 - Lexikon: neun neue Einträge (Stromteiler, Stern-Dreieck-Umwandlung, Ersatzstromquelle, Knotenpotentialverfahren mit Millman, Knoten einfärben, Leerlauf und Kurzschluss, Mittelwert, Gleichrichtwert, Faradaysche Gesetze); Einträge verlinken unter „In den Notizen“ auf die passenden Notizen (Feld `notiz`).
 - Notiz *Vom Sinus zum Sound*: Kurs in fünf Teilen von Schall, Sinus und Dezibel über Obertöne, Modulation, Abtasten, Bits, komplexe Zeiger und FFT bis zu Filter, Biquad, Faltung und Hall, dazu die Projekte Karplus-Strong, Stimmgerät und Mini-Synthesizer. 26 getestete Python-Programme, 14 SVG-Diagramme, Formelsammlung und Aufgaben zu jedem Teil. Checkpoints (`- [ ]`) lassen sich in jeder Notiz abhaken, der Stand bleibt im Browser (`osci-log-haken`) und steht im Kopf der Notiz. Neue Simulationen `klang` (Obertöne) und `abtastung` (Aliasing), beide mit Ton über Web Audio (ein gemeinsamer AudioContext, immer nur eine Quelle, stoppt beim Verlassen des Tabs). Codeblöcke haben einen Knopf „Kopieren“, Tabellen trennen am Handy Wörter statt seitlich zu scrollen. 16 Synth-Lexikon-Einträge verlinken auf die passenden Abschnitte. Das Inhaltsverzeichnis scrollt bei langen Notizen selbst.
+- Notizen A3.4 *Ersatzspannungsquelle mit gesteuerten Quellen* (Leerlauf und Kurzschluss statt Abschalten, Probe mit Testquelle), A3.5 *Brückenschaltung zur Messwertumsetzung* (Thévenin, Stromteiler auf zwei Wegen, Potentiale, Spannungsteiler) und A3.6 *Wirkungsgrad einer Spannungsquelle* (η über R<sub>a</sub>/R<sub>i</sub> mit Graph). Alle Zwischenschritte mit Zufallswerten gegen eine direkte Netzwerkrechnung geprüft. Schaltbilder mit farbigen Zählpfeilen (Klassen `pu`/`pi`), neuer Lexikon-Eintrag *Gesteuerte Quelle*.
 
 **Inhalte**
 - Notiz Brückenschaltung (A2.3) mit Simulation `bruecke`: Schaltplan, Potentialskala, Zweig-Tabelle mit Leistungsbilanz, Lastleistungs-Kurve.

@@ -191,7 +191,9 @@ Eine Zeile, die mit einem HTML-Tag wie `<div`, `<iframe`, `<video` oder `<figure
 </svg><figcaption>Bildunterschrift</figcaption></figure>
 ```
 
-Klassen: `s` Linie, `m` graue Linie, `d` gestrichelt, `b` Kasten, `a` Akzent-Fläche, `hl` zarte Markierung, `f` gefüllt; bei Text `c` zentriert, `k` kleine graue Beschriftung, `ai` Text auf Akzent. Etwa 360 breit zeichnen, dann bleibt die Schrift auf dem Handy lesbar.
+Klassen: `s` Linie, `m` graue Linie, `d` gestrichelt, `b` Kasten, `a` Akzent-Fläche, `hl` zarte Markierung, `f` gefüllt; bei Text `c` zentriert, `k` kleine graue Beschriftung, `ai` Text auf Akzent.
+
+Zählpfeile in Schaltbildern: Spannungen rot mit `pu` (Pfeilspitze `fu`, Text `tu`), Ströme blau mit `pi` (Pfeilspitze `fi`, Text `ti`). Schaltzeichen wie in den A3-Notizen: Spannungsquelle als Kreis mit Strich in Leitungsrichtung, Stromquelle als Kreis mit Strich quer dazu. Etwa 360 breit zeichnen, dann bleibt die Schrift auf dem Handy lesbar.
 
 ## 9. Code und Dateien
 
