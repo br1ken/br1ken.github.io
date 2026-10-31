@@ -11,4 +11,4 @@ Der Track baut sich genauso auf – jede Größe bringt eine Spur: Kraft die Kic
 Die ganze Herleitung mit Einheiten, Bildern und Drude-Modell steht in der Notiz „Von Newton bis Ohm".
 → Link in Bio: br1ken.github.io
 
-#elektrotechnik #physik #ohmschesgesetz #grundlagen
+#ohmschesgesetz #stromundspannung #kraftundarbeit #ladung #elektrotechnik
