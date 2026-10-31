@@ -2,23 +2,23 @@
 :root {
   --mp-red: #cf3a28;
   --mp-black: #1e1e1c;
-  --mp-ch1: #a9bb0e;
+  --mp-ch1: #d9330a;
   --mp-ch2: #0a7fb4;
   --mp-hot: #e2591f;
   --lcd-bg: #121410;
-  --lcd-fg: #dff27a;
+  --lcd-fg: #ffb09a;
   --mp-math: #b8268f;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { --mp-red: #ff6a52; --mp-black: #8d8d85; --mp-ch1: #d4e43a; --mp-ch2: #4cc9f0; --mp-math: #ff8ad8; --lcd-bg: #0a0b08; }
+  :root:not([data-theme="light"]) { --mp-red: #ff6a52; --mp-black: #8d8d85; --mp-ch1: #ff6a3d; --mp-ch2: #9096ff; --mp-math: #efece2; --lcd-bg: #0a0b08; }
 }
-:root[data-theme="dark"] { --mp-red: #ff6a52; --mp-black: #8d8d85; --mp-ch1: #d4e43a; --mp-ch2: #4cc9f0; --mp-math: #ff8ad8; --lcd-bg: #0a0b08; }
+:root[data-theme="dark"] { --mp-red: #ff6a52; --mp-black: #8d8d85; --mp-ch1: #ff6a3d; --mp-ch2: #9096ff; --mp-math: #efece2; --lcd-bg: #0a0b08; }
 
 /* ---------- Versuche ---------- */
 .mp-versuche-section { padding-bottom: 28px; }
 .mp-versuche { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
 .mp-vk { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; align-content: start; text-align: left; padding: 12px 14px; border: 1px solid var(--hairline); background: var(--card); color: var(--fg); cursor: pointer; font: inherit; transition: border-color .15s, transform .15s, box-shadow .15s; }
-.mp-vk:hover { border-color: var(--ink); transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--fg); }
+.mp-vk:hover { border-color: var(--ink); transform: translate(-1px, -1px); box-shadow: none; }
 .mp-vk[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 4px 0 0 var(--accent), 3px 3px 0 var(--fg); }
 .mp-vk-nr { grid-row: span 3; font: 11px var(--mono); color: var(--muted); padding-top: 2px; }
 .mp-vk-cat { font: 9px var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }

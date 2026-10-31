@@ -983,7 +983,7 @@ function measure() {
 
 /* ---------- Oszilloskop: Bild ---------- */
 const screen = $('osz-screen'), pen = screen.getContext('2d');
-const SCOPE_COLORS = ['#e8ff5a', '#4cc9f0', '#ff8ad8'];
+const SCOPE_COLORS = ['#ff5a2e', '#9096ff', '#efece2'];
 const traceOn = c => c < 2 ? state.osz.ch[c].on : state.osz.math !== 'off';
 const traceDiv = c => c < 2 ? state.osz.ch[c].vdiv : state.osz.mdiv;
 const tracePos = c => c < 2 ? state.osz.ch[c].pos : 0;

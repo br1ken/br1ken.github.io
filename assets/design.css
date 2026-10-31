@@ -1,0 +1,148 @@
+/* Erscheinungsbild: alles, was aus der Seite ein Stück Elektronik macht. Wird auf jeder Seite zuletzt geladen.
+   Ultramarin ist Lötstopplack, Mennige ist blankes Kupfer, Kreide ist Bestückungsdruck, Tinte ist das Oszilloskop.
+   Schrift: überall Meslo LG. */
+
+/* ---------- Schrift ---------- */
+h1, h2, h3, .headline, .about-lead, .menu-item b, .post-nav b, .lesson h4, .news-item b, .lex-head h2, .news-head h2 {
+  font-family: var(--mono); font-weight: 700; letter-spacing: -.035em;
+}
+.page-hero h1, .post-head h1 { font-weight: 700; letter-spacing: -.06em; line-height: 1; }
+.page-hero h1 { font-size: clamp(44px, 8vw, 108px); }
+.post-head h1 { font-size: clamp(30px, 4.6vw, 58px); line-height: 1.04; letter-spacing: -.05em; }
+.page-hero h1 span { font-weight: 700; padding: 0; letter-spacing: -.06em; color: var(--accent); }
+.section-heading h2, .playground h2, .mh-text h2 { font-weight: 700; letter-spacing: -.05em; line-height: 1.02; }
+.card h3 { font-size: 18px; font-weight: 700; letter-spacing: -.035em; line-height: 1.18; }
+.intro { font-size: 14px; line-height: 1.65; }
+h1, h2, h3 { overflow-wrap: break-word; hyphens: auto; }
+
+/* ---------- Kopfzeile ---------- */
+.chrome { padding: 0 var(--gutter); min-height: 56px; background: var(--bg); border-bottom: 1px solid var(--ink); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.brand-mini { flex-direction: row; align-items: center; gap: 10px; }
+.brand-mini svg { display: block; width: 28px; height: 28px; }
+.brand-top { font-size: 15px; font-weight: 700; letter-spacing: -.03em; }
+.brand-line { display: none; }
+.nav-link, .menu-pill { font-size: 12px; letter-spacing: 0; text-transform: none; opacity: 1; padding: 6px 0; }
+.nav-link:hover { color: var(--accent); }
+.nav-link[aria-current="page"] { background: var(--ink); color: var(--on-ink); padding: 6px 8px; text-decoration: none; }
+.menu-panel { top: 56px; right: 0; left: 0; border-width: 0 0 1px; box-shadow: none; }
+.menu-item b { font-size: 20px; }
+.theme-toggle, .lex-toggle, .theme-toggle span, .lex-toggle span { border-radius: 0; }
+.theme-toggle:hover, .theme-toggle:focus-visible, .lex-toggle:hover, .lex-toggle:focus-visible { background: var(--accent); border-color: transparent; }
+.page { padding-top: 56px; }
+html { scroll-padding-top: 72px; }
+
+/* ---------- Bedienelemente wie Kupferpads ---------- */
+.button { min-height: 44px; padding: 11px 18px; border: 1px solid var(--ink); color: var(--ink); font-weight: 700; transition: none; }
+.button:hover { background: var(--ink); color: var(--on-ink); box-shadow: none; transform: none; }
+.button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.button.primary:hover { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
+.tag { border-color: var(--hairline); background: transparent; }
+.news-fab, .news-fab.is-new, .news-fab.is-new::after, .news-close, .lex-close, .mh-check { border-radius: 0; }
+.news-fab.is-new { box-shadow: none; }
+.news-panel, .lex-panel { box-shadow: none; }
+
+/* ---------- Netzlabel wie im Schaltplan ---------- */
+.eyebrow { display: inline-block; width: fit-content; max-width: 100%; overflow-wrap: anywhere; padding: 4px 18px 4px 8px; background: var(--ink); color: var(--on-ink); font-size: 10px; font-weight: 700; letter-spacing: .02em; text-transform: uppercase;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%); }
+.section-heading { position: relative; border-bottom: 1px solid var(--ink); }
+/* Die Unterstreichung ist eine Leiterbahn und endet in einem Via */
+.section-heading::after { content: ""; position: absolute; right: -1px; bottom: -6px; width: 11px; height: 11px; border: 3px solid var(--accent); border-radius: 50%; background: var(--bg); }
+.section-heading h2 { font-size: clamp(30px, 4.6vw, 60px); }
+
+/* ---------- Karten als ICs ---------- */
+.card-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 26px 40px; padding: 0 16px; }
+.card { background: var(--card); border: 1px solid var(--ink); transition: none; }
+/* Pins links und rechts */
+.card::before, .card::after { content: ""; position: absolute; top: 12px; bottom: 12px; width: 11px; background: repeating-linear-gradient(180deg, var(--ink) 0 6px, transparent 6px 22px); }
+.card::before { left: -12px; }
+.card::after { right: -12px; }
+a.card:hover, .card:has(.card-link:hover) { background: var(--card); box-shadow: none; transform: none; border-color: var(--accent); outline: 1px solid var(--accent); }
+.card:has(.card-link:hover)::before, .card:has(.card-link:hover)::after { background: repeating-linear-gradient(180deg, var(--accent) 0 6px, transparent 6px 22px); }
+.card-cover { aspect-ratio: 16 / 9; border-bottom: 1px solid var(--ink); background: #0a0a14; }
+.card-art { border: 0; background: var(--accent); color: #0a0a14; font-weight: 700; }
+.card-art[data-art="theorie"] { background: #efece2; color: #0a0a14; }
+.card-kicker { font-size: 9.5px; }
+
+/* Titelbilder: XY-Oszillogramm, immer auf dunklem Schirm */
+.cover .cv-bg { fill: #0a0a14; }
+.cover .cv-raster path { stroke: rgba(239, 236, 226, .15); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.cover .cv-achse { stroke: rgba(239, 236, 226, .4); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.cover .cv-echo { fill: none; stroke: rgba(255, 90, 46, .3); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+.cover .cv-spur { fill: none; stroke: #ff5a2e; stroke-width: 2.2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.cover .cv-text { font: 15px var(--mono); fill: #efece2; }
+.post-cover { aspect-ratio: 16 / 4; }
+
+/* ---------- Notiz ---------- */
+.callout { border-radius: 0; box-shadow: none; }
+.callout-merke { background: var(--code-bg); color: var(--code-fg); border-color: var(--code-bg); box-shadow: none; }
+.callout-merke p, .callout-merke .callout-label, .callout-merke .katex, .callout-merke li { color: var(--code-fg); }
+.callout-achtung { border: 1px solid var(--ink); border-left: 10px solid var(--accent); }
+.callout-achtung .callout-label { color: var(--ink); }
+.post-nav a:hover { background: var(--ink); color: var(--on-ink); box-shadow: none; }
+.progress { background: var(--accent); height: 4px; }
+.prose figure.dia { background: var(--card); border-color: var(--ink); }
+.prose a:hover { background: var(--accent); }
+
+/* ---------- Startseite: die Platine ---------- */
+.signal { position: relative; height: 100svh; min-height: 640px; padding-top: 56px; overflow: hidden; background: #1a12ff; color: #efece2; }
+.platine { display: block; width: 100%; height: 100%; touch-action: pan-y; }
+/* Das Oszilloskop liegt wie ein Messgerät neben der Platine */
+.oszi { position: absolute; top: 76px; right: var(--gutter); width: min(430px, calc(100% - 2 * var(--gutter))); background: #0a0a14; color: #efece2; border: 1px solid #efece2; font-size: 11px; pointer-events: none; }
+.oszi canvas { display: block; width: 100%; aspect-ratio: 5 / 3; }
+.oszi-kopf, .oszi-fuss { display: flex; justify-content: space-between; gap: 12px; padding: 8px 10px; }
+.oszi-kopf { border-bottom: 1px solid #3a3a4c; font-weight: 700; }
+.oszi-fuss { border-top: 1px solid #3a3a4c; color: #c8c6bc; }
+.oszi-kopf b { color: #ff5a2e; }
+/* Der Titel ist Bestückungsdruck in einem Bauteilrahmen */
+.titel { position: absolute; left: var(--gutter); bottom: 44px; width: min(760px, calc(100% - 2 * var(--gutter))); padding: 18px 22px 22px; background: #1a12ff; border: 1px solid #efece2; }
+.titel h1 { margin: 0; color: #efece2; font-size: clamp(50px, 8.4vw, 118px); line-height: 1; letter-spacing: -.075em; font-weight: 700; hyphens: none; }
+.titel h1 span { color: #ff5a2e; }
+.titel .headline { margin: 12px 0 0; font-size: clamp(15px, 1.5vw, 19px); line-height: 1.3; letter-spacing: -.03em; color: #efece2; }
+.titel .meta { margin-top: 8px; font-size: 11px; color: #efece2; }
+.titel .hero-links { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px; margin-top: 16px; }
+.titel .button { border-color: #efece2; color: #efece2; }
+.titel .button.primary { background: #ff5a2e; border-color: #ff5a2e; color: #0a0a14; }
+.titel .button:hover { background: #efece2; border-color: #efece2; color: #0a0a14; }
+
+/* ---------- Farbflächen: jede Fläche setzt ihre eigenen Werte ---------- */
+.flaeche { max-width: none; padding: 54px max(var(--gutter), calc((100vw - var(--max)) / 2)) 72px; background: var(--bg); color: var(--fg); }
+.flaeche-tinte {
+  --bg: #0a0a14; --paper: #12121f; --card: #171726; --panel: #222233; --fg: #efece2; --ink: #efece2; --on-ink: #0a0a14; --muted: #b5b2a8; --prose: #efece2;
+  --line: rgba(239,236,226,.5); --hairline: #3a3a4c; --soft: #8c8a82; --node-border: #6a6a7c; --wire: #c8c6bc; --dot: #2c2c3c; --watermark: #1d1d2c; --accent: #ff5a2e; --accent-ink: #0a0a14;
+}
+.flaeche-blau {
+  --bg: #1a12ff; --paper: #1208c4; --card: #1208c4; --panel: #2c25ff; --fg: #efece2; --ink: #efece2; --on-ink: #1a12ff; --muted: #dcd9ff; --prose: #efece2;
+  --line: rgba(239,236,226,.6); --hairline: #6f6aff; --soft: #bdbaff; --accent: #ff5a2e; --accent-ink: #0a0a14;
+  /* Parallele Leiterbahnen unter dem Lack */
+  background-image: repeating-linear-gradient(135deg, transparent 0 22px, #2a22ff 22px 25px);
+}
+.flaeche .section-heading { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; padding-bottom: 20px; }
+.flaeche .section-heading:has(> .eyebrow) { display: flex; flex-direction: column-reverse; align-items: flex-start; gap: 12px; }
+.flaeche .section-heading h2 { margin-top: 12px; }
+.flaeche .section-heading:has(> .eyebrow) h2 { margin-top: 0; }
+.flaeche .lab-stamp { padding: 0; border: 0; text-align: right; }
+.flaeche .teaser-visual { box-shadow: none; }
+.about-lead { font-size: clamp(22px, 2.6vw, 34px); line-height: 1.14; letter-spacing: -.045em; }
+.datasheet { box-shadow: none; }
+.site-footer-inner { border-top-color: var(--ink); }
+
+@media (max-width: 760px) {
+  .chrome { padding: 0 var(--gutter); gap: 8px; }
+  .brand-mini { gap: 8px; }
+  .brand-mini svg { width: 24px; height: 24px; }
+  .nav { gap: 2px; }
+  .menu-pill::before, .menu-pill::after { display: none; }
+  .signal { height: auto; min-height: 94svh; display: grid; grid-template-rows: auto 1fr auto; }
+  .platine { position: absolute; inset: 56px 0 0; height: calc(100% - 56px); }
+  .oszi { position: relative; top: auto; right: auto; width: auto; margin: 16px var(--gutter) 0; }
+  .oszi canvas { aspect-ratio: 2 / 1; }
+  .titel { position: relative; left: auto; bottom: auto; width: auto; grid-row: 3; margin: 72px var(--gutter) 22px; padding: 14px 16px 16px; }
+  .titel h1 { font-size: 15.4vw; }
+  .titel .button { flex: 1 1 100%; }
+  .flaeche { padding: 34px var(--gutter) 50px; }
+  .flaeche .section-heading { grid-template-columns: minmax(0, 1fr); }
+  .flaeche .lab-stamp { display: none; }
+  .card-grid { padding: 0 8px; gap: 22px 0; }
+  .card::before { left: -9px; width: 8px; }
+  .card::after { right: -9px; width: 8px; }
+}

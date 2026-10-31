@@ -98,15 +98,15 @@
 .dia .n1 { stroke: #3a86dc; }
 .dia .n2 { stroke: #e3901f; }
 .dia text.t0 { fill: #1f9467; }
-.dia text.t1 { fill: #3a80d0; }
+.dia text.t1 { fill: var(--amp); }
 .dia text.t2 { fill: #d4840f; }
 /* Zählpfeile in Schaltbildern: Spannungen rot, Ströme blau */
-.dia .pu { fill: none; stroke: #d1453b; stroke-width: 1.4; }
-.dia .pi { fill: none; stroke: #3a80d0; stroke-width: 1.4; }
-.dia .fu { fill: #d1453b; stroke: none; }
-.dia .fi { fill: #3a80d0; stroke: none; }
-.dia text.tu { fill: #d1453b; }
-.dia text.ti { fill: #3a80d0; }
+.dia .pu { fill: none; stroke: var(--volt); stroke-width: 1.4; }
+.dia .pi { fill: none; stroke: var(--amp); stroke-width: 1.4; }
+.dia .fu { fill: var(--volt); stroke: none; }
+.dia .fi { fill: var(--amp); stroke: none; }
+.dia text.tu { fill: var(--volt); }
+.dia text.ti { fill: var(--amp); }
 .prose img { height: auto; }
 .table-wrap { overflow-x: auto; margin: 1.6em 0; border: 1px solid var(--ink); }
 .prose table { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -123,7 +123,7 @@
 .callout-label { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .12em; margin-bottom: 10px; display: block; }
 .callout-label span { text-transform: none; letter-spacing: 0; font-size: 12px; }
 .callout p { font-size: 14px; }
-.callout-merke { background: var(--accent); border-color: var(--ink); box-shadow: 5px 5px 0 var(--ink); }
+.callout-merke { background: var(--accent); border-color: var(--ink); box-shadow: none; }
 .callout-merke p { font-size: 15px; color: var(--accent-ink); }
 .callout-info, .callout-beispiel { background: var(--paper); border-color: var(--hairline); }
 .callout-tipp { border-style: dashed; }
@@ -142,7 +142,7 @@
 .post-end { max-width: 720px; margin: 10px auto 0; padding: 0 var(--gutter); }
 .post-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 30px; }
 .post-nav a { display: grid; gap: 8px; padding: 18px; border: 1px solid var(--hairline); text-decoration: none; background: var(--card); }
-.post-nav a:hover { border-color: var(--ink); box-shadow: 4px 4px 0 var(--ink); }
+.post-nav a:hover { border-color: var(--ink); box-shadow: none; }
 .post-nav a span { font-family: var(--mono); font-size: 10px; color: var(--muted); text-transform: uppercase; }
 .post-nav a b { font-weight: 400; font-size: 18px; letter-spacing: -.03em; }
 .post-nav .next { text-align: right; }

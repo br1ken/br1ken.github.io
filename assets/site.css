@@ -1,50 +1,22 @@
-/* Schrift für Fließtext und Labels: MesloLGS Nerd Font (verkleinert, siehe assets/fonts/LIZENZ.md).
-   Die großen Überschriften bleiben in Helvetica Neue (--sans). */
+/* Schrift der ganzen Seite: Meslo LG (verkleinert, siehe assets/fonts/LIZENZ.md). */
 @font-face { font-family: 'Meslo'; src: url('fonts/meslo-lgs-nf-regular.woff') format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
 @font-face { font-family: 'Meslo'; src: url('fonts/meslo-lgs-nf-italic.woff') format('woff'); font-weight: 400; font-style: italic; font-display: swap; }
 @font-face { font-family: 'Meslo'; src: url('fonts/meslo-lgs-nf-bold.woff') format('woff'); font-weight: 500 700; font-style: normal; font-display: swap; }
-
 /* osci//log — gemeinsames Design für alle Seiten.
    Farben und Abstände stehen als Variablen oben; Seiten-spezifisches liegt in labor.css und notizen.css. */
 :root {
-  /* Hell (Standard) */
-  --bg: #fbfbfa;
-  --paper: #f6f6f1;
-  --card: #ffffff;
-  --panel: #efefe9;
-  --panel-2: #fcfcfa;
-  --fg: #0a0a0a;
-  --ink: #111111;
-  --on-ink: #ffffff;
-  --muted: #65655f;
-  --prose: #1b1b19;
-  --line: rgba(0, 0, 0, .42);
-  --hairline: #d6d6cf;
-  --soft: #b4b4ab;
-  --node-border: #88887e;
-  --wire: #62625b;
-  --dot: #c8c8c0;
-  --watermark: #e5e5dd;
-  --grid-major: #d8d8cf;
-  --grid-minor: #ececE5;
-  --plot-text: #7a7a72;
-  --code-bg: #141412;
-  --code-fg: #f1f1ea;
-  --accent: #e8ff5a;       /* Signalgelb: sparsam für "aktiv" und Markierungen */
-  --accent-ink: #1a1a00;
-  --accent-soft: #f3f7c9;
-  --control: #b4c21a;
-  --backdrop: rgba(10, 10, 10, .32);
-  --chrome-a: rgba(255, 255, 255, .97);
-  --chrome-b: rgba(255, 255, 255, .86);
-  --chrome-c: rgba(255, 255, 255, 0);
-  --glow: rgba(255, 255, 255, .92);
-  --scope-grid: #dadad1;
-  --scope-trace: #22221e;
-  --ok: #1f6b3a;
-  --warn: #8a3b12;
+  /* Hell (Standard): Kreide und Tinte, Mennige für Spannung und Kupfer, Ultramarin für Strom und Lötstopplack */
+  --bg: #efece2; --paper: #e6e2d5; --card: #f6f4ec; --panel: #dcd8ca; --panel-2: #f1eee5;
+  --fg: #0a0a14; --ink: #0a0a14; --on-ink: #efece2; --muted: #57554f; --prose: #15151f;
+  --line: rgba(10, 10, 20, .5); --hairline: #bdb9aa; --soft: #9e9a8b; --node-border: #6f6c62; --wire: #3a3a44;
+  --dot: #bdb9aa; --watermark: #dedacb; --grid-major: #c9c5b6; --grid-minor: #dcd8ca; --plot-text: #66645c;
+  --code-bg: #0a0a14; --code-fg: #efece2;
+  --accent: #ff4a1c; --accent-ink: #0a0a14; --accent-soft: #ffd9cc; --control: #e23a0e;
+  --backdrop: rgba(10, 10, 20, .4); --chrome-a: #efece2; --chrome-b: #efece2; --chrome-c: #efece2; --glow: transparent;
+  --scope-grid: #c9c5b6; --scope-trace: #0a0a14; --ok: #0f6b3f; --warn: #b4260a;
+  --volt: #d9330a; --amp: #1a12ff; --amp-fill: #1a12ff;
   --mono: 'Meslo', 'MesloLGS Nerd Font', ui-monospace, Menlo, Consolas, monospace;
-  --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --sans: var(--mono);
   --gutter: 34px;
   --max: 1248px;
   color-scheme: light;
@@ -52,25 +24,29 @@
 /* Dunkel: folgt dem System, außer man hat oben rechts umgeschaltet (data-theme) */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e0e0d; --paper: #161614; --card: #1c1c1a; --panel: #262622; --panel-2: #181816;
-    --fg: #ecece6; --ink: #ecece6; --on-ink: #121211; --muted: #a3a39b; --prose: #dcdcd4;
-    --line: rgba(255, 255, 255, .42); --hairline: #34342f; --soft: var(--muted); --node-border: #5e5e56; --wire: #a6a69c;
-    --dot: #34342f; --watermark: #1f1f1c; --grid-major: #3a3a34; --grid-minor: #282824; --plot-text: #9a9a92;
-    --code-bg: #0a0a09; --code-fg: #f1f1ea; --accent-soft: #2a2e10; --control: #d4e43a; --backdrop: rgba(0, 0, 0, .6);
-    --chrome-a: rgba(14, 14, 13, .97); --chrome-b: rgba(14, 14, 13, .86); --chrome-c: rgba(14, 14, 13, 0); --glow: rgba(40, 40, 36, .55);
-    --scope-grid: #2e2e29; --scope-trace: #e8ff5a; --ok: #7ad69a; --warn: #f0a070;
+    --bg: #0a0a14; --paper: #12121f; --card: #171726; --panel: #222233; --panel-2: #0f0f1c;
+    --fg: #efece2; --ink: #efece2; --on-ink: #0a0a14; --muted: #a9a69c; --prose: #e4e1d8;
+    --line: rgba(239, 236, 226, .5); --hairline: #3a3a4c; --soft: var(--muted); --node-border: #6a6a7c; --wire: #c8c6bc;
+    --dot: #2c2c3c; --watermark: #1d1d2c; --grid-major: #3a3a4c; --grid-minor: #24243a; --plot-text: #a9a69c;
+    --code-bg: #05050c; --code-fg: #efece2;
+    --accent: #ff5a2e; --accent-soft: #3a1408; --control: #ff6a3d;
+    --backdrop: rgba(0, 0, 0, .65); --chrome-a: #0a0a14; --chrome-b: #0a0a14; --chrome-c: #0a0a14; --glow: transparent;
+    --scope-grid: #2c2c3c; --scope-trace: #ff5a2e; --ok: #6fd6a0; --warn: #ff8a66;
+    --volt: #ff6a3d; --amp: #9096ff; --amp-fill: #1a12ff;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0e0e0d; --paper: #161614; --card: #1c1c1a; --panel: #262622; --panel-2: #181816;
-  --fg: #ecece6; --ink: #ecece6; --on-ink: #121211; --muted: #a3a39b; --prose: #dcdcd4;
-  --line: rgba(255, 255, 255, .42); --hairline: #34342f; --soft: var(--muted); --node-border: #5e5e56; --wire: #a6a69c;
-  --dot: #34342f; --watermark: #1f1f1c; --grid-major: #3a3a34; --grid-minor: #282824; --plot-text: #9a9a92;
-  --code-bg: #0a0a09; --code-fg: #f1f1ea; --accent-soft: #2a2e10; --control: #d4e43a; --backdrop: rgba(0, 0, 0, .6);
-  --chrome-a: rgba(14, 14, 13, .97); --chrome-b: rgba(14, 14, 13, .86); --chrome-c: rgba(14, 14, 13, 0); --glow: rgba(40, 40, 36, .55);
-  --scope-grid: #2e2e29; --scope-trace: #e8ff5a; --ok: #7ad69a; --warn: #f0a070;
-  color-scheme: dark;
+  --bg: #0a0a14; --paper: #12121f; --card: #171726; --panel: #222233; --panel-2: #0f0f1c;
+    --fg: #efece2; --ink: #efece2; --on-ink: #0a0a14; --muted: #a9a69c; --prose: #e4e1d8;
+    --line: rgba(239, 236, 226, .5); --hairline: #3a3a4c; --soft: var(--muted); --node-border: #6a6a7c; --wire: #c8c6bc;
+    --dot: #2c2c3c; --watermark: #1d1d2c; --grid-major: #3a3a4c; --grid-minor: #24243a; --plot-text: #a9a69c;
+    --code-bg: #05050c; --code-fg: #efece2;
+    --accent: #ff5a2e; --accent-soft: #3a1408; --control: #ff6a3d;
+    --backdrop: rgba(0, 0, 0, .65); --chrome-a: #0a0a14; --chrome-b: #0a0a14; --chrome-c: #0a0a14; --glow: transparent;
+    --scope-grid: #2c2c3c; --scope-trace: #ff5a2e; --ok: #6fd6a0; --warn: #ff8a66;
+    --volt: #ff6a3d; --amp: #9096ff; --amp-fill: #1a12ff;
+    color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html { scroll-padding-top: 96px; -webkit-text-size-adjust: 100%; }
@@ -82,16 +58,14 @@ body {
   min-height: 100vh;
   font-family: var(--mono);
   color: var(--fg);
-  background:
-    radial-gradient(circle at 50% 18%, var(--glow) 0%, transparent 55%),
-    linear-gradient(180deg, var(--card) 0%, var(--bg) 100%) fixed;
+  background: var(--bg);
 }
 a { color: inherit; }
 img { max-width: 100%; }
 :focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; }
 ::selection { background: var(--accent); color: var(--accent-ink); }
 .eyebrow, .card-kicker, .sub, .meta { font-family: var(--mono); }
-/* Überschriften und große Leitsätze: Helvetica */
+/* Überschriften und große Leitsätze */
 h1, h2, h3, .headline, .about-lead, .menu-item b, .post-nav b, .lesson h4 { font-family: var(--sans); }
 .skip-link { position: fixed; left: 20px; top: -80px; z-index: 60; background: var(--card); padding: 14px; color: var(--fg); }
 .skip-link:focus { top: 15px; }
@@ -122,7 +96,7 @@ h1, h2, h3, .headline, .about-lead, .menu-item b, .post-nav b, .lesson h4 { font
 .menu-panel {
   position: fixed; top: 74px; right: 14px; left: 14px; z-index: 45;
   display: grid; gap: 4px; padding: 14px 18px 18px;
-  background: var(--card); border: 1px solid var(--ink); box-shadow: 6px 6px 0 rgba(0,0,0,.08);
+  background: var(--card); border: 1px solid var(--ink); box-shadow: none;
   opacity: 0; visibility: hidden; transform: translateY(-6px);
   transition: opacity .18s ease, transform .18s ease, visibility .18s;
 }
@@ -145,7 +119,7 @@ h1, h2, h3, .headline, .about-lead, .menu-item b, .post-nav b, .lesson h4 { font
   background: transparent; color: var(--fg); font: inherit; font-size: 12px; letter-spacing: .04em;
   text-decoration: none; cursor: pointer; transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
 }
-.button:hover { box-shadow: 3px 3px 0 var(--fg); transform: translate(-1px, -1px); }
+.button:hover { box-shadow: none; transform: translate(-1px, -1px); }
 .button:active { box-shadow: none; transform: none; }
 .button.primary { background: var(--fg); color: var(--on-ink); }
 .button.small { min-height: 36px; padding: 7px 11px; font-size: 11px; }
@@ -163,7 +137,7 @@ button.tag[aria-pressed="true"] { background: var(--fg); color: var(--on-ink); b
   background: var(--card); border: 1px solid var(--hairline); text-decoration: none;
   transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
 }
-a.card:hover, .card:has(.card-link:hover) { border-color: var(--ink); box-shadow: 5px 5px 0 var(--ink); transform: translate(-2px, -2px); }
+a.card:hover, .card:has(.card-link:hover) { border-color: var(--ink); box-shadow: none; transform: translate(-2px, -2px); }
 .card-cover { position: relative; aspect-ratio: 16 / 7; border-bottom: 1px solid var(--hairline); background: var(--paper); overflow: hidden; }
 .card-cover svg, .card-cover img { display: block; width: 100%; height: 100%; object-fit: cover; }
 /* Etikett „Rechnung“ / „Theorie“ oben links auf dem Titelbild einer Notiz */
@@ -219,7 +193,7 @@ html.lex-open { overflow: hidden; }
 .lex-list { flex: 1; overflow-y: auto; padding: 4px 20px 20px; overscroll-behavior: contain; }
 .lex-cat { font: 10px var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin: 18px 0 6px; }
 .lex-entry { border: 1px solid var(--hairline); background: var(--card); margin-bottom: 6px; }
-.lex-entry[open] { border-color: var(--ink); box-shadow: 4px 4px 0 rgba(0,0,0,.06); }
+.lex-entry[open] { border-color: var(--ink); box-shadow: none; }
 .lex-entry summary { list-style: none; display: grid; grid-template-columns: 78px 1fr auto; align-items: center; gap: 10px; padding: 10px 12px; cursor: pointer; min-height: 52px; }
 .lex-entry summary::-webkit-details-marker { display: none; }
 .lex-entry summary::after { content: "+"; font: 16px var(--mono); }
@@ -263,7 +237,7 @@ html.lex-open { overflow: hidden; }
 .news-fab.is-new {
   right: calc(22px + env(safe-area-inset-right)); bottom: calc(22px + env(safe-area-inset-bottom));
   width: 54px; height: 54px; border-color: var(--ink); background: var(--accent); color: var(--accent-ink);
-  font-size: 26px; opacity: 1; box-shadow: 4px 4px 0 rgba(0, 0, 0, .14);
+  font-size: 26px; opacity: 1; box-shadow: none;
   animation: news-wackeln 5s ease-in-out 1.5s infinite;
 }
 .news-fab.is-new::after { content: ""; position: absolute; inset: -1px; border: 1px solid var(--ink); border-radius: 50%; animation: news-ping 2.4s ease-out infinite; pointer-events: none; }
@@ -282,7 +256,7 @@ html.news-open { overflow: hidden; }
 .news-panel {
   position: absolute; right: calc(22px + env(safe-area-inset-right)); bottom: calc(22px + env(safe-area-inset-bottom));
   width: min(420px, calc(100% - 44px)); max-height: min(680px, calc(100% - 110px));
-  display: flex; flex-direction: column; background: var(--bg); border: 1px solid var(--ink); box-shadow: 6px 6px 0 rgba(0, 0, 0, .1);
+  display: flex; flex-direction: column; background: var(--bg); border: 1px solid var(--ink); box-shadow: none;
   transform: translateY(14px) scale(.98); transform-origin: 100% 100%; opacity: 0; transition: transform .2s ease, opacity .2s ease;
 }
 .news.is-open .news-backdrop { opacity: 1; }

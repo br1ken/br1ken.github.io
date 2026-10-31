@@ -7,6 +7,7 @@
      text:    ein, zwei Sätze
      link:    optional, relativ zur Startseite (z. B. 'messplatz/') oder eine volle Adresse */
 OSCINeuigkeiten.liste([
+  {datum: '2026-10-31', bereich: 'Seite', titel: 'Neues Gesicht: die Platine', text: 'Die Startseite ist jetzt eine Leiterplatte: Fahr mit dem Zeiger über die Bahnen und sieh ihr Signal auf dem Oszilloskop. Dazu neue Farben, ein neues Logo, Notizen als ICs und XY-Oszillogramme als Titelbilder.'},
   {datum: '2026-10-27', bereich: 'Notizen', titel: 'Abhaken, kopieren, anhören', text: 'Checkpoints in Notizen lassen sich abhaken, der Browser merkt sich den Fortschritt. Codeblöcke haben einen Knopf zum Kopieren, und zwei neue Simulationen spielen ihren Ton direkt ab: Obertöne und Abtastung mit Aliasing.', link: 'notizen/beitrag.html?b=vom-sinus-zum-sound#6-obertoene-woraus-klangfarbe-besteht'},
   {datum: '2026-10-28', bereich: 'Notizen', titel: 'A3.2 überarbeitet', text: 'Die Ersatzspannungsquelle ist jetzt kompakt wie in der Übung gerechnet: Leerlauf, Kurzschluss, beliebige Last und null gesetzte Quellen, jeder Schritt mit Bild.', link: 'notizen/beitrag.html?b=ersatzspannungsquelle'},
   {datum: '2026-10-28', bereich: 'Notizen', titel: 'A3.3 überarbeitet', text: 'Die Ersatzquellen-Aufgabe ist jetzt kompakt wie in der Übung gerechnet: Thévenin und Norton mit Knotengleichungen, jeder Schritt mit Bild, ohne Ballast.', link: 'notizen/beitrag.html?b=ersatzquellen'},

@@ -32,7 +32,7 @@ const OSCI = (() => {
     if (!slot) return;
     const links = NAV.map(n => `<a class="nav-link" href="${url(n.href)}"${n.id === page ? ' aria-current="page"' : ''}>${n.title}</a>`).join('');
     const items = NAV.map(n => `<a class="menu-item" href="${url(n.href)}"><b>${n.title}</b><span>${n.text}</span></a>`).join('') + '<a class="menu-item" href="#neuigkeiten" data-news><b>Neuigkeiten</b><span>Neue Notizen und Neuerungen an der Seite.</span></a>';
-    slot.outerHTML = `<header class="chrome"><a class="brand-mini" href="${page === 'home' ? '#top' : root}" aria-label="osci//log Startseite"><span class="brand-top">osci//log</span><span class="brand-line"></span></a><nav class="nav" aria-label="Hauptnavigation">${links}<button class="menu-pill" id="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-panel">Menü</button><button class="theme-toggle" type="button" id="theme-toggle" aria-label="Hell oder dunkel umschalten" title="Hell / Dunkel"><span></span></button><button class="lex-toggle" type="button" data-lex="" aria-label="Lexikon öffnen: elektrische Größen und Synthesizer" title="Lexikon: nachschlagen"><span></span><span></span><span></span></button></nav></header><div class="menu-panel" id="menu-panel" inert>${items}</div>`;
+    slot.outerHTML = `<header class="chrome"><a class="brand-mini" href="${page === 'home' ? '#top' : root}" aria-label="osci//log Startseite"><svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="#1a12ff"/><path d="M55.00 32.00L54.90 33.44L54.59 34.88L54.09 36.31L53.38 37.72L52.49 39.11L51.42 40.47L50.17 41.79L48.77 43.08L47.21 44.32L45.52 45.52L43.71 46.66L41.79 47.74L39.79 48.77L37.72 49.72L35.60 50.61L33.44 51.42L31.28 52.16L29.12 52.81L26.98 53.38L24.89 53.87L22.87 54.28L20.92 54.59L19.07 54.82L17.34 54.95L15.74 55.00L14.28 54.95L12.98 54.82L11.84 54.59L10.89 54.28L10.13 53.87L9.55 53.38L9.18 52.81L9.01 52.16L9.05 51.42L9.28 50.61L9.72 49.72L10.36 48.77L11.19 47.74L12.20 46.66L13.39 45.52L14.75 44.32L16.26 43.08L17.90 41.79L19.68 40.47L21.56 39.11L23.53 37.72L25.58 36.31L27.69 34.88L29.84 33.44L32.00 32.00L34.16 30.56L36.31 29.12L38.42 27.69L40.47 26.28L42.44 24.89L44.32 23.53L46.10 22.21L47.74 20.92L49.25 19.68L50.61 18.48L51.80 17.34L52.81 16.26L53.64 15.23L54.28 14.28L54.72 13.39L54.95 12.58L54.99 11.84L54.82 11.19L54.45 10.62L53.87 10.13L53.11 9.72L52.16 9.41L51.02 9.18L49.72 9.05L48.26 9.00L46.66 9.05L44.93 9.18L43.08 9.41L41.13 9.72L39.11 10.13L37.02 10.62L34.88 11.19L32.72 11.84L30.56 12.58L28.40 13.39L26.28 14.28L24.21 15.23L22.21 16.26L20.29 17.34L18.48 18.48L16.79 19.68L15.23 20.92L13.83 22.21L12.58 23.53L11.51 24.89L10.62 26.28L9.91 27.69L9.41 29.12L9.10 30.56L9.00 32.00L9.10 33.44L9.41 34.88L9.91 36.31L10.62 37.72L11.51 39.11L12.58 40.47L13.83 41.79L15.23 43.08L16.79 44.32L18.48 45.52L20.29 46.66L22.21 47.74L24.21 48.77L26.28 49.72L28.40 50.61L30.56 51.42L32.72 52.16L34.88 52.81L37.02 53.38L39.11 53.87L41.13 54.28L43.08 54.59L44.93 54.82L46.66 54.95L48.26 55.00L49.72 54.95L51.02 54.82L52.16 54.59L53.11 54.28L53.87 53.87L54.45 53.38L54.82 52.81L54.99 52.16L54.95 51.42L54.72 50.61L54.28 49.72L53.64 48.77L52.81 47.74L51.80 46.66L50.61 45.52L49.25 44.32L47.74 43.08L46.10 41.79L44.32 40.47L42.44 39.11L40.47 37.72L38.42 36.31L36.31 34.88L34.16 33.44L32.00 32.00L29.84 30.56L27.69 29.12L25.58 27.69L23.53 26.28L21.56 24.89L19.68 23.53L17.90 22.21L16.26 20.92L14.75 19.68L13.39 18.48L12.20 17.34L11.19 16.26L10.36 15.23L9.72 14.28L9.28 13.39L9.05 12.58L9.01 11.84L9.18 11.19L9.55 10.62L10.13 10.13L10.89 9.72L11.84 9.41L12.98 9.18L14.28 9.05L15.74 9.00L17.34 9.05L19.07 9.18L20.92 9.41L22.87 9.72L24.89 10.13L26.98 10.62L29.12 11.19L31.28 11.84L33.44 12.58L35.60 13.39L37.72 14.28L39.79 15.23L41.79 16.26L43.71 17.34L45.52 18.48L47.21 19.68L48.77 20.92L50.17 22.21L51.42 23.53L52.49 24.89L53.38 26.28L54.09 27.69L54.59 29.12L54.90 30.56Z" fill="none" stroke="#efece2" stroke-width="4.6" stroke-linejoin="round"/></svg><span class="brand-top">osci//log</span></a><nav class="nav" aria-label="Hauptnavigation">${links}<button class="menu-pill" id="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-panel">Menü</button><button class="theme-toggle" type="button" id="theme-toggle" aria-label="Hell oder dunkel umschalten" title="Hell / Dunkel"><span></span></button><button class="lex-toggle" type="button" data-lex="" aria-label="Lexikon öffnen: elektrische Größen und Synthesizer" title="Lexikon: nachschlagen"><span></span><span></span><span></span></button></nav></header><div class="menu-panel" id="menu-panel" inert>${items}</div>`;
     const toggle = document.getElementById('menu-toggle'), panel = document.getElementById('menu-panel');
     const setMenu = (open, focus = false) => {
       panel.classList.toggle('is-open', open); panel.inert = !open;
@@ -50,7 +50,7 @@ const OSCI = (() => {
      Ein kleines Skript im <head> jeder Seite setzt sie schon vor dem ersten Zeichnen (kein Aufblitzen). */
   const darkQuery = matchMedia('(prefers-color-scheme: dark)');
   const isDark = () => document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : darkQuery.matches;
-  function syncThemeColor() { document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isDark() ? '#0e0e0d' : '#fbfbfa'); }
+  function syncThemeColor() { document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isDark() ? '#0a0a14' : '#efece2'); }
   function setTheme(theme) {
     document.documentElement.dataset.theme = theme;
     try { localStorage.setItem('osci-log-theme', theme); } catch { /* egal */ }
@@ -75,34 +75,26 @@ const OSCI = (() => {
     for (const ch of String(text)) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619); }
     return () => { h ^= h << 13; h ^= h >>> 17; h ^= h << 5; return ((h >>> 0) % 10000) / 10000; };
   }
-  const WAVES = {
-    sinus: (x) => Math.sin(x),
-    rechteck: (x) => Math.sin(x) >= 0 ? .82 : -.82,
-    dreieck: (x) => 2 / Math.PI * Math.asin(Math.sin(x)),
-    saege: (x) => ((x / Math.PI + 1) % 2 + 2) % 2 - 1,
-    gedaempft: (x, t) => Math.sin(x) * Math.exp(-2.2 * t),
-    lade: (x, t) => 1.6 * (1 - Math.exp(-4.5 * t)) - .8,
-    am: (x, t) => Math.sin(x * 2.4) * (.55 + .45 * Math.sin(t * Math.PI * 4))
-  };
-  /* Titelbild als Oszilloskop-Spur. `wave` erzwingt eine Wellenform (Schlüssel aus WAVES). */
+  /* Lissajous-Verhältnis je Wellenform aus dem Notizkopf */
+  const FIGUREN = {sinus: [1, 2], rechteck: [3, 2], dreieck: [3, 4], saege: [2, 3], gedaempft: [5, 4], lade: [1, 3], am: [5, 6]};
+  /* Titelbild als XY-Oszillogramm: Zwei Sinussignale im festen Verhältnis zeichnen eine Lissajous-Figur auf den Schirm. */
   function cover(seed, wave) {
-    const rnd = hash(seed), names = Object.keys(WAVES);
-    const kind = WAVES[wave] ? wave : names[Math.floor(rnd() * names.length)];
-    const periods = 1.5 + rnd() * 4, phase = rnd() * Math.PI * 2, amp = 62 + rnd() * 30;
-    const w = 800, h = 350, mid = h / 2;
-    const trace = (shift, scale) => {
+    const rnd = hash(seed), namen = Object.keys(FIGUREN);
+    const kind = FIGUREN[wave] ? wave : namen[Math.floor(rnd() * namen.length)];
+    const [fx, fy] = FIGUREN[kind];
+    const w = 800, h = 450, phase = .4 + rnd() * 2.2;
+    const figur = ph => {
       let d = '';
-      for (let i = 0; i <= 320; i++) {
-        const t = i / 320, x = t * w;
-        const y = mid - WAVES[kind](t * periods * Math.PI * 2 + phase + shift, t) * amp * scale;
-        d += `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`;
+      for (let i = 0; i <= 260; i++) {
+        const u = i / 260 * Math.PI * 2;
+        d += `${i ? 'L' : 'M'}${(w / 2 + Math.sin(fx * u + ph) * w * .3).toFixed(1)} ${(h / 2 + Math.sin(fy * u) * h * .4).toFixed(1)}`;
       }
       return d;
     };
-    const grid = [];
-    for (let x = 0; x <= w; x += 80) grid.push(`<path d="M${x},0V${h}"/>`);
-    for (let y = 15; y <= h; y += 80) grid.push(`<path d="M0,${y}H${w}"/>`);
-    return `<svg class="cover" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect class="cv-bg" width="${w}" height="${h}"/><g class="cv-grid">${grid.join('')}</g><path class="cv-zero" d="M0,${mid}H${w}"/><path class="cv-ghost" d="${trace(.9, .55)}"/><path class="cv-trace" d="${trace(0, 1)}"/><text class="cv-text" x="22" y="${h - 20}">CH1 · ${kind.toUpperCase()}</text></svg>`;
+    const raster = [];
+    for (let x = 80; x < w; x += 80) raster.push(`<path d="M${x} 0V${h}"/>`);
+    for (let y = 45; y < h; y += 90) raster.push(`<path d="M0 ${y}H${w}"/>`);
+    return `<svg class="cover" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect class="cv-bg" width="${w}" height="${h}"/><g class="cv-raster">${raster.join('')}</g><path class="cv-achse" d="M${w / 2} 0V${h}M0 ${h / 2}H${w}"/><path class="cv-echo" d="${figur(phase - .16)}"/><path class="cv-spur" d="${figur(phase)}"/><text class="cv-text" x="${w - 22}" y="${h - 22}" text-anchor="end">XY ${fx}:${fy}</text></svg>`;
   }
 
   const dateFormat = new Intl.DateTimeFormat('de-DE', {day: 'numeric', month: 'short', year: 'numeric'});
