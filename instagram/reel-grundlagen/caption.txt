@@ -1,0 +1,14 @@
+Acht Größen. Eine Kette. ∿
+
+In der ersten Vorlesung stehen U, I und R an der Tafel, als wären sie vom Himmel gefallen. Sind sie nicht. Jede Größe folgt aus der vorigen:
+
+Kraft → Arbeit → Ladung → Feld → Potential → Spannung → Strom → Widerstand.
+
+Kraft mal Weg ist Arbeit. Arbeit pro Ladung ist Spannung. Ladung pro Zeit ist Strom. Und Newton plus Stöße im Draht machen beide proportional: U = R · I.
+
+Der Track baut sich genauso auf – jede Größe bringt eine Spur: Kraft die Kick, Arbeit die Hats, Ladung die Zähl-Blips (ein Blip, ein Elektron), Feld die Snare, Potential das Pad, Spannung den Akkordwechsel, Strom das Arpeggio (jede Note eine Ladung durch den Querschnitt), Widerstand den Filter.
+
+Die ganze Herleitung mit Einheiten, Bildern und Drude-Modell steht in der Notiz „Von Newton bis Ohm".
+→ Link in Bio: br1ken.github.io
+
+#elektrotechnik #physik #ohmschesgesetz #grundlagen

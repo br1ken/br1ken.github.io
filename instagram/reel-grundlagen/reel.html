@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>osci//log · Reel „Von Newton bis Ohm"</title>
+<!-- Bild-Engine: zeichnet jeden Frame deterministisch aus der Zeit t und den Daten des Tracks (data.js aus track.py).
+     Acht Größen, je ein Takt: Formel schreibt sich mit Stift, Diagramm bewegt sich im Takt, die Ladungen in
+     „Ladung" und „Strom" sind die Blips und Arpeggio-Noten, die man hört. Rendern: render.js. -->
+<style>
+@font-face { font-family: 'Meslo'; src: url('../../assets/fonts/meslo-lgs-nf-regular.woff') format('woff'); font-weight: 400; }
+@font-face { font-family: 'Meslo'; src: url('../../assets/fonts/meslo-lgs-nf-bold.woff') format('woff'); font-weight: 700; }
+html, body { margin: 0; background: #333; }
+canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+'use strict';
+const W = 1080, H = 1920;
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const INK = '#0a0a14', CHALK = '#efece2', BLUE = '#1a12ff', KUPFER = '#ff5a2e', KUPFER_HELL = '#ff4a1c', AMP = '#9096ff', AMP_HELL = '#1a12ff',
+      PANEL = '#12121f', HAIR = '#3a3a4c', MUTED = '#b5b2a8', MUTED_HELL = '#57554f', PAPIER = '#f6f4ec', BLAU_KARTE = '#1208c4';
+const zpi = Math.PI * 2;
+let D = null;
+
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const ease = x => 1 - Math.pow(1 - clamp(x), 3);
+const easeIn = x => Math.pow(clamp(x), 2);
+const easeIO = x => { x = clamp(x); return x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; };
+const pop = x => { x = clamp(x); return 1 + 0.35 * Math.sin(x * Math.PI) * (1 - x); };
+const lerp = (a, b, x) => a + (b - a) * x;
+const sec = (bar, beat = 0, step = 0) => (bar - 1) * D.bar + beat * D.beat + step * D.beat / 4;
+const frameOf = t => clamp(Math.floor(t * D.fps), 0, D.rms.length - 1);
+const kickEnv = t => clamp((1 - D.sc[frameOf(t)]) / 0.85);
+const cutAt = t => D.cut[frameOf(t)];
+const rmsAt = t => D.rms[frameOf(t)];
+const beatPhase = t => (t / D.beat) % 1;
+/* Wie lange ist das letzte Ereignis einer Liste her? (für Pulse) */
+const since = (list, t) => { let s = 9; for (const x of list) { if (x <= t) s = t - x; else break; } return s; };
+
+/* Farben je Hintergrund: Kupfer ist Spannung, Blau ist Strom */
+const PAL = {
+  chalk: {bg: CHALK, fg: INK, muted: MUTED_HELL, volt: KUPFER_HELL, amp: AMP_HELL, card: PAPIER, line: '#bdb9aa', label: [INK, CHALK]},
+  ink:   {bg: INK, fg: CHALK, muted: MUTED, volt: KUPFER, amp: AMP, card: PANEL, line: HAIR, label: [CHALK, INK]},
+  blue:  {bg: BLUE, fg: CHALK, muted: '#dcd9ff', volt: KUPFER, amp: CHALK, card: BLAU_KARTE, line: '#6f6aff', label: [CHALK, BLUE]}
+};
+
+/* ---------- Zeichenhelfer ---------- */
+function bg(color) { ctx.fillStyle = color; ctx.fillRect(0, 0, W, H); }
+function font(size, weight = 400, ls = 0) { ctx.font = `${weight} ${size}px Meslo`; ctx.letterSpacing = ls + 'px'; }
+function text(s, x, y, o = {}) {
+  font(o.size || 24, o.weight || 400, o.ls || 0);
+  ctx.fillStyle = o.color || CHALK; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic';
+  ctx.fillText(s, x, y); ctx.letterSpacing = '0px';
+}
+function textW(s, size, weight = 400, ls = 0) { font(size, weight, ls); const w = ctx.measureText(s).width; ctx.letterSpacing = '0px'; return w; }
+function eyebrow(s, x, y, p, o = {}) {
+  const size = o.size || 22, h = size * 1.9; s = s.toUpperCase();
+  const w = textW(s, size, 700, 1) + 40;
+  ctx.fillStyle = p.label[0]; ctx.beginPath();
+  ctx.moveTo(x, y); ctx.lineTo(x + w - 14, y); ctx.lineTo(x + w, y + h / 2); ctx.lineTo(x + w - 14, y + h); ctx.lineTo(x, y + h); ctx.closePath(); ctx.fill();
+  text(s, x + 14, y + h / 2 + 1, {size, weight: 700, ls: 1, color: p.label[1], base: 'middle'});
+  return w;
+}
+function headline(lines, x, y, o = {}) {
+  const size = o.size || 118, lh = size * 1.0, ls = -size * 0.06, sc = o.scale || 1;
+  ctx.save(); ctx.translate(x, y); ctx.scale(sc, sc);
+  lines.forEach((segs, i) => { let cx = 0; for (const [s, color] of segs) { text(s, cx, i * lh, {size, weight: 700, ls, color}); cx += textW(s, size, 700, ls); } });
+  ctx.restore();
+}
+function lissajous(x, y, size, lw, color, a = 3, b = 2, phase = 0) {
+  ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.beginPath();
+  const n = 300, r = size / 2;
+  for (let i = 0; i <= n; i++) { const th = i / n * zpi; const px = x + r * Math.cos(a * th + phase), py = y + r * Math.sin(b * th); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }
+  ctx.stroke();
+}
+function logo(x, y, s, lw) { ctx.fillStyle = BLUE; ctx.fillRect(x, y, s, s); lissajous(x + s / 2, y + s / 2, s * .72, lw, CHALK); }
+function brand(p, x = 80, y = 236) { logo(x, y - 30, 44, 3.6); text('osci//log', x + 58, y, {size: 26, weight: 700, ls: -0.8, color: p.fg}); }
+function arrow(x1, y1, x2, y2, color, lw = 5, head = 18) {
+  const a = Math.atan2(y2 - y1, x2 - x1);
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - Math.cos(a) * head * .6, y2 - Math.sin(a) * head * .6); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - head * Math.cos(a - .5), y2 - head * Math.sin(a - .5)); ctx.lineTo(x2 - head * Math.cos(a + .5), y2 - head * Math.sin(a + .5)); ctx.closePath(); ctx.fill();
+}
+function dashed(x1, y1, x2, y2, color, lw = 2, dash = [8, 10]) { ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.setLineDash(dash); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.setLineDash([]); }
+function knopf(s, x, y, w, h, fill, border, color, size = 28) {
+  if (fill) { ctx.fillStyle = fill; ctx.fillRect(x, y, w, h); }
+  ctx.strokeStyle = border; ctx.lineWidth = 2; ctx.strokeRect(x + 1, y + 1, w - 2, h - 2);
+  text(s, x + w / 2, y + h / 2 + 1, {size, weight: 700, color, align: 'center', base: 'middle'});
+}
+function stripes(x, y, w, h, color = '#2a22ff', step = 22, lw = 3) {
+  ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip(); ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.beginPath();
+  for (let d = -h; d < w + h; d += step) { ctx.moveTo(x + d, y); ctx.lineTo(x + d - h, y + h); }
+  ctx.stroke(); ctx.restore();
+}
+
+/* ---------- Formeln: Token-Liste → Breite / Zeichnung. Tokens: 'Text' | {t, c} | {sub, c} | {sup, c} | {frac: [num, den]} | {sp} ---------- */
+function fmlWidth(tokens, size) {
+  let w = 0;
+  for (const tk of tokens) {
+    if (typeof tk === 'string') w += textW(tk, size, 700, -size * .04);
+    else if (tk.t !== undefined) w += textW(tk.t, size, 700, -size * .04);
+    else if (tk.sub !== undefined || tk.sup !== undefined) w += textW(tk.sub ?? tk.sup, size * .55, 700) + size * .04;
+    else if (tk.frac) w += Math.max(fmlWidth(tk.frac[0], size * .78), fmlWidth(tk.frac[1], size * .78)) + size * .3;
+    else if (tk.sp) w += tk.sp * size;
+  }
+  return w;
+}
+function fmlDraw(tokens, x, y, size, color) {
+  let cx = x;
+  for (const tk of tokens) {
+    if (typeof tk === 'string' || tk.t !== undefined) { const s = typeof tk === 'string' ? tk : tk.t; text(s, cx, y, {size, weight: 700, ls: -size * .04, color: tk.c || color}); cx += textW(s, size, 700, -size * .04); }
+    else if (tk.sub !== undefined) { text(tk.sub, cx + size * .02, y + size * .16, {size: size * .55, weight: 700, color: tk.c || color}); cx += textW(tk.sub, size * .55, 700) + size * .04; }
+    else if (tk.sup !== undefined) { text(tk.sup, cx + size * .02, y - size * .5, {size: size * .55, weight: 700, color: tk.c || color}); cx += textW(tk.sup, size * .55, 700) + size * .04; }
+    else if (tk.frac) {
+      const s2 = size * .74, wn = fmlWidth(tk.frac[0], s2), wd = fmlWidth(tk.frac[1], s2), w = Math.max(wn, wd) + size * .3;
+      fmlDraw(tk.frac[0], cx + (w - wn) / 2, y - size * .56, s2, color); fmlDraw(tk.frac[1], cx + (w - wd) / 2, y + size * .5, s2, color);
+      ctx.fillStyle = tk.c || color; ctx.fillRect(cx + size * .06, y - size * .36, w - size * .12, Math.max(3, size * .05)); cx += w;
+    }
+    else if (tk.sp) cx += tk.sp * size;
+  }
+}
+/* Schreiben wie mit Stift: von links aufdecken, vorne ein glühender Punkt */
+function fmlWrite(tokens, x, y, size, color, prog, pen = KUPFER) {
+  const w = fmlWidth(tokens, size); prog = clamp(prog);
+  ctx.save(); ctx.beginPath(); ctx.rect(x - 10, y - size * 1.3, w * prog + 12, size * 2.6); ctx.clip(); fmlDraw(tokens, x, y, size, color); ctx.restore();
+  if (prog > 0 && prog < 1) { ctx.save(); ctx.shadowColor = pen; ctx.shadowBlur = 22; ctx.fillStyle = pen; ctx.beginPath(); ctx.arc(x + w * prog, y - size * .3, size * .1, 0, zpi); ctx.fill(); ctx.restore(); }
+  return w;
+}
+function textWrite(s, x, y, size, color, prog, pen = KUPFER, ls = -size * .06) {
+  const w = textW(s, size, 700, ls); prog = clamp(prog);
+  ctx.save(); ctx.beginPath(); ctx.rect(x - 10, y - size * 1.1, w * prog + 12, size * 1.5); ctx.clip(); text(s, x, y, {size, weight: 700, ls, color}); ctx.restore();
+  if (prog > 0 && prog < 1) { ctx.save(); ctx.shadowColor = pen; ctx.shadowBlur = 22; ctx.fillStyle = pen; ctx.beginPath(); ctx.arc(x + w * prog, y - size * .32, size * .09, 0, zpi); ctx.fill(); ctx.restore(); }
+}
+
+/* ---------- Die acht Größen ---------- */
+const V = KUPFER, A_ = AMP;   // Platzhalter, je Hintergrund ersetzt
+const GROESSEN = [
+  {name: 'Kraft', sym: 'F', unit: 'Newton, N', si: ['1 N = 1 kg·m/s', {sup: '2'}], bg: 'chalk', f: p => ['F', {sp: .25}, '=', {sp: .25}, 'm', {sp: .15}, '·', {sp: .15}, 'a']},
+  {name: 'Arbeit', sym: 'W', unit: 'Joule, J', si: ['1 J = 1 N·m = 1 kg·m', {sup: '2'}, '/s', {sup: '2'}], bg: 'chalk', f: p => ['W', {sp: .25}, '=', {sp: .25}, 'F', {sp: .15}, '·', {sp: .15}, 's']},
+  {name: 'Ladung', sym: 'Q', unit: 'Coulomb, C', si: ['1 C = 1 A·s', {sp: 1}, 'e = 1,602·10', {sup: '−19'}, ' C'], bg: 'ink', f: p => [{t: 'Q', c: p.amp}, {sp: .25}, '=', {sp: .25}, 'n', {sp: .15}, '·', {sp: .15}, 'e']},
+  {name: 'Feld', sym: 'E', unit: 'Volt pro Meter, V/m', si: ['1 V/m = 1 N/C = 1 kg·m/(A·s', {sup: '3'}, ')'], bg: 'ink', f: p => [{t: 'E', c: p.volt}, {sp: .25}, '=', {sp: .25}, {frac: [['F'], [{t: 'q', c: p.amp}]]}]},
+  {name: 'Potential', sym: 'φ', unit: 'Volt, V', si: ['1 V = 1 J/C = 1 kg·m', {sup: '2'}, '/(A·s', {sup: '3'}, ')'], bg: 'blue', f: p => [{t: 'φ', c: p.volt}, {sp: .25}, '=', {sp: .25}, {frac: [['E', {sub: 'pot'}], [{t: 'q', c: p.amp}]]}]},
+  {name: 'Spannung', sym: 'U', unit: 'Volt, V', si: ['1 V = 1 W/A', {sp: 1}, 'U = W/Q'], bg: 'blue', f: p => [{t: 'U', c: p.volt}, {sp: .25}, '=', {sp: .25}, 'φ', {sub: '1'}, {sp: .15}, '−', {sp: .15}, 'φ', {sub: '2'}]},
+  {name: 'Strom', sym: 'I', unit: 'Ampere, A', si: ['1 A = 1 C/s', {sp: 1}, 'SI-Basiseinheit'], bg: 'chalk', f: p => [{t: 'I', c: p.amp}, {sp: .25}, '=', {sp: .25}, {frac: [['d', {t: 'Q', c: p.amp}], ['dt']]}]},
+  {name: 'Widerstand', sym: 'R', unit: 'Ohm, Ω', si: ['1 Ω = 1 V/A = 1 kg·m', {sup: '2'}, '/(A', {sup: '2'}, '·s', {sup: '3'}, ')'], bg: 'ink', f: p => ['R', {sp: .25}, '=', {sp: .25}, {frac: [[{t: 'U', c: p.volt}], [{t: 'I', c: p.amp}]]}]}
+];
+
+/* Die Kette: acht Kästen in zwei Reihen, Leiterbahn dazwischen */
+const KETTE = {x: 80, w: 200, h: 170, gap: 40, y1: 880, y2: 1230};
+function kettePos(i) { const r = i < 4 ? 0 : 1, c = i % 4; return {x: KETTE.x + c * (KETTE.w + KETTE.gap), y: r ? KETTE.y2 : KETTE.y1}; }
+function kette(t, p, o) {
+  /* o.sichtbar(i) → 0..1 Einblendung, o.gefuellt → Symbole zeigen, o.puls → Pulsstärke */
+  ctx.lineWidth = 2;
+  for (let i = 0; i < 8; i++) {
+    const a = o.sichtbar(i); if (a <= 0) continue;
+    const {x, y} = kettePos(i), s = pop(a) * (o.aktiv === i ? 1 + .03 * (o.puls || 0) : 1);
+    ctx.save(); ctx.translate(x + KETTE.w / 2, y + KETTE.h / 2); ctx.scale(s, s); ctx.translate(-(x + KETTE.w / 2), -(y + KETTE.h / 2)); ctx.globalAlpha = clamp(a * 2);
+    const fertig = o.gefuellt && o.fertig(i);
+    ctx.fillStyle = o.aktiv === i ? p.volt : fertig ? p.card : 'transparent'; if (o.aktiv === i || fertig) ctx.fillRect(x, y, KETTE.w, KETTE.h);
+    ctx.strokeStyle = o.aktiv === i ? p.volt : p.fg; ctx.strokeRect(x + 1, y + 1, KETTE.w - 2, KETTE.h - 2);
+    const fg = o.aktiv === i ? INK : p.fg;
+    text(String(i + 1).padStart(2, '0'), x + 12, y + 28, {size: 16, color: o.aktiv === i ? INK : p.muted, ls: 1});
+    if (o.gefuellt) {
+      text(GROESSEN[i].sym, x + KETTE.w / 2, y + 96, {size: 66, weight: 700, color: fg, align: 'center'});
+      text(GROESSEN[i].name, x + KETTE.w / 2, y + 128, {size: 17, color: fg, align: 'center'});
+      text(GROESSEN[i].unit.split(',')[1].trim(), x + KETTE.w / 2, y + 156, {size: 17, weight: 700, color: fg, align: 'center'});
+    } else text('?', x + KETTE.w / 2, y + 112, {size: 66, weight: 700, color: p.muted, align: 'center'});
+    ctx.restore();
+  }
+  /* Leiterbahnen: zwischen den Kästen, von 4 nach 5 als Umweg unten herum */
+  ctx.strokeStyle = p.line; ctx.lineWidth = 4; ctx.lineJoin = 'round';
+  for (let i = 0; i < 7; i++) {
+    const a = Math.min(o.sichtbar(i), o.sichtbar(i + 1)); if (a <= 0) continue;
+    const A = kettePos(i), B = kettePos(i + 1); ctx.globalAlpha = clamp(a * 2); ctx.beginPath();
+    if (i !== 3) { ctx.moveTo(A.x + KETTE.w, A.y + KETTE.h / 2); ctx.lineTo(B.x, B.y + KETTE.h / 2); }
+    else { const ym = KETTE.y1 + KETTE.h + (KETTE.y2 - KETTE.y1 - KETTE.h) / 2; ctx.moveTo(A.x + KETTE.w / 2, A.y + KETTE.h); ctx.lineTo(A.x + KETTE.w / 2, ym); ctx.lineTo(B.x + KETTE.w / 2, ym); ctx.lineTo(B.x + KETTE.w / 2, B.y); }
+    ctx.stroke();
+    /* Ladung läuft im Takt über die Bahn */
+    if (o.laufen) { const u = beatPhase(t); ctx.fillStyle = p.volt; ctx.beginPath();
+      if (i !== 3) ctx.arc(lerp(A.x + KETTE.w, B.x, u), A.y + KETTE.h / 2, 7, 0, zpi);
+      else { const ym = KETTE.y1 + KETTE.h + (KETTE.y2 - KETTE.y1 - KETTE.h) / 2, L1 = ym - (A.y + KETTE.h), L2 = A.x - B.x, L3 = B.y - ym, L = L1 + L2 + L3, d = u * L;
+        if (d < L1) ctx.arc(A.x + KETTE.w / 2, A.y + KETTE.h + d, 7, 0, zpi); else if (d < L1 + L2) ctx.arc(A.x + KETTE.w / 2 - (d - L1), ym, 7, 0, zpi); else ctx.arc(B.x + KETTE.w / 2, ym + (d - L1 - L2), 7, 0, zpi); }
+      ctx.fill(); }
+  }
+  ctx.globalAlpha = 1;
+}
+/* Kleine Fortschrittsleiste oben: welche Größe gerade dran ist */
+function fortschritt(aktiv, p, t) {
+  for (let i = 0; i < 8; i++) {
+    const x = 80 + i * 62, y = 290, s = 50;
+    ctx.fillStyle = i < aktiv ? p.fg : i === aktiv ? p.volt : 'transparent'; if (i <= aktiv) ctx.fillRect(x, y, s, s);
+    ctx.strokeStyle = i <= aktiv ? (i === aktiv ? p.volt : p.fg) : p.muted; ctx.lineWidth = 2; ctx.strokeRect(x + 1, y + 1, s - 2, s - 2);
+    text(GROESSEN[i].sym, x + s / 2, y + s / 2 + 1, {size: 24, weight: 700, color: i < aktiv ? p.bg : i === aktiv ? INK : p.muted, align: 'center', base: 'middle'});
+  }
+  text(`${String(aktiv + 1).padStart(2, '0')} / 08`, 1000, 325, {size: 22, color: p.muted, align: 'right', ls: 2});
+}
+
+/* ---------- Diagramme: (t, u = Anteil des Takts, p, Rahmen) ---------- */
+const RAHMEN = {x: 80, y: 960, w: 920, h: 600};
+function rahmen(p) { const r = RAHMEN; ctx.fillStyle = p.card; ctx.fillRect(r.x, r.y, r.w, r.h); ctx.strokeStyle = p.fg; ctx.lineWidth = 2; ctx.strokeRect(r.x + 1, r.y + 1, r.w - 2, r.h - 2); }
+function beschriftung(s, p, rechts = false) { text(s, rechts ? RAHMEN.x + RAHMEN.w - 24 : RAHMEN.x + 24, RAHMEN.y + RAHMEN.h - 24, {size: 20, color: p.muted, align: rechts ? 'right' : 'left', ls: 1}); }
+const DIAGRAMME = [
+  /* Kraft: Masse wird beschleunigt */
+  (t, u, p) => {
+    const r = RAHMEN, y0 = r.y + 400, k = kickEnv(t);
+    ctx.strokeStyle = p.fg; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(r.x + 40, y0); ctx.lineTo(r.x + r.w - 40, y0); ctx.stroke();
+    const x = r.x + 140 + 420 * easeIn(u), s = 170;
+    ctx.fillStyle = p.bg; ctx.fillRect(x, y0 - s, s, s); ctx.strokeStyle = p.fg; ctx.lineWidth = 3; ctx.strokeRect(x, y0 - s, s, s);
+    text('m', x + s / 2, y0 - s / 2 + 2, {size: 60, weight: 700, color: p.fg, align: 'center', base: 'middle'});
+    const fl = Math.min((120 + 160 * ease(u / .35)) * (1 + .12 * k), x - r.x - 60);
+    arrow(x - fl - 20, y0 - s / 2, x - 8, y0 - s / 2, p.volt, 7, 26); text('F', x - fl / 2 - 20, y0 - s / 2 - 36, {size: 44, weight: 700, color: p.volt, align: 'center'});
+    if (u > .3) { const al = 140 * ease((u - .3) / .3); arrow(x + s / 2, y0 - s - 40, x + s / 2 + al, y0 - s - 40, p.amp, 5, 20); text('a', x + s / 2 + al + 30, y0 - s - 28, {size: 40, weight: 700, color: p.amp}); }
+    for (let i = 0; i < 3; i++) { const lx = x - 300 - i * 40 - 140 * u; dashed(lx, y0 - s + 30 + i * 50, lx + 60, y0 - s + 30 + i * 50, p.muted, 2, [6, 8]); }
+    beschriftung('Kraft ändert Bewegung', p); beschriftung('Newton', p, true);
+  },
+  /* Arbeit: Kraft mal Weg ist eine Fläche */
+  (t, u, p) => {
+    const r = RAHMEN, y0 = r.y + 380, x0 = r.x + 120, s = 130, weg = 520 * easeIO(u);
+    ctx.fillStyle = p.volt; ctx.globalAlpha = .22; ctx.fillRect(x0 + s, y0 - 200, weg, 200); ctx.globalAlpha = 1;
+    ctx.strokeStyle = p.fg; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(r.x + 40, y0); ctx.lineTo(r.x + r.w - 40, y0); ctx.stroke();
+    const x = x0 + weg;
+    ctx.fillStyle = p.bg; ctx.fillRect(x, y0 - s, s, s); ctx.strokeStyle = p.fg; ctx.strokeRect(x, y0 - s, s, s); text('m', x + s / 2, y0 - s / 2 + 2, {size: 46, weight: 700, color: p.fg, align: 'center', base: 'middle'});
+    arrow(x - 150, y0 - s / 2, x - 8, y0 - s / 2, p.volt, 6, 24); text('F', x - 90, y0 - s / 2 - 30, {size: 40, weight: 700, color: p.volt, align: 'center'});
+    dashed(x0 + s, y0 + 50, x0 + s + weg, y0 + 50, p.fg, 2, [1, 0]); ctx.strokeStyle = p.fg; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x0 + s, y0 + 36); ctx.lineTo(x0 + s, y0 + 64); ctx.moveTo(x0 + s + weg, y0 + 36); ctx.lineTo(x0 + s + weg, y0 + 64); ctx.stroke();
+    text('s', x0 + s + weg / 2, y0 + 100, {size: 40, weight: 700, color: p.fg, align: 'center'});
+    if (u > .5) { ctx.globalAlpha = ease((u - .5) / .25); text('Fläche = Arbeit', x0 + s + weg / 2, y0 - 228, {size: 28, weight: 700, color: p.volt, align: 'center', base: 'middle'}); ctx.globalAlpha = 1; }
+    beschriftung('Kraft mal Weg', p); beschriftung('Energie, die ankommt', p, true);
+  },
+  /* Ladung: ein Blip, ein Elektron */
+  (t, u, p) => {
+    const r = RAHMEN, n = D.blip.filter(b => b <= t + 1e-3).length;
+    for (let i = 0; i < 16; i++) {
+      const x = r.x + 110 + (i % 8) * 100, y = r.y + 190 + Math.floor(i / 8) * 150;
+      if (i >= n) { ctx.strokeStyle = p.line; ctx.lineWidth = 2; ctx.setLineDash([4, 6]); ctx.beginPath(); ctx.arc(x, y, 26, 0, zpi); ctx.stroke(); ctx.setLineDash([]); continue; }
+      const dt = t - D.blip[i], s = pop(dt / .25);
+      ctx.save(); ctx.shadowColor = p.amp; ctx.shadowBlur = dt < .25 ? 30 * (1 - dt / .25) : 0;
+      ctx.fillStyle = p.amp; ctx.beginPath(); ctx.arc(x, y, 26 * s, 0, zpi); ctx.fill(); ctx.restore();
+      text('−', x, y + 2, {size: 34, weight: 700, color: INK, align: 'center', base: 'middle'});
+    }
+    text(`n = ${n}`, r.x + 60, r.y + 470, {size: 56, weight: 700, color: p.fg});
+    text('Q = n · e', r.x + r.w - 60, r.y + 470, {size: 44, weight: 700, color: p.amp, align: 'right'});
+    beschriftung('Ladung kommt in Portionen', p); beschriftung('Elementarladung e', p, true);
+  },
+  /* Feld: Kraft pro Probeladung zwischen zwei Platten */
+  (t, u, p) => {
+    const r = RAHMEN, xl = r.x + 90, xr = r.x + r.w - 90, yt = r.y + 70, yb = r.y + 480;
+    ctx.fillStyle = p.volt; ctx.fillRect(xl - 14, yt, 14, yb - yt); ctx.fillStyle = p.amp; ctx.fillRect(xr, yt, 14, yb - yt);
+    text('+', xl - 50, yt + 30, {size: 40, weight: 700, color: p.volt, align: 'center'}); text('−', xr + 50, yt + 30, {size: 40, weight: 700, color: p.amp, align: 'center'});
+    for (let i = 0; i < 6; i++) { const y = yt + 40 + i * 70, a = ease((u - i * .05) / .3); if (a <= 0) continue; const x2 = xl + (xr - xl - 40) * a; ctx.globalAlpha = .55; arrow(xl + 10, y, x2, y, p.fg, 2.5, 14); ctx.globalAlpha = 1; }
+    const qx = (xl + xr) / 2, qy = (yt + yb) / 2 + 20, k = kickEnv(t);
+    ctx.fillStyle = p.card; ctx.beginPath(); ctx.arc(qx, qy, 34, 0, zpi); ctx.fill(); ctx.strokeStyle = p.amp; ctx.lineWidth = 4; ctx.stroke(); text('q', qx, qy + 2, {size: 36, weight: 700, color: p.amp, align: 'center', base: 'middle'});
+    if (u > .4) { const fl = (120 + 60 * ease((u - .4) / .3)) * (1 + .12 * k); arrow(qx + 40, qy, qx + 40 + fl, qy, p.volt, 7, 26); text('F', qx + 40 + fl / 2, qy - 44, {size: 40, weight: 700, color: p.volt, align: 'center'}); }
+    if (u > .7) { ctx.globalAlpha = ease((u - .7) / .25); text('E = F / q  —  unabhängig von q', (xl + xr) / 2, yb + 56, {size: 24, weight: 700, color: p.volt, align: 'center'}); ctx.globalAlpha = 1; }
+    beschriftung('Kraft pro Ladung', p); beschriftung('Feldlinien von + nach −', p, true);
+  },
+  /* Potential: Höhe im Feld, eine Ladung rollt bergab */
+  (t, u, p) => {
+    const r = RAHMEN, x0 = r.x + 90, x1 = r.x + r.w - 60, y0 = r.y + 470, yT = r.y + 90;
+    ctx.strokeStyle = p.fg; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x0, yT - 20); ctx.lineTo(x0, y0); ctx.lineTo(x1, y0); ctx.stroke();
+    text('φ', x0 - 36, yT, {size: 36, weight: 700, color: p.volt}); text('x', x1 - 10, y0 + 40, {size: 30, weight: 700, color: p.fg});
+    const prof = s => yT + 40 + (y0 - yT - 80) * (1 - Math.exp(-3 * s)) / (1 - Math.exp(-3));
+    ctx.strokeStyle = p.volt; ctx.lineWidth = 5; ctx.beginPath(); for (let i = 0; i <= 100; i++) { const s = i / 100, x = x0 + (x1 - x0 - 40) * s, y = prof(s); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke();
+    const s = easeIn(clamp(u / .85)), bx = x0 + (x1 - x0 - 40) * s, by = prof(s) - 30;
+    dashed(bx, by + 30, bx, y0, p.muted, 2); dashed(x0, by + 30, bx, by + 30, p.muted, 2);
+    ctx.fillStyle = p.amp; ctx.beginPath(); ctx.arc(bx, by, 28, 0, zpi); ctx.fill(); text('+', bx, by + 2, {size: 34, weight: 700, color: INK, align: 'center', base: 'middle'});
+    const phi = 5 - 4.4 * (1 - Math.exp(-3 * s)) / (1 - Math.exp(-3));
+    text(`φ = ${phi.toFixed(1).replace('.', ',')} V`, x0 + 24, by + 20, {size: 30, weight: 700, color: p.volt});
+    beschriftung('Energie pro Ladung = Höhe', p); beschriftung('bergab, von selbst', p, true);
+  },
+  /* Spannung: nur der Unterschied zählt */
+  (t, u, p) => {
+    const r = RAHMEN, y1 = r.y + 120, y2 = r.y + 420, xm = r.x + r.w / 2, k = kickEnv(t);
+    for (const [y, lbl, v] of [[y1, 'φ', '5 V'], [y2, 'φ', '2 V']]) {
+      ctx.strokeStyle = p.volt; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(r.x + 60, y); ctx.lineTo(r.x + r.w - 60, y); ctx.stroke();
+      text(lbl, r.x + 70, y - 22, {size: 36, weight: 700, color: p.volt}); text(y === y1 ? '1' : '2', r.x + 94, y - 10, {size: 22, weight: 700, color: p.volt}); text(`= ${v}`, r.x + 122, y - 22, {size: 36, weight: 700, color: p.fg});
+    }
+    const a = ease(u / .4), ym = (y1 + y2) / 2, half = (y2 - y1) / 2 * a;
+    arrow(xm, ym, xm, ym - half + 4, p.fg, 6, 22); arrow(xm, ym, xm, ym + half - 4, p.fg, 6, 22);
+    ctx.save(); ctx.translate(xm + 60, ym); ctx.scale(1 + .06 * k, 1 + .06 * k); text('U = 3 V', 0, 14, {size: 54, weight: 700, color: p.fg}); ctx.restore();
+    if (u > .55) { ctx.globalAlpha = ease((u - .55) / .25); text('Masse ist frei wählbar — der Unterschied bleibt.', xm, r.y + 520, {size: 24, weight: 700, color: p.fg, align: 'center'}); ctx.globalAlpha = 1; }
+    beschriftung('Höhenunterschied', p); beschriftung('Antrieb für Ladung', p, true);
+  },
+  /* Strom: Ladungen durch den Querschnitt, eine je Arpeggio-Note */
+  (t, u, p) => {
+    const r = RAHMEN, yw = r.y + 250, hw = 180, xa = r.x + 40, xb = r.x + r.w - 40, xq = r.x + r.w / 2;
+    ctx.fillStyle = p.bg; ctx.fillRect(xa, yw - hw / 2, xb - xa, hw); ctx.strokeStyle = p.fg; ctx.lineWidth = 3; ctx.strokeRect(xa, yw - hw / 2, xb - xa, hw);
+    dashed(xq, yw - hw / 2 - 40, xq, yw + hw / 2 + 40, p.volt, 3, [10, 8]); text('A', xq + 14, yw - hw / 2 - 50, {size: 30, weight: 700, color: p.volt});
+    const T = 1.6; let durch = 0;
+    for (const e of D.arp) { const dt = t - e.t; if (dt < 0 || dt > T) continue; const x = xa + 30 + (xb - xa - 60) * dt / T, y = yw - 50 + (e.row % 4) * 34; if (x > xq) durch++;
+      ctx.fillStyle = p.amp; ctx.beginPath(); ctx.arc(x, y, 16, 0, zpi); ctx.fill(); text('−', x, y + 1, {size: 22, weight: 700, color: p.bg, align: 'center', base: 'middle'}); }
+    arrow(xa + 60, yw + hw / 2 + 60, xb - 60, yw + hw / 2 + 60, p.fg, 3, 16); text('technische Stromrichtung ←  ·  Elektronen →', xq, yw + hw / 2 + 110, {size: 22, color: p.muted, align: 'center'});
+    text(`durch A: ${D.arp.filter(e => e.t <= t && e.t >= sec(9)).length} Ladungen`, r.x + 40, r.y + 500, {size: 28, weight: 700, color: p.amp});
+    text('pro Sekunde = I', r.x + r.w - 40, r.y + 500, {size: 28, weight: 700, color: p.fg, align: 'right'});
+    beschriftung('Ladung pro Zeit', p); beschriftung('der Draht ist nie leer', p, true);
+  },
+  /* Widerstand: Newton im Draht — ein Elektron zwischen Gitter-Ionen */
+  (t, u, p) => {
+    const r = RAHMEN, cols = 7, rows = 4, gx = r.x + 110, gy = r.y + 90, dx = 115, dy = 100;
+    for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) { ctx.strokeStyle = p.fg; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(gx + i * dx, gy + j * dy, 14, 0, zpi); ctx.stroke(); text('+', gx + i * dx, gy + j * dy + 1, {size: 18, weight: 700, color: p.fg, align: 'center', base: 'middle'}); }
+    /* Zickzack von rechts nach links (Elektronen gegen das Feld), im Takt der Sechzehntel */
+    const pts = [[6.5, 1.5], [5.9, .5], [5.2, 2.6], [4.4, 1.2], [3.7, 3.1], [3.0, 1.7], [2.3, .4], [1.6, 2.3], [.9, 1.0], [.2, 2.8]];
+    const seg = clamp(u) * (pts.length - 1), i0 = Math.min(pts.length - 2, Math.floor(seg)), f = seg - i0;
+    ctx.strokeStyle = p.amp; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.beginPath();
+    for (let i = 0; i <= i0; i++) { const x = gx + pts[i][0] * dx, y = gy + pts[i][1] * dy; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+    const ex = gx + lerp(pts[i0][0], pts[i0 + 1][0], f) * dx, ey = gy + lerp(pts[i0][1], pts[i0 + 1][1], f) * dy; ctx.lineTo(ex, ey); ctx.stroke();
+    ctx.save(); ctx.shadowColor = p.amp; ctx.shadowBlur = 24; ctx.fillStyle = p.amp; ctx.beginPath(); ctx.arc(ex, ey, 18, 0, zpi); ctx.fill(); ctx.restore();
+    arrow(r.x + 100, r.y + 470, r.x + 300, r.y + 470, p.volt, 5, 20); text('E', r.x + 320, r.y + 482, {size: 34, weight: 700, color: p.volt});
+    arrow(r.x + r.w - 100, r.y + 470, r.x + r.w - 300, r.y + 470, p.amp, 5, 20); text('Drift', r.x + r.w - 320, r.y + 482, {size: 30, weight: 700, color: p.amp, align: 'right'});
+    beschriftung('beschleunigen, stoßen, von vorn', p); beschriftung('Stoß etwa alle 25 fs', p, true);
+  }
+];
+
+/* ---------- Szenen ---------- */
+function prolog(t) {
+  const p = PAL.ink; bg(INK); brand(p);
+  eyebrow('Grundlagen / 001 · Von Newton bis Ohm', 80, 400, p);
+  textWrite('Acht Größen.', 80, 580, 118, CHALK, (t - .2) / 1.0);
+  textWrite('Eine Kette.', 80, 710, 118, KUPFER, (t - sec(2)) / 1.0);
+  kette(t, p, {sichtbar: i => ease((t - sec(1, i * .5) - .1) / .3), gefuellt: false, puls: kickEnv(t), aktiv: -1});
+  if (t > sec(2, 2)) { ctx.globalAlpha = ease((t - sec(2, 2)) / .4); text('Jede Größe folgt aus der vorigen.', 80, 1560, {size: 28, color: MUTED}); ctx.globalAlpha = 1; }
+}
+function schritt(i, t) {
+  const g = GROESSEN[i], p = PAL[g.bg], t0 = sec(3 + i), u = (t - t0) / D.bar, k = kickEnv(t);
+  bg(p.bg); if (g.bg === 'blue') stripes(0, 0, W, H); brand(p);
+  fortschritt(i, p, t);
+  eyebrow(`${String(i + 1).padStart(2, '0')} / ${g.name}`, 80, 390, p);
+  headline([[[g.name + '.', p.fg]]], 80, 560, {size: 112, scale: 1 + .02 * k});
+  /* Formel schreibt sich in den ersten zwei Schlägen */
+  const tokens = g.f(p);
+  ctx.save(); ctx.translate(80, 700); ctx.scale(1 + .025 * k, 1 + .025 * k); fmlWrite(tokens, 0, 0, 100, p.fg, (t - t0 - .05) / .8, p.volt); ctx.restore();
+  /* Einheit auf Schlag 3, SI-Kette auf Schlag 4 */
+  const a3 = ease((t - t0 - 2 * D.beat) / .2), a4 = ease((t - t0 - 3 * D.beat) / .2);
+  if (a3 > 0) { ctx.globalAlpha = a3; const s = 'Einheit: ' + g.unit; const w = textW(s, 24, 700) + 36; ctx.fillStyle = p.fg; ctx.fillRect(80, 836 + (1 - a3) * 10, w, 46); text(s, 98, 867 + (1 - a3) * 10, {size: 24, weight: 700, color: p.bg, base: 'middle'}); ctx.globalAlpha = 1; }
+  if (a4 > 0) { ctx.globalAlpha = a4; fmlDraw(g.si, 80, 928, 25, p.muted); ctx.globalAlpha = 1; }
+  rahmen(p); ctx.save(); ctx.beginPath(); ctx.rect(RAHMEN.x + 2, RAHMEN.y + 2, RAHMEN.w - 4, RAHMEN.h - 4); ctx.clip(); DIAGRAMME[i](t, u, p); ctx.restore();
+}
+function synthese(t) {
+  const p = PAL.ink; bg(INK); brand(p);
+  const impact = clamp(1 - (t - sec(11)) / .25);
+  eyebrow('Alles auf einen Blick', 80, 400, p);
+  headline([[['Acht Schritte.', CHALK]]], 80, 560, {size: 112, scale: 1 + .02 * kickEnv(t)});
+  if (t >= sec(12)) { ctx.globalAlpha = ease((t - sec(12)) / .2); headline([[['Ein Gesetz.', KUPFER]]], 80, 690, {size: 112}); ctx.globalAlpha = 1; }
+  kette(t, p, {sichtbar: i => ease((t - sec(11, i * .5)) / .25), gefuellt: true, fertig: () => true, aktiv: -1, laufen: t >= sec(12)});
+  /* Takt 12: R = U/I schreibt sich und wird zu U = R · I */
+  if (t >= sec(12)) {
+    const w1 = ease((t - sec(12)) / .5), m = easeIO((t - sec(12, 2)) / .45), punch = 1 + .04 * kickEnv(t);
+    const size = 120, y = 1620, x = 80;
+    /* Zwei Layouts, Glyph für Glyph ineinander geschoben */
+    const A = {R: [0, 0], '=': [size * .72, 0], U: [size * 1.5, -size * .42], I: [size * 1.5, size * .72], bar: [size * 1.42, -size * .3, size * .9]};
+    const B = {U: [0, 0], '=': [size * .72, 0], R: [size * 1.5, 0], '·': [size * 2.2, 0], I: [size * 2.7, 0]};
+    ctx.save(); ctx.translate(x, y); ctx.scale(punch, punch);
+    ctx.save(); ctx.beginPath(); ctx.rect(-10, -size * 1.4, 760 * w1 + 10, size * 2.8); ctx.clip();
+    for (const [g, c] of [['R', CHALK], ['=', CHALK], ['U', KUPFER], ['I', AMP]]) { const a = A[g], b = B[g]; const s = g === 'U' || g === 'I' ? lerp(size * .78, size, m) : size; text(g, lerp(a[0], b[0], m), lerp(a[1], b[1], m), {size: s, weight: 700, color: c, ls: -size * .04}); }
+    ctx.globalAlpha = 1 - m; ctx.fillStyle = CHALK; ctx.fillRect(A.bar[0], A.bar[1], A.bar[2], 6); ctx.globalAlpha = m; text('·', B['·'][0], 0, {size, weight: 700, color: CHALK}); ctx.globalAlpha = 1;
+    ctx.restore(); ctx.restore();
+    if (w1 < 1) { ctx.save(); ctx.shadowColor = KUPFER; ctx.shadowBlur = 22; ctx.fillStyle = KUPFER; ctx.beginPath(); ctx.arc(x + 400 * w1, y - 40, 12, 0, zpi); ctx.fill(); ctx.restore(); }
+    if (m >= 1) { text('Newton plus Stöße im Draht.', 1000, 1620, {size: 26, color: MUTED, align: 'right'}); }
+  }
+  if (impact > 0) { ctx.fillStyle = `rgba(239,236,226,${impact * .5})`; ctx.fillRect(0, 0, W, H); }
+}
+function outro(t) {
+  const p = PAL.chalk; bg(CHALK); brand(p);
+  eyebrow('Merke', 80, 400, p);
+  const bx = 80, by = 470, bw = 920, bh = 470;
+  ctx.fillStyle = INK; ctx.fillRect(bx, by, bw, bh);
+  const zeilen = [['Kraft mal Weg ist ', 'Arbeit.'], ['Arbeit pro Ladung ist ', 'Spannung.'], ['Ladung pro Zeit ist ', 'Strom.'], ['Newton plus Stöße: ', 'U = R · I']];
+  zeilen.forEach(([a, b], i) => { const al = ease((t - sec(13, i)) / .22); if (al <= 0) return; ctx.globalAlpha = al; const y = by + 96 + i * 92; text(a, bx + 40 + (1 - al) * 30, y, {size: 34, weight: 700, color: CHALK}); text(b, bx + 40 + (1 - al) * 30 + textW(a, 34, 700), y, {size: 34, weight: 700, color: i === 3 ? KUPFER : CHALK}); ctx.globalAlpha = 1; });
+  /* Die Notiz als IC-Karte */
+  const a = ease((t - sec(14)) / .3);
+  if (a > 0) {
+    const x = 92 + (1 - a) * 500, y = 1000, w = 896, h = 250;
+    ctx.fillStyle = PAPIER; ctx.fillRect(x, y, w, h); ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.strokeRect(x + 1, y + 1, w - 2, h - 2);
+    ctx.fillStyle = INK; for (let q = y + 14; q < y + h - 14; q += 24) { ctx.fillRect(x - 13, q, 12, 7); ctx.fillRect(x + w + 1, q, 12, 7); }
+    const cw = 330; ctx.fillStyle = INK; ctx.fillRect(x + 2, y + 2, cw, h - 4);
+    ctx.save(); ctx.beginPath(); ctx.rect(x + 2, y + 2, cw, h - 4); ctx.clip(); lissajous(x + 2 + cw / 2, y + h / 2, 190, 2.4, KUPFER, 3, 2, t * 1.2); ctx.restore();
+    ctx.fillStyle = CHALK; ctx.fillRect(x + 16, y + 16, textW('THEORIE', 17, 700, 1) + 20, 30); text('THEORIE', x + 26, y + 32, {size: 17, weight: 700, color: INK, base: 'middle', ls: 1});
+    text('N°005 · GRUNDLAGEN DER E-TECHNIK', x + cw + 28, y + 50, {size: 16, color: MUTED_HELL, ls: 1});
+    text('Von Newton bis Ohm', x + cw + 28, y + 110, {size: 38, weight: 700, color: INK, ls: -1.3});
+    text('Acht Größen, eine Kette — hergeleitet.', x + cw + 28, y + 152, {size: 22, color: MUTED_HELL});
+    let tx = x + cw + 28; for (const tag of ['Herleitung', 'Potential', 'Drude']) { const tw = textW(tag, 17) + 20; ctx.strokeStyle = '#bdb9aa'; ctx.lineWidth = 1.5; ctx.strokeRect(tx, y + 186, tw, 34); text(tag, tx + 10, y + 204, {size: 17, color: MUTED_HELL, base: 'middle'}); tx += tw + 10; }
+  }
+  const c = ease((t - sec(14, 1)) / .3);
+  if (c > 0) {
+    ctx.globalAlpha = c;
+    knopf('br1ken.github.io', 180, 1330, 720, 86, KUPFER_HELL, KUPFER_HELL, INK, 34);
+    knopf('Link in Bio ↗', 180, 1440, 720, 86, null, INK, INK, 30);
+    const e = 'Ein Labor von Brick · TU Wien', ew = textW(e.toUpperCase(), 22, 700, 1) + 40; eyebrow(e, (W - ew) / 2, 1580, p);
+    ctx.globalAlpha = 1;
+  }
+}
+
+function renderFrame(t) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.setLineDash([]); ctx.shadowBlur = 0;
+  if (t < sec(3)) prolog(t);
+  else if (t < sec(11)) schritt(Math.min(7, Math.floor((t - sec(3)) / D.bar)), t);
+  else if (t < sec(13)) synthese(t);
+  else outro(t);
+  for (const s of [3, 11, 13]) { const dt = t - sec(s); if (dt >= 0 && dt < .1) { ctx.fillStyle = KUPFER; ctx.fillRect(0, H * dt / .1 - 3, W, 6); } }
+}
+async function reelInit() {
+  await Promise.all([document.fonts.load('700 20px Meslo'), document.fonts.load('400 20px Meslo')]);
+  D = window.REEL;
+  for (const k in D.sig) { const b = atob(D.sig[k]); const u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); D.sig[k] = new Int16Array(u.buffer); }
+  return D.rms.length;
+}
+window.renderFrame = renderFrame; window.reelInit = reelInit;
+</script>
+</body>
+</html>
