@@ -11,4 +11,4 @@ Die Pointe am Schluss: Das Logo ist eine Lissajous-Figur. Zwei Töne im Verhält
 Track und Bild selbst gebaut, aus denselben Daten.
 → Link in Bio: br1ken.github.io
 
-#elektrotechnik #tuwien #synthesizer #oszilloskop #lissajous #sounddesign #electronics #signalprocessing #engineeringstudent #klangsynthese #generativeart
+#elektrotechnik #oszilloskop #lissajous #synthesizer
