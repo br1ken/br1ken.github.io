@@ -1,0 +1,14 @@
+osci//log hat ein neues Gesicht. ∿
+
+Lötstopplack, Kupfer, Bestückungsdruck – die Seite ist jetzt eine Leiterplatte. Und alles, was du hier siehst, hörst du auch: Das Oszilloskop zeigt den echten Track, der Sequencer spielt das echte Arpeggio, das Bode-Diagramm ist der echte Filter.
+
+Die Pointe am Schluss: Das Logo ist eine Lissajous-Figur. Zwei Töne im Verhältnis 3 : 2 – eine reine Quinte, E4 gegen A3 – zeichnen es im XY-Betrieb exakt. Kein Design. Mathematik, die gut aussieht.
+
+∿ Klanglabor: Bausteine stecken, Melodien bauen, Grundlagen hören
+⊓ Messplatz: Oszilloskop, Generator, Multimeter, Bode-Diagramm – gerechnet wie SPICE
+Σ Notizen: E-Technik so erklärt, dass man sie ohne Vorlesung versteht
+
+Track und Bild selbst gebaut, aus denselben Daten.
+→ Link in Bio: br1ken.github.io
+
+#elektrotechnik #tuwien #synthesizer #oszilloskop #lissajous #sounddesign #electronics #signalprocessing #engineeringstudent #klangsynthese #generativeart
