@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>osci//log · Intro-Reel</title>
+<!-- Bild-Engine des Reels. Zeichnet jeden Frame deterministisch aus der Zeit t und aus den Daten des Tracks (data.js aus track.py):
+     Oszilloskop = der echte Mix, Sequencer = das echte Arpeggio, Bode-Diagramm = die echte Filter-Grenzfrequenz,
+     XY-Betrieb = die beiden Schlusstöne. Rendern: render.js. -->
+<style>
+@font-face { font-family: 'Meslo'; src: url('../../assets/fonts/meslo-lgs-nf-regular.woff') format('woff'); font-weight: 400; }
+@font-face { font-family: 'Meslo'; src: url('../../assets/fonts/meslo-lgs-nf-bold.woff') format('woff'); font-weight: 700; }
+html, body { margin: 0; background: #333; }
+canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+'use strict';
+const W = 1080, H = 1920;
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const INK = '#0a0a14', CHALK = '#efece2', BLUE = '#1a12ff', BAHN = '#4640ff', KUPFER = '#ff5a2e', KUPFER_HELL = '#ff4a1c',
+      AMP = '#9096ff', PANEL = '#12121f', PANEL2 = '#171726', HAIR = '#3a3a4c', MUTED = '#b5b2a8', MUTED_HELL = '#57554f', PAPIER = '#f6f4ec';
+const zpi = Math.PI * 2;
+let D = null, PCB = null;
+
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const ease = x => 1 - Math.pow(1 - clamp(x), 3);
+const easeIn = x => Math.pow(clamp(x), 3);
+const lerp = (a, b, x) => a + (b - a) * x;
+const sec = (bar, beat = 0, step = 0) => (bar - 1) * D.bar + beat * D.beat + step * D.beat / 4;
+const frameOf = t => clamp(Math.floor(t * D.fps), 0, D.rms.length - 1);
+const kickEnv = t => clamp((1 - D.sc[frameOf(t)]) / 0.85);
+const cutAt = t => D.cut[frameOf(t)];
+const rmsAt = t => D.rms[frameOf(t)];
+const beatPhase = t => (t / D.beat) % 1;
+
+function zufall(s) { return () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) % 10000) / 10000; }; }
+
+/* Signalfenster: die letzten ms Millisekunden einer Spur bis zum Zeitpunkt t, Werte −1…1 */
+function win(name, t, ms) {
+  const sig = D.sig[name], n = Math.round(ms / 1000 * D.sr);
+  const end = clamp(Math.round(t * D.sr), n, sig.length), out = new Float32Array(n);
+  for (let i = 0; i < n; i++) out[i] = sig[end - n + i] / 32767;
+  return out;
+}
+
+/* ---------- Zeichenhelfer ---------- */
+function bg(color) { ctx.fillStyle = color; ctx.fillRect(0, 0, W, H); }
+function font(size, weight = 400, ls = 0) { ctx.font = `${weight} ${size}px Meslo`; ctx.letterSpacing = ls + 'px'; }
+function text(s, x, y, o = {}) {
+  font(o.size || 24, o.weight || 400, o.ls || 0);
+  ctx.fillStyle = o.color || CHALK; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic';
+  ctx.fillText(s, x, y); ctx.letterSpacing = '0px';
+}
+function textW(s, size, weight = 400, ls = 0) { font(size, weight, ls); const w = ctx.measureText(s).width; ctx.letterSpacing = '0px'; return w; }
+/* Netzlabel wie im Schaltplan: Kasten mit Pfeilspitze */
+function eyebrow(s, x, y, o = {}) {
+  const size = o.size || 22, h = size * 1.9; s = s.toUpperCase();
+  const w = textW(s, size, 700, 1) + 40;
+  ctx.fillStyle = o.bg || INK; ctx.beginPath();
+  ctx.moveTo(x, y); ctx.lineTo(x + w - 14, y); ctx.lineTo(x + w, y + h / 2); ctx.lineTo(x + w - 14, y + h); ctx.lineTo(x, y + h); ctx.closePath(); ctx.fill();
+  text(s, x + 14, y + h / 2 + 1, {size, weight: 700, ls: 1, color: o.fg || CHALK, base: 'middle'});
+  return h;
+}
+/* Headline: Zeilen aus Segmenten [text, farbe] */
+function headline(lines, x, y, o = {}) {
+  const size = o.size || 118, lh = size * 1.0, ls = -size * 0.06, sc = o.scale || 1;
+  ctx.save(); ctx.translate(x, y); ctx.scale(sc, sc);
+  lines.forEach((segs, i) => {
+    let cx = 0;
+    for (const [s, color] of segs) { text(s, cx, i * lh, {size, weight: 700, ls, color}); cx += textW(s, size, 700, ls); }
+  });
+  ctx.restore();
+}
+function via(x, y, r, color = KUPFER, hole = BLUE) {
+  ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, r, 0, zpi); ctx.fill();
+  ctx.fillStyle = hole; ctx.beginPath(); ctx.arc(x, y, r * .4, 0, zpi); ctx.fill();
+}
+/* Das Logo: x = cos 3θ, y = sin 2θ — die Lissajous-Figur einer reinen Quinte */
+function lissajous(x, y, size, lw, color = CHALK, a = 3, b = 2, phase = 0, frac = 1) {
+  ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.beginPath();
+  const n = 400, r = size / 2;
+  for (let i = 0; i <= n * frac; i++) { const th = i / n * zpi; const px = x + r * Math.cos(a * th + phase), py = y + r * Math.sin(b * th); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }
+  ctx.stroke();
+}
+function logo(x, y, s, lw) { ctx.fillStyle = BLUE; ctx.fillRect(x, y, s, s); lissajous(x + s / 2, y + s / 2, s * .72, lw, CHALK); }
+function brand(x = 80, y = 236, color = CHALK) { logo(x, y - 30, 44, 3.6); text('osci//log', x + 58, y, {size: 26, weight: 700, ls: -0.8, color}); }
+
+/* Oszilloskop-Kasten: Kopf, Schirm mit Raster, Fuß */
+function oszi(x, y, w, h, o, draw) {
+  const kopf = 64, fuss = 60;
+  ctx.fillStyle = INK; ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = CHALK; ctx.lineWidth = 2; ctx.strokeRect(x + 1, y + 1, w - 2, h - 2);
+  ctx.strokeStyle = HAIR; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x, y + kopf); ctx.lineTo(x + w, y + kopf); ctx.moveTo(x, y + h - fuss); ctx.lineTo(x + w, y + h - fuss); ctx.stroke();
+  const k = o.head || [], f = o.foot || [];
+  if (k[0]) { text(k[0], x + 22, y + kopf / 2 + 1, {size: 24, weight: 700, base: 'middle'}); if (k[1]) text(k[1], x + 22 + textW(k[0], 24, 700), y + kopf / 2 + 1, {size: 24, weight: 700, color: KUPFER, base: 'middle'}); }
+  if (k[2]) text(k[2], x + w - 22, y + kopf / 2 + 1, {size: 24, weight: 700, align: 'right', base: 'middle', color: k[3] || CHALK});
+  if (f[0]) text(f[0], x + 22, y + h - fuss / 2 + 1, {size: 22, color: '#c8c6bc', base: 'middle'});
+  if (f[1]) text(f[1], x + w - 22, y + h - fuss / 2 + 1, {size: 22, color: '#c8c6bc', align: 'right', base: 'middle'});
+  const sx = x + 2, sy = y + kopf + 1, sw = w - 4, sh = h - kopf - fuss - 2;
+  ctx.save(); ctx.beginPath(); ctx.rect(sx, sy, sw, sh); ctx.clip();
+  const nx = o.grid?.[0] || 10, ny = o.grid?.[1] || 6;
+  ctx.strokeStyle = 'rgba(239,236,226,.17)'; ctx.lineWidth = 1; ctx.beginPath();
+  for (let i = 1; i < nx; i++) { ctx.moveTo(sx + i * sw / nx, sy); ctx.lineTo(sx + i * sw / nx, sy + sh); }
+  for (let i = 1; i < ny; i++) { ctx.moveTo(sx, sy + i * sh / ny); ctx.lineTo(sx + sw, sy + i * sh / ny); }
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(239,236,226,.42)'; ctx.beginPath(); ctx.moveTo(sx, sy + sh / 2); ctx.lineTo(sx + sw, sy + sh / 2); ctx.moveTo(sx + sw / 2, sy); ctx.lineTo(sx + sw / 2, sy + sh); ctx.stroke();
+  draw(sx, sy, sw, sh);
+  ctx.restore();
+}
+function trace(samples, sx, sy, sw, sh, color, lw, gain = .42) {
+  ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.lineJoin = 'round'; ctx.beginPath();
+  for (let i = 0; i < samples.length; i++) { const px = sx + i / (samples.length - 1) * sw, py = sy + sh / 2 - samples[i] * sh * gain; i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }
+  ctx.stroke();
+}
+/* Nachleuchten: die letzten Durchläufe bleiben schwach stehen */
+function traceGlow(name, t, ms, sx, sy, sw, sh, color, lw, gain) {
+  for (const [dt, a] of [[.1, .12], [.066, .22], [.033, .4], [0, 1]]) { ctx.globalAlpha = a; trace(win(name, t - dt, ms), sx, sy, sw, sh, color, lw, gain); }
+  ctx.globalAlpha = 1;
+}
+function knopf(s, x, y, w, h, fill, border, color, size = 28) {
+  if (fill) { ctx.fillStyle = fill; ctx.fillRect(x, y, w, h); }
+  ctx.strokeStyle = border; ctx.lineWidth = 2; ctx.strokeRect(x + 1, y + 1, w - 2, h - 2);
+  text(s, x + w / 2, y + h / 2 + 1, {size, weight: 700, color, align: 'center', base: 'middle'});
+}
+function stripes(x, y, w, h, color = '#2a22ff', step = 22, lw = 3) {
+  ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip(); ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.beginPath();
+  for (let d = -h; d < w + h; d += step) { ctx.moveTo(x + d, y); ctx.lineTo(x + d - h, y + h); }
+  ctx.stroke(); ctx.restore();
+}
+
+/* ---------- Platine: einmal routen, wie auf der Startseite ---------- */
+function routePCB() {
+  const rnd = zufall(20261031), g = 15, busse = 11;
+  const pads = [], vias = [], ics = [], teile = [], bahnen = [];
+  const sperren = [{l: 60, r: 1020, o: 1190, u: 1760}, {l: 540, r: 1020, o: 270, u: 640}];
+  const gesperrt = (x, y, b, h) => sperren.some(s => x < s.r && x + b > s.l && y < s.u && y + h > s.o);
+  let nU = 1, nR = 1;
+  for (let b = 0; b < busse; b++) {
+    const zone = H / busse, k = 3 + Math.floor(rnd() * 3), oben = zone * b + 14, unten = zone * (b + 1) - k * g - 14;
+    let x = -20 + rnd() * 60, y = oben + rnd() * Math.max(1, unten - oben); y = Math.round(y / g) * g;
+    const y0 = y, ablauf = [];
+    while (x < W + 100) {
+      x += 90 + rnd() * 180 + k * g;
+      const breite = 76 + Math.floor(rnd() * 3) * 24;
+      if (rnd() < .32 && x < W - 160 && !gesperrt(x, y - g, breite, (k + 1) * g)) { ablauf.push({typ: 'ic', x, breite, y, ref: `U${nU++}`}); x += breite; }
+      else { let dy = Math.round((rnd() - .5) * 8) * g; if (y + dy < oben || y + dy > unten) dy = -dy; if (y + dy < oben || y + dy > unten) dy = 0; if (dy) { ablauf.push({typ: 'knick', x, dy}); x += Math.abs(dy); y += dy; } }
+    }
+    const endet = rnd() < .45 ? W - 40 - rnd() * W * .22 : null;
+    for (let i = 0; i < k; i++) {
+      const teile_ = [[]]; let px = -20, py = y0 + i * g, laenge = 0;
+      const punkt = (nx, ny, neu) => { if (neu) teile_.push([]); else laenge += Math.hypot(nx - px, ny - py); teile_[teile_.length - 1].push([nx, ny, laenge]); px = nx; py = ny; };
+      punkt(px, py);
+      const ende = endet === null ? W + 20 : endet - i * g * .8;
+      for (const op of ablauf) {
+        if (op.typ === 'knick') {
+          const xs = op.x + (op.dy > 0 ? -1 : 1) * i * g * .414; if (xs + Math.abs(op.dy) > ende) break;
+          punkt(xs, py); punkt(xs + Math.abs(op.dy), py + op.dy);
+          if (rnd() < .12) vias.push([px, py, laenge, b]);
+        } else {
+          if (op.x + op.breite > ende) break;
+          punkt(op.x, py); pads.push([op.x, py, laenge, b], [op.x + op.breite, py, laenge, b]);
+          if (i === 0) ics.push({x: op.x, y: py - g * .9, b: op.breite, h: (k - 1) * g + g * 1.8, ref: op.ref, l: laenge, bus: b});
+          punkt(op.x + op.breite, py, true);
+        }
+      }
+      if (px < ende && rnd() < .3) {
+        const rx = px + 16 + rnd() * Math.max(1, Math.min(ende - px - 50, 100));
+        if (rx + 30 < ende && !gesperrt(rx, py - 16, 34, 32)) { punkt(rx, py); teile.push({x: rx, y: py, ref: `R${nR++}`, l: laenge, bus: b}); punkt(rx + 30, py, true); }
+      }
+      punkt(ende, py);
+      if (endet !== null) vias.push([px, py, laenge, b]);
+      bahnen.push({teile: teile_, laenge, bus: b, tempo: 40 + rnd() * 90, luecke: 80 + rnd() * 260, breite: g * .36, start: rnd() * .5});
+    }
+  }
+  return {pads, vias, ics, teile, bahnen, g};
+}
+/* Zeichnet die Platine, wobei jede Bahn bis zum Bruchteil frac(bahn) gewachsen ist */
+function drawPCB(t, t0, x0 = 0, y0 = 0, scale = 1) {
+  const P = PCB, g = P.g, kick = kickEnv(t);
+  const wachsen = b => ease((t - t0 - b.bus * 0.07 - b.start * .3) / 0.9);
+  ctx.save(); ctx.translate(x0, y0); ctx.scale(scale, scale);
+  ctx.fillStyle = BLUE; ctx.fillRect(0, 0, W, H);
+  ctx.lineJoin = 'round'; ctx.lineCap = 'butt';
+  const pfad = (b, bis) => {
+    ctx.beginPath();
+    for (const teil of b.teile) for (let i = 0; i < teil.length; i++) {
+      const [x, y, l] = teil[i];
+      if (i === 0) { if (l <= bis) ctx.moveTo(x, y); continue; }
+      const [px, py, pl] = teil[i - 1];
+      if (l <= bis) ctx.lineTo(x, y);
+      else if (pl < bis) { const f = (bis - pl) / (l - pl); ctx.lineTo(px + (x - px) * f, py + (y - py) * f); break; }
+    }
+  };
+  for (const b of P.bahnen) {
+    const f = wachsen(b); if (f <= 0) continue;
+    ctx.strokeStyle = BAHN; ctx.lineWidth = b.breite; pfad(b, f * b.laenge); ctx.stroke();
+    if (f >= 1) { ctx.strokeStyle = CHALK; ctx.lineWidth = b.breite * .55; ctx.setLineDash([8, b.luecke]); ctx.lineDashOffset = -(t - t0) * b.tempo; pfad(b, b.laenge); ctx.stroke(); ctx.setLineDash([]); }
+  }
+  const fertig = bus => wachsen({bus, start: 0}) >= 1;
+  for (const [x, y, l, bus] of P.pads) if (fertig(bus)) { ctx.fillStyle = KUPFER; ctx.fillRect(x - 5, y - g * .31, 10, g * .62); }
+  for (const [x, y, l, bus] of P.vias) if (fertig(bus)) via(x, y, g * .46 * (1 + .5 * kick));
+  font(14, 400); ctx.strokeStyle = CHALK; ctx.lineWidth = 1.5; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  for (const ic of P.ics) if (fertig(ic.bus)) {
+    ctx.fillStyle = BLUE; ctx.fillRect(ic.x + 8, ic.y, ic.b - 16, ic.h); ctx.strokeRect(ic.x + 8.5, ic.y + .5, ic.b - 17, ic.h - 1);
+    ctx.fillStyle = CHALK; ctx.beginPath(); ctx.arc(ic.x + 17, ic.y + 9, 2.5, 0, zpi); ctx.fill();
+    ctx.fillText(ic.ref, ic.x + 14, ic.y + ic.h / 2 + 5);
+  }
+  for (const r of P.teile) if (fertig(r.bus)) {
+    ctx.fillStyle = KUPFER; ctx.fillRect(r.x, r.y - 5, 8, 10); ctx.fillRect(r.x + 22, r.y - 5, 8, 10);
+    ctx.strokeRect(r.x - 3.5, r.y - 8.5, 37, 17); ctx.fillStyle = CHALK; ctx.fillText(r.ref, r.x - 2, r.y - 13);
+  }
+  for (const [x, y] of [[28, 28], [W - 28, 28], [W - 28, H - 28], [28, H - 28]]) {
+    ctx.fillStyle = KUPFER; ctx.beginPath(); ctx.arc(x, y, 13, 0, zpi); ctx.fill();
+    ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(x, y, 8, 0, zpi); ctx.fill();
+  }
+  ctx.restore();
+}
+
+/* ---------- Szene 0: der Tastkopf ---------- */
+function scene0(t) {
+  bg(INK);
+  const ox = 80, oy = 540, ow = 920, oh = 640;
+  oszi(ox, oy, ow, oh, {head: ['Tastkopf an ', 'BASS_OUT', 'CH1'], foot: ['Sägezahn · 55 Hz · 2 Vss', '124 BPM · a-Moll']}, (sx, sy, sw, sh) => {
+    /* Automatischer Messbereich: der leise Intro-Takt soll den Schirm füllen */
+    const w0 = win('mix', t, 40); let pk = 0.1; for (const v of w0) pk = Math.max(pk, Math.abs(v));
+    const gain = Math.min(.42 / pk, 3.5);
+    traceGlow('mix', t, 40, sx, sy, sw, sh, KUPFER, 3, gain);
+    /* Der Tastkopf tippt die Bahn an */
+    if (t > 0.35) {
+      const a = ease((t - 0.35) / 0.3), px = sx + sw * (0.2 + 0.5 * a), py = sy + sh / 2 - w0[Math.floor((w0.length - 1) * (0.2 + 0.5 * a))] * sh * gain;
+      ctx.strokeStyle = CHALK; ctx.lineWidth = 2.5; ctx.globalAlpha = a;
+      ctx.beginPath(); ctx.arc(px, py, 16, 0, zpi); ctx.moveTo(px - 28, py); ctx.lineTo(px + 28, py); ctx.moveTo(px, py - 28); ctx.lineTo(px, py + 28); ctx.stroke(); ctx.globalAlpha = 1;
+    }
+  });
+  /* Netzlabel oben */
+  eyebrow('000 / Tastkopf an die Bahn', 80, 440, {bg: CHALK, fg: INK});
+  /* Der Name tippt sich, ein Zeichen pro Achtel */
+  const s = 'osci//log', n = Math.floor(clamp((t - 0.3) / 1.5) * (s.length + 1));
+  let cx = 80; const size = 112;
+  for (let i = 0; i < Math.min(n, s.length); i++) { const ch = s[i]; text(ch, cx, 1380, {size, weight: 700, ls: -size * .075, color: ch === '/' ? KUPFER : CHALK}); cx += textW(ch, size, 700, -size * .075); }
+  if (t < 1.9 && Math.floor(t * 4) % 2 === 0) { ctx.fillStyle = KUPFER; ctx.fillRect(cx + 8, 1290, 14, 100); }
+  if (t > 1.2) { ctx.globalAlpha = ease((t - 1.2) / .3); text('Ein persönliches Labor von Brick', 80, 1450, {size: 26, color: MUTED}); ctx.globalAlpha = 1; }
+}
+
+/* ---------- Szene 1: die Platine ---------- */
+function scene1(t) {
+  const t0 = sec(2);
+  drawPCB(t, t0);
+  /* Oszilloskop oben rechts wie auf der Startseite */
+  oszi(560, 290, 440, 340, {head: ['Tastkopf an ', 'VCO_OUT', 'CH1'], foot: ['Mix · 124 BPM', 'live']}, (sx, sy, sw, sh) => traceGlow('mix', t, 20, sx, sy, sw, sh, KUPFER, 2.4, .42));
+  /* Der Titel ist Bestückungsdruck in einem Bauteilrahmen */
+  const bx = 80, by = 1210, bw = 920, bh = 520;
+  ctx.fillStyle = BLUE; ctx.fillRect(bx, by, bw, bh); ctx.strokeStyle = CHALK; ctx.lineWidth = 2; ctx.strokeRect(bx + 1, by + 1, bw - 2, bh - 2);
+  const size = 150, ls = -size * .075;
+  const parts = [['osci', CHALK], ['//', KUPFER], ['log', CHALK]]; let cx = bx + 30;
+  const punch = 1 + .025 * kickEnv(t);
+  ctx.save(); ctx.translate(bx + 30, by + 170); ctx.scale(punch, punch); ctx.translate(-(bx + 30), -(by + 170));
+  for (const [s, c] of parts) { text(s, cx, by + 170, {size, weight: 700, ls, color: c}); cx += textW(s, size, 700, ls); }
+  ctx.restore();
+  const zeilen = ['Ideen verschalten.', 'Signale hören.', 'Dinge ausprobieren.'];
+  zeilen.forEach((z, i) => { const a = ease((t - sec(3, i)) / .22); if (a <= 0) return; ctx.globalAlpha = a; text(z, bx + 30 + (1 - a) * 40, by + 246 + i * 48, {size: 36, weight: 700, ls: -1.2}); ctx.globalAlpha = 1; });
+  text('Ein persönliches Labor von Brick', bx + 30, by + 420, {size: 22, color: CHALK});
+  const a2 = ease((t - sec(3, 3)) / .25);
+  if (a2 > 0) { ctx.globalAlpha = a2; knopf('Ins Labor ↗', bx + 30, by + 445, 260, 56, KUPFER, KUPFER, INK, 24); knopf('Notizen lesen', bx + 310, by + 445, 280, 56, null, CHALK, CHALK, 24); ctx.globalAlpha = 1; }
+}
+
+/* ---------- Szene 2: das Labor ---------- */
+function scene2(t) {
+  bg(INK); brand();
+  eyebrow('001 / Lab 0 · Crashtest-Labor', 80, 300, {bg: CHALK, fg: INK});
+  headline([[['Bauen. Stecken.', CHALK]], [['Hören.', CHALK]]], 80, 470, {size: 118, scale: 1 + .02 * kickEnv(t)});
+  text('Bausteine stecken, Kabel ziehen, Melodien bauen —', 80, 680, {size: 26, color: MUTED});
+  text('und nebenbei verstehen, was ein Filter mit Klang zu tun hat.', 80, 718, {size: 26, color: MUTED});
+  /* Das Pult */
+  const px = 80, py = 790, pw = 920, ph = 710;
+  ctx.fillStyle = PANEL; ctx.fillRect(px, py, pw, ph); ctx.strokeStyle = HAIR; ctx.lineWidth = 2; ctx.strokeRect(px + 1, py + 1, pw - 2, ph - 2);
+  const modul = (x, y, w, h, kopf) => { ctx.fillStyle = PANEL2; ctx.fillRect(x, y, w, h); ctx.strokeStyle = CHALK; ctx.lineWidth = 2; ctx.strokeRect(x + 1, y + 1, w - 2, h - 2); ctx.fillStyle = CHALK; ctx.fillRect(x, y, w, 40); text(kopf, x + 14, y + 21, {size: 19, weight: 700, color: INK, base: 'middle', ls: 1}); };
+  /* Sequencer: Zeilen = Tonhöhen, Spalten = Schritte; die Zellen sind das echte Arpeggio */
+  const sx = px + 30, sy = py + 30, cell = 50, gap = 6;
+  modul(sx, sy, 8 * cell + 2 * 18 + 7 * gap, 8 * cell + 7 * gap + 40 + 18 + 60, '♪ / SEQUENCER');
+  const halbStart = Math.floor(t / (2 * D.beat)) * 2 * D.beat;
+  const ev = D.arp.filter(e => e.t >= halbStart - 1e-3 && e.t < halbStart + 2 * D.beat - 1e-3);
+  let aktiv = null; for (const e of D.arp) if (e.t <= t + 1e-3) aktiv = e;
+  const gx = sx + 18, gy = sy + 58;
+  for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+    const x = gx + c * (cell + gap), y = gy + (7 - r) * (cell + gap);
+    const e = ev.find(e => e.step === c && e.row === r);
+    const ist = aktiv && e && aktiv.t === e.t;
+    ctx.fillStyle = ist ? KUPFER : e ? 'rgba(239,236,226,.55)' : 'rgba(239,236,226,.1)';
+    ctx.fillRect(x, y, cell, cell);
+    if (ist) { ctx.fillStyle = 'rgba(255,90,46,.35)'; ctx.fillRect(x - 4, y - 4, cell + 8, cell + 8); ctx.fillStyle = KUPFER; ctx.fillRect(x, y, cell, cell); }
+  }
+  const spalte = aktiv ? aktiv.step : -1;
+  if (t >= sec(4) && spalte >= 0) { ctx.fillStyle = 'rgba(255,90,46,.18)'; ctx.fillRect(gx + spalte * (cell + gap), gy, cell, 8 * (cell + gap) - gap); }
+  text(`124 BPM · 8 Noten · a-Moll`, gx, gy + 8 * (cell + gap) + 30, {size: 20, color: MUTED});
+  /* Rechte Spalte: Oszillator, Tiefpass, Ausgang */
+  const mx = px + 560, mw = 330;
+  modul(mx, py + 30, mw, 150, '∿ / OSZILLATOR'); text('Rechteck + Säge', mx + 14, py + 95, {size: 24, weight: 700}); text(aktiv ? ['A3', 'C4', 'D4', 'E4', 'G4', 'A4', 'C5', 'E5'][aktiv.row] + ' · gespielt von ♪' : '— · wartet auf ♪', mx + 14, py + 135, {size: 20, color: MUTED});
+  modul(mx, py + 220, mw, 150, 'RC / TIEFPASS'); const fc = cutAt(t); text(`fc = ${fc >= 1000 ? (fc / 1000).toFixed(1).replace('.', ',') + ' kHz' : Math.round(fc) + ' Hz'}`, mx + 14, py + 285, {size: 24, weight: 700, color: KUPFER});
+  ctx.fillStyle = HAIR; ctx.fillRect(mx + 14, py + 320, mw - 28, 10); ctx.fillStyle = KUPFER; ctx.fillRect(mx + 14, py + 320, (mw - 28) * clamp(Math.log(fc / 100) / Math.log(60)), 10);
+  modul(mx, py + 410, mw, 150, '↗ / AUSGANG'); text('Hören', mx + 14, py + 475, {size: 24, weight: 700});
+  const vu = rmsAt(t); for (let i = 0; i < 12; i++) { ctx.fillStyle = i / 12 < vu ? (i > 9 ? KUPFER : CHALK) : HAIR; ctx.fillRect(mx + 14 + i * 25, py + 500, 18, 36); }
+  /* Kabel mit laufenden Signalen */
+  const kabel = (x1, y1, x2, y2, phase) => {
+    const c1x = x1 + 80, c1y = y1 + 60, c2x = x2 - 80, c2y = y2 - 10;
+    ctx.strokeStyle = CHALK; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.bezierCurveTo(c1x, c1y, c2x, c2y, x2, y2); ctx.stroke();
+    ctx.fillStyle = KUPFER; ctx.beginPath(); ctx.arc(x1, y1, 9, 0, zpi); ctx.arc(x2, y2, 9, 0, zpi); ctx.fill();
+    const u = phase, bx = (1 - u) ** 3 * x1 + 3 * (1 - u) ** 2 * u * c1x + 3 * (1 - u) * u * u * c2x + u ** 3 * x2, by = (1 - u) ** 3 * y1 + 3 * (1 - u) ** 2 * u * c1y + 3 * (1 - u) * u * u * c2y + u ** 3 * y2;
+    ctx.fillStyle = KUPFER; ctx.beginPath(); ctx.arc(bx, by, 7 + 4 * kickEnv(t), 0, zpi); ctx.fill();
+  };
+  const bp = beatPhase(t);
+  kabel(sx + 8 * cell + 36 + 7 * gap, sy + 120, mx, py + 110, bp);
+  kabel(mx + mw, py + 110, mx + mw, py + 300, (bp + .33) % 1);
+  kabel(mx + mw, py + 300, mx + mw, py + 490, (bp + .66) % 1);
+  text('SIGNAL IS MATERIAL.', px + 30, py + ph - 36, {size: 20, color: MUTED, ls: 2});
+}
+
+/* ---------- Szene 3: der Messplatz ---------- */
+function scene3(t) {
+  bg(BLUE); stripes(0, 0, W, H); brand();
+  eyebrow('002 / Lab 1 · Messplatz', 80, 300, {bg: INK, fg: CHALK});
+  headline([[['Messen wie', CHALK]], [['im Praktikum.', CHALK]]], 80, 470, {size: 118, scale: 1 + .02 * kickEnv(t)});
+  text('Steckbrett, Oszilloskop, Multimeter, Bode-Diagramm —', 80, 680, {size: 26, color: CHALK});
+  text('gerechnet wie SPICE, gemessen wie im Labor.', 80, 718, {size: 26, color: CHALK});
+  oszi(80, 780, 920, 500, {head: ['CH1 ', 'BASS', 'CH2 ARP', AMP], foot: ['2 ms/div · 1 V/div', 'T: CH1 ↗ 0 V']}, (sx, sy, sw, sh) => {
+    traceGlow('arp', t, 20, sx, sy, sw, sh, AMP, 2.4, .3);
+    traceGlow('bass', t, 20, sx, sy, sw, sh, KUPFER, 3, .4);
+  });
+  /* Bode-Diagramm: die echte Grenzfrequenz des Bass-Filters */
+  const bx = 80, by = 1320, bw = 920, bh = 340;
+  ctx.fillStyle = INK; ctx.fillRect(bx, by, bw, bh); ctx.strokeStyle = CHALK; ctx.lineWidth = 2; ctx.strokeRect(bx + 1, by + 1, bw - 2, bh - 2);
+  ctx.fillStyle = CHALK; ctx.fillRect(bx, by, bw, 48); text('FREQUENZGANG · .AC', bx + 22, by + 25, {size: 22, weight: 700, color: INK, base: 'middle', ls: 1}); text('Tiefpass 2. Ordnung · Q = 2,6', bx + bw - 22, by + 25, {size: 20, weight: 700, color: INK, base: 'middle', align: 'right'});
+  const gx = bx + 70, gy = by + 70, gw = bw - 100, gh = bh - 130;
+  const fx = f => gx + gw * Math.log10(f / 20) / 3, fy = db => gy + gh * (12 - db) / 60;
+  ctx.strokeStyle = 'rgba(239,236,226,.17)'; ctx.lineWidth = 1; ctx.beginPath();
+  for (const f of [20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000]) { ctx.moveTo(fx(f), gy); ctx.lineTo(fx(f), gy + gh); }
+  for (const db of [0, -12, -24, -36]) { ctx.moveTo(gx, fy(db)); ctx.lineTo(gx + gw, fy(db)); }
+  ctx.stroke();
+  for (const [f, s] of [[20, '20 Hz'], [200, '200 Hz'], [2000, '2 kHz'], [20000, '20 kHz']]) text(s, fx(f), gy + gh + 28, {size: 17, color: MUTED, align: f === 20 ? 'left' : f === 20000 ? 'right' : 'center'});
+  for (const db of [0, -24, -48]) text(`${db} dB`, gx - 10, fy(db) + 6, {size: 17, color: MUTED, align: 'right'});
+  const fc = cutAt(t), Q = 2.6;
+  ctx.strokeStyle = 'rgba(239,236,226,.5)'; ctx.setLineDash([6, 8]); ctx.beginPath(); ctx.moveTo(fx(fc), gy); ctx.lineTo(fx(fc), gy + gh); ctx.moveTo(gx, fy(-3)); ctx.lineTo(gx + gw, fy(-3)); ctx.stroke(); ctx.setLineDash([]);
+  ctx.strokeStyle = KUPFER; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.beginPath();
+  for (let i = 0; i <= 300; i++) { const f = 20 * Math.pow(1000, i / 300), r = f / fc, db = -10 * Math.log10((1 - r * r) ** 2 + (r / Q) ** 2); const x = fx(f), y = clamp(fy(db), gy, gy + gh); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+  ctx.stroke();
+  const fs = fc >= 1000 ? (fc / 1000).toFixed(2).replace('.', ',') + ' kHz' : Math.round(fc) + ' Hz';
+  ctx.fillStyle = KUPFER; ctx.fillRect(fx(fc) + 10, gy + 6, textW('fc = ' + fs, 22, 700) + 20, 36); text('fc = ' + fs, fx(fc) + 20, gy + 24, {size: 22, weight: 700, color: INK, base: 'middle'});
+}
+
+/* ---------- Szene 4: die Notizen ---------- */
+function scene4(t) {
+  bg(CHALK); brand(80, 236, INK);
+  eyebrow('003 / Elektrotechnik, verständlich', 80, 300, {bg: INK, fg: CHALK});
+  headline([[['Notizen aus', INK]], [['dem Studium.', INK]]], 80, 470, {size: 118, scale: 1 + .02 * kickEnv(t)});
+  if (t < sec(9)) {
+    text('Was ich lerne, so aufgeschrieben, dass man es', 80, 680, {size: 26, color: MUTED_HELL});
+    text('auch ohne Vorlesung versteht. Mit Simulationen zum Anfassen.', 80, 718, {size: 26, color: MUTED_HELL});
+  } else {
+    /* Takt 9: eine Formel pro Schlag, dort, wo eben noch der Text stand */
+    const formeln = ['U = R · I', 'P = U · I', 'τ = R · C', 'fc = 1 / 2πRC'];
+    const i = Math.min(3, Math.floor((t - sec(9)) / D.beat)), a = ease((t - sec(9, i)) / .12);
+    ctx.fillStyle = INK; ctx.fillRect(80, 640, 920, 104);
+    ctx.globalAlpha = a; text(formeln[i], 540, 694, {size: 60 * (1.08 - .08 * a), weight: 700, color: KUPFER, align: 'center', base: 'middle', ls: -2}); ctx.globalAlpha = 1;
+  }
+  const karten = [
+    {k: 'N°021 · ET1 · Rechenübung 3 · A3.4', titel: ['Ersatzspannungsquelle', 'mit gesteuerten Quellen'], art: 'Rechnung', tags: ['Ersatzquelle', 'Leerlauf', 'Kurzschluss'], ab: 3, bb: 2},
+    {k: 'N°019 · ET1 · Rechenübung 3 · A3.5', titel: ['Brückenschaltung zur', 'Messwertumsetzung'], art: 'Rechnung', tags: ['Brücke', 'DMS', 'Thévenin'], ab: 1, bb: 2},
+    {k: 'N°016 · Audiotechnik · Kurs', titel: ['Vom Sinus', 'zum Sound'], art: 'Theorie', tags: ['Klang', 'Obertöne', 'Filter'], ab: 3, bb: 4}
+  ];
+  karten.forEach((k, i) => {
+    const a = ease((t - sec(8, i)) / .28); if (a <= 0) return;
+    const x = 92 + (1 - a) * 600, y = 790 + i * 300, w = 896, h = 272;
+    ctx.fillStyle = PAPIER; ctx.fillRect(x, y, w, h); ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.strokeRect(x + 1, y + 1, w - 2, h - 2);
+    /* Pins links und rechts */
+    ctx.fillStyle = INK; for (let p = y + 14; p < y + h - 14; p += 24) { ctx.fillRect(x - 13, p, 12, 7); ctx.fillRect(x + w + 1, p, 12, 7); }
+    /* Titelbild: XY-Oszillogramm */
+    const cx = x + 2, cy = y + 2, cw = 360, ch = h - 4;
+    ctx.fillStyle = INK; ctx.fillRect(cx, cy, cw, ch);
+    ctx.save(); ctx.beginPath(); ctx.rect(cx, cy, cw, ch); ctx.clip();
+    ctx.strokeStyle = 'rgba(239,236,226,.15)'; ctx.lineWidth = 1; ctx.beginPath(); for (let g = 1; g < 8; g++) { ctx.moveTo(cx + g * cw / 8, cy); ctx.lineTo(cx + g * cw / 8, cy + ch); } for (let g = 1; g < 6; g++) { ctx.moveTo(cx, cy + g * ch / 6); ctx.lineTo(cx + cw, cy + g * ch / 6); } ctx.stroke();
+    lissajous(cx + cw / 2, cy + ch / 2, 200, 1.4, 'rgba(255,90,46,.3)', k.ab, k.bb, t * 1.1 + i, 1);
+    lissajous(cx + cw / 2, cy + ch / 2, 200, 2.4, KUPFER, k.ab, k.bb, t * 1.1 + i + .25, ease((t - sec(8, i)) / .6));
+    ctx.restore();
+    ctx.fillStyle = k.art === 'Rechnung' ? KUPFER_HELL : CHALK; const bw = textW(k.art.toUpperCase(), 17, 700, 1) + 20; ctx.fillRect(cx + 14, cy + 14, bw, 30); text(k.art.toUpperCase(), cx + 24, cy + 30, {size: 17, weight: 700, color: INK, base: 'middle', ls: 1});
+    text(k.k.toUpperCase(), x + cw + 28, y + 50, {size: 16, color: MUTED_HELL, ls: 1});
+    k.titel.forEach((z, j) => text(z, x + cw + 28, y + 104 + j * 44, {size: 36, weight: 700, color: INK, ls: -1.3}));
+    let tx = x + cw + 28; for (const tag of k.tags) { const tw = textW(tag, 17) + 20; ctx.strokeStyle = '#bdb9aa'; ctx.lineWidth = 1.5; ctx.strokeRect(tx, y + 206, tw, 34); text(tag, tx + 10, y + 224, {size: 17, color: MUTED_HELL, base: 'middle'}); tx += tw + 10; }
+  });
+}
+
+/* ---------- Szene 5: XY-Betrieb — zwei Töne, eine Figur ---------- */
+function scene5(t) {
+  bg(INK); brand();
+  eyebrow('XY-Betrieb · CH1 → X · CH2 → Y', 80, 300, {bg: CHALK, fg: INK});
+  const sx = 140, sy = 400, s = 800;
+  const impact = clamp(1 - (t - sec(10)) / .25);
+  ctx.fillStyle = INK; ctx.fillRect(sx, sy, s, s); ctx.strokeStyle = impact > 0 ? KUPFER : CHALK; ctx.lineWidth = 2 + 6 * impact; ctx.strokeRect(sx, sy, s, s);
+  ctx.save(); ctx.beginPath(); ctx.rect(sx, sy, s, s); ctx.clip();
+  ctx.strokeStyle = 'rgba(239,236,226,.17)'; ctx.lineWidth = 1; ctx.beginPath(); for (let g = 1; g < 8; g++) { ctx.moveTo(sx + g * s / 8, sy); ctx.lineTo(sx + g * s / 8, sy + s); ctx.moveTo(sx, sy + g * s / 8); ctx.lineTo(sx + s, sy + g * s / 8); } ctx.stroke();
+  ctx.strokeStyle = 'rgba(239,236,226,.42)'; ctx.beginPath(); ctx.moveTo(sx, sy + s / 2); ctx.lineTo(sx + s, sy + s / 2); ctx.moveTo(sx + s / 2, sy); ctx.lineTo(sx + s / 2, sy + s); ctx.stroke();
+  const r = s * .36;
+  for (const [dt, a, lw] of [[.12, .1, 2], [.08, .18, 2], [.04, .35, 2.4], [0, 1, 3.2]]) {
+    const xs = win('lx', t - dt, 27), ys = win('ly', t - dt, 27);
+    ctx.strokeStyle = KUPFER; ctx.globalAlpha = a; ctx.lineWidth = lw; ctx.lineJoin = 'round'; ctx.beginPath();
+    for (let i = 0; i < xs.length; i++) { const px = sx + s / 2 + xs[i] * r, py = sy + s / 2 - ys[i] * r; i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1; ctx.restore();
+  if (impact > 0) { ctx.fillStyle = `rgba(239,236,226,${impact * .5})`; ctx.fillRect(0, 0, W, H); }
+  /* Ablesung */
+  const zellen = [['X · CH1', 'E4 · 330 Hz', sec(10, 1)], ['Y · CH2', 'A3 · 220 Hz', sec(10, 2)], ['Verhältnis', '3 : 2', sec(11)]];
+  zellen.forEach(([l, v, ab], i) => {
+    const a = ease((t - ab) / .2); if (a <= 0) return; ctx.globalAlpha = a;
+    const x = 80 + i * 310, y = 1250, w = 300, h = 110;
+    ctx.fillStyle = PANEL; ctx.fillRect(x, y, w, h); ctx.strokeStyle = HAIR; ctx.lineWidth = 2; ctx.strokeRect(x + 1, y + 1, w - 2, h - 2);
+    text(l.toUpperCase(), x + 18, y + 34, {size: 17, color: MUTED, ls: 2}); text(v, x + 18, y + 80, {size: 28, weight: 700, color: i === 2 ? KUPFER : CHALK}); ctx.globalAlpha = 1;
+  });
+  const a1 = ease((t - sec(11)) / .25), a2 = ease((t - sec(11, 1)) / .25);
+  if (a1 > 0) { ctx.globalAlpha = a1; headline([[['Zwei Töne.', CHALK]]], 80, 1510, {size: 104}); ctx.globalAlpha = 1; }
+  if (a2 > 0) { ctx.globalAlpha = a2; headline([[['Eine Figur.', KUPFER]]], 80, 1620, {size: 104}); ctx.globalAlpha = 1; }
+  text('Eine reine Quinte, als Bild.', 80, 1690, {size: 24, color: MUTED});
+}
+
+/* ---------- Szene 6: das Logo ---------- */
+function scene6(t) {
+  bg(INK);
+  const a = ease((t - sec(12)) / .55);
+  /* Der Schirm zieht sich zum Logo zusammen */
+  const s = lerp(800, 320, a), x = lerp(140, 380, a), y = lerp(400, 420, a);
+  ctx.fillStyle = BLUE; ctx.globalAlpha = a; ctx.fillRect(x, y, s, s); ctx.globalAlpha = 1;
+  if (a < 1) { ctx.strokeStyle = CHALK; ctx.lineWidth = 2; ctx.globalAlpha = 1 - a; ctx.strokeRect(x, y, s, s); ctx.globalAlpha = 1; }
+  const r = s * .36 * lerp(1, 1.0, a);
+  lissajous(x + s / 2, y + s / 2, r * 2, lerp(3.2, 20, a), lerp(1, 0, a) > .5 ? KUPFER : CHALK, 3, 2, 0, 1);
+  if (a < 1) lissajous(x + s / 2, y + s / 2, r * 2, 3.2, `rgba(255,90,46,${1 - a})`, 3, 2, 0, 1);
+  const b = ease((t - sec(12) - .35) / .3);
+  if (b > 0) {
+    ctx.globalAlpha = b;
+    const size = 168, ls = -size * .075, parts = [['osci', CHALK], ['//', KUPFER], ['log', CHALK]];
+    const tw = parts.reduce((w, [s]) => w + textW(s, size, 700, ls), 0); let cx = (W - tw) / 2;
+    for (const [s, c] of parts) { text(s, cx, 960, {size, weight: 700, ls, color: c}); cx += textW(s, size, 700, ls); }
+    text('Ideen verschalten. Signale hören. Dinge ausprobieren.', 540, 1030, {size: 26, color: CHALK, align: 'center'});
+    ctx.globalAlpha = 1;
+  }
+  const c = ease((t - sec(12) - .7) / .3);
+  if (c > 0) {
+    ctx.globalAlpha = c;
+    knopf('br1ken.github.io', 180, 1140, 720, 86, KUPFER, KUPFER, INK, 34);
+    knopf('Link in Bio ↗', 180, 1250, 720, 86, null, CHALK, CHALK, 30);
+    const e = 'Ein Labor von Brick · TU Wien'; const ew = textW(e.toUpperCase(), 22, 700, 1) + 40;
+    eyebrow(e, (W - ew) / 2, 1420, {bg: CHALK, fg: INK});
+    ctx.globalAlpha = 1;
+  }
+}
+
+function renderFrame(t) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.setLineDash([]);
+  if (t < sec(2)) scene0(t);
+  else if (t < sec(4)) scene1(t);
+  else if (t < sec(6)) scene2(t);
+  else if (t < sec(8)) scene3(t);
+  else if (t < sec(10)) scene4(t);
+  else if (t < sec(12)) scene5(t);
+  else scene6(t);
+  /* Harter Schnitt auf dem Taktstrich: ein Frame Kupfer-Linie, die den Schirm abtastet */
+  for (const s of [2, 4, 6, 8, 10, 12]) { const dt = t - sec(s); if (dt >= 0 && dt < .1) { ctx.fillStyle = KUPFER; ctx.fillRect(0, H * dt / .1 - 3, W, 6); } }
+}
+
+async function reelInit() {
+  await Promise.all([document.fonts.load('700 20px Meslo'), document.fonts.load('400 20px Meslo')]);
+  D = window.REEL;
+  for (const k in D.sig) { const b = atob(D.sig[k]); const u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); D.sig[k] = new Int16Array(u.buffer); }
+  PCB = routePCB();
+  return D.rms.length;
+}
+window.renderFrame = renderFrame; window.reelInit = reelInit;
+</script>
+</body>
+</html>
