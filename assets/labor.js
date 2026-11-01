@@ -995,10 +995,14 @@ $('load-preset').addEventListener('click', () => loadPreset($('preset').value));
 let audio = null, starting = false, audioGeneration = 0, rebuildTimer = 0, scopeFrame = 0;
 const labEl = document.querySelector('.sound-computer');
 const scopes = [$('scope'), $('scope-mini')].map(canvas => ({canvas, pen: canvas.getContext('2d')}));
-function audibleSources() {
-  const out = getOut(), visited = new Set();
+function audibleIds() {
+  const visited = new Set();
   function visit(id) { if (visited.has(id)) return; visited.add(id); state.edges.filter(e => e.to === id && isAudio(e)).forEach(e => visit(e.from)); }
-  visit(out.id);
+  visit(getOut().id);
+  return visited;
+}
+function audibleSources() {
+  const visited = audibleIds();
   return state.nodes.filter(n => isSource(n) && visited.has(n.id));
 }
 function audioStatus() {
@@ -1016,9 +1020,36 @@ function disposeBundle(bundle, ctx) {
     bundle.nodes.forEach(node => { try { node.disconnect(); } catch { /* schon getrennt */ } });
   }, 90);
 }
+/* Umstecken baut den Graphen neu. Der alte darf nicht abreißen: Bereits geplante Noten spielen zu Ende, Hall und Echo klingen aus.
+   Sofort still wird nur, was jetzt nicht mehr am Ausgang hängt, und was der neue Graph selbst weiterspielt (freilaufende Quellen). */
+function retireBundle(bundle, engine) {
+  if (!bundle) return;
+  const ctx = engine.ctx, now = ctx.currentTime, heard = audibleIds();
+  const stillHeard = (id, type) => heard.has(id) && getNode(id)?.type === type;
+  const hush = param => { param.cancelScheduledValues(now); param.setTargetAtTime(0, now, .008); };
+  bundle.free.forEach(hush);
+  let hold = 0;
+  for (const {id, type, param} of bundle.heldBack) {
+    if (!stillHeard(id, type)) { hush(param); continue; }
+    if (type === 'seq' || playable({type})) { const seq = state.nodes.find(n => n.type === 'seq'); hold = Math.max(hold, .2 + (seq ? 30 / seq.p.tempo : .5)); continue; }
+    const p = getNode(id).p;
+    if (type === 'reverb') hold = Math.max(hold, p.size);
+    if (type === 'delay') hold = Math.max(hold, p.feedback ? p.time / 1000 * Math.log(.001) / Math.log(Math.min(.98, p.feedback / 100)) : p.time / 1000);
+  }
+  if (!hold) { disposeBundle(bundle, ctx); return; }
+  hold = Math.min(6, hold);
+  bundle.bus.gain.setTargetAtTime(0, now + hold, .06);
+  engine.retired.push(bundle);
+  if (engine.retired.length > 3) disposeBundle(engine.retired.shift(), ctx);   // Wildes Umstecken: mehr als drei Ausklänge rechnet niemand mit
+  setTimeout(() => {
+    const i = engine.retired.indexOf(bundle);
+    if (i < 0) return;
+    engine.retired.splice(i, 1); disposeBundle(bundle, ctx);
+  }, (hold + .4) * 1000);
+}
 function buildAudio() {
   if (!audio) return;
-  const engine = audio, ctx = engine.ctx, bundle = {bus: ctx.createGain(), sources: [], nodes: [], live: new Map()};
+  const engine = audio, ctx = engine.ctx, bundle = {bus: ctx.createGain(), sources: [], nodes: [], live: new Map(), free: [], heldBack: []};
   const lookup = new Map();
   bundle.bus.gain.value = 0; bundle.bus.connect(engine.master); bundle.nodes.push(bundle.bus);
   try {
@@ -1031,6 +1062,7 @@ function buildAudio() {
         const controlled = state.edges.some(e => e.to === n.id && isControl(e)), gate = ctx.createGain();
         gate.gain.value = controlled ? 0 : 1; gain.connect(gate); // gesteuert: still bis zur ersten Note
         bundle.sources.push(osc); bundle.nodes.push(osc, gain, gate); output = gate;
+        if (controlled) bundle.heldBack.push({id: n.id, type: n.type, param: gate.gain}); else bundle.free.push(gate.gain);
         mod = {param: osc.detune, scale: 1200}; // Vibrato: bis zu eine Oktave
         bundle.live.set(n.id, {osc, gate, controlled, amp: gain});
       } else if (n.type === 'chord') {
@@ -1043,19 +1075,20 @@ function buildAudio() {
           osc.connect(sum); vib.connect(osc.detune); bundle.sources.push(osc); bundle.nodes.push(osc); voices.push({osc, semis, sign});
         }
         bundle.nodes.push(sum, gate, vib); output = gate;
+        if (controlled) bundle.heldBack.push({id: n.id, type: n.type, param: gate.gain}); else bundle.free.push(gate.gain);
         mod = {node: vib, scale: 1200};
         bundle.live.set(n.id, {voices, gate, controlled, amp: sum});
       } else if (n.type === 'noise') {
         const src = ctx.createBufferSource(); src.buffer = noiseBuffer(engine, p.color); src.loop = true;
         output = ctx.createGain(); output.gain.value = p.level / 100 * NOISE_GAIN[p.color]; src.connect(output);
-        bundle.sources.push(src); bundle.nodes.push(src, output);
+        bundle.sources.push(src); bundle.nodes.push(src, output); bundle.free.push(output.gain);
         bundle.live.set(n.id, {gain: output});
       } else if (n.type === 'binaural') {
         /* Links f, rechts f + Δf — getrennt auf die beiden Kanäle */
         const l = ctx.createOscillator(), r = ctx.createOscillator(), merge = ctx.createChannelMerger(2), gl = ctx.createGain(), gr = ctx.createGain();
         l.frequency.value = p.carrier; r.frequency.value = p.carrier + p.beat; gl.gain.value = gr.gain.value = .42;
         l.connect(gl); r.connect(gr); gl.connect(merge, 0, 0); gr.connect(merge, 0, 1);
-        bundle.sources.push(l, r); bundle.nodes.push(l, r, gl, gr, merge); output = merge;
+        bundle.sources.push(l, r); bundle.nodes.push(l, r, gl, gr, merge); output = merge; bundle.free.push(gl.gain, gr.gain);
         bundle.live.set(n.id, {l, r});
       } else if (n.type === 'resistor') {
         input = output = ctx.createGain(); input.gain.value = LabModels.divider(p.r * 1000, 10000); bundle.nodes.push(input);
@@ -1076,6 +1109,7 @@ function buildAudio() {
         }
       } else if (n.type === 'seq') {
         output = ctx.createGain(); bundle.nodes.push(output); // Noten werden vom Taktgeber hier eingespeist
+        bundle.heldBack.push({id: n.id, type: n.type, param: output.gain});
         bundle.live.set(n.id, {out: output});
       } else if (n.type === 'delay') {
         input = ctx.createGain(); output = ctx.createGain();
@@ -1083,6 +1117,7 @@ function buildAudio() {
         line.delayTime.value = p.time / 1000; fb.gain.value = p.feedback / 100; wet.gain.value = echoWet(p);
         input.connect(output); input.connect(line); line.connect(fb); fb.connect(line); line.connect(wet); wet.connect(output);
         bundle.nodes.push(input, output, line, fb, wet);
+        bundle.heldBack.push({id: n.id, type: n.type, param: wet.gain});
         mod = {param: line.delayTime, scale: .008}; // ein paar Millisekunden hin und her: Chorus
         bundle.live.set(n.id, {line, fb, wet});
       } else if (n.type === 'reverb') {
@@ -1090,6 +1125,7 @@ function buildAudio() {
         const conv = ctx.createConvolver(), wet = ctx.createGain(); conv.buffer = impulse(engine, p.size); wet.gain.value = p.mix / 100;
         input.connect(output); input.connect(conv); conv.connect(wet); wet.connect(output);
         bundle.nodes.push(input, output, conv, wet);
+        bundle.heldBack.push({id: n.id, type: n.type, param: wet.gain});
         bundle.live.set(n.id, {conv, wet});
       } else if (n.type === 'pan') {
         input = output = ctx.createStereoPanner(); input.pan.value = p.position / 100;
@@ -1130,7 +1166,7 @@ function buildAudio() {
     bundle.sources.forEach(source => source.start());
     bundle.bus.gain.setTargetAtTime(1 / Math.sqrt(Math.max(1, audibleSources().length)), ctx.currentTime, .012);
     engine.master.gain.setTargetAtTime(getOut().p.volume / 100, ctx.currentTime, .012);
-    const old = engine.current; engine.current = bundle; disposeBundle(old, ctx); audioStatus();
+    const old = engine.current; engine.current = bundle; retireBundle(old, engine); audioStatus();
   } catch {
     disposeBundle(bundle, ctx); message('Der Patch konnte nicht aktualisiert werden. Lade einen Starter-Patch.');
   }
@@ -1267,7 +1303,7 @@ async function startAudio() {
     analyser.fftSize = 2048; master.connect(limiter); limiter.connect(analyser); analyser.connect(ctx.destination);
     const recDest = ctx.createMediaStreamDestination ? ctx.createMediaStreamDestination() : null;
     if (recDest) limiter.connect(recDest);
-    audio = {ctx, master, limiter, analyser, samples: new Uint8Array(analyser.fftSize), current: null, worklet, noise: {}, irs: {}, recDest};
+    audio = {ctx, master, limiter, analyser, samples: new Uint8Array(analyser.fftSize), current: null, retired: [], worklet, noise: {}, irs: {}, recDest};
     buildAudio(); $('audio-toggle').textContent = '■ Ton stoppen'; $('audio-toggle').setAttribute('aria-pressed', 'true');
     seqTimer = setInterval(seqTick, 25); seqTick();
     notify();
