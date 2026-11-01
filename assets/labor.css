@@ -536,3 +536,68 @@ select { width: 100%; min-height: 40px; font: inherit; font-size: 12px; padding:
 /* „?“ öffnet das Lexikon zum Baustein */
 .lex-q { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-left: 8px; padding: 0; border: 1px solid var(--hairline); border-radius: 50%; background: var(--card); color: var(--muted); font: 11px/1 var(--mono); cursor: help; vertical-align: middle; }
 .lex-q:hover { border-color: var(--ink); color: var(--ink); background: var(--accent); }
+
+/* ================= Klanglabor 2.0: Klangbilder, Modulation, neue Bausteine ================= */
+/* ---------- Klangbilder: fertige Aufbauten zum Reinhören ---------- */
+.klangbilder { margin: 0 0 22px; }
+.kb-head { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+.kb-head p { margin: 0; font-size: 13px; color: var(--muted); }
+.kb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(216px, 1fr)); gap: 12px 22px; padding: 0 10px; }
+.kb { position: relative; display: grid; grid-template-columns: 52px 1fr; grid-template-rows: auto auto auto; column-gap: 12px; align-items: start; text-align: left; padding: 14px; border: 1px solid var(--ink); background: var(--card); color: var(--ink); font: inherit; cursor: pointer; transition: transform .15s; }
+/* Pins links und rechts, wie die Karten der Notizen */
+.kb::before, .kb::after { content: ""; position: absolute; top: 12px; bottom: 12px; width: 9px; background: repeating-linear-gradient(180deg, var(--ink) 0 5px, transparent 5px 18px); }
+.kb::before { left: -10px; } .kb::after { right: -10px; }
+.kb:hover { transform: translate(-2px, -2px); border-color: var(--accent); outline: 1px solid var(--accent); }
+.kb.active { background: var(--ink); color: var(--on-ink); }
+.kb-sym { grid-row: span 3; width: 52px; height: 52px; display: grid; place-items: center; border: 1.5px solid currentColor; font: 24px var(--mono); }
+.kb.active .kb-sym { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.kb-name { font-weight: 700; font-size: 16px; letter-spacing: -.03em; line-height: 1.15; }
+.kb-text { font-size: 12px; line-height: 1.45; color: var(--muted); margin-top: 5px; }
+.kb.active .kb-text { color: var(--on-ink); opacity: .8; }
+.kb-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 9px; }
+.kb-tags i { font: 10px var(--mono); font-style: normal; padding: 2px 6px; border: 1px solid var(--hairline); }
+.kb-tags .kb-kh { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.kb-random { border-style: dashed; }
+@media (max-width: 760px) {
+  .kb-grid { display: flex; overflow-x: auto; gap: 10px; padding: 2px 10px 10px; margin: 0 -8px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .kb { flex: 0 0 78%; scroll-snap-align: start; }
+  .kb::before, .kb::after { display: none; }
+  .kb-grid::after { content: ""; flex: 0 0 1px; }
+  .kb-head p { font-size: 12px; }
+}
+
+/* ---------- MOD-Eingang und Modulationskabel (LFO → Regler) ---------- */
+.port-mod { top: auto; bottom: 22px; transform: none; }
+.port-mod .port-dot, .port-modout .port-dot { border-style: dotted; border-color: var(--amp); }
+.port-mod.connected .port-dot, .port-modout.connected .port-dot { background: var(--amp); }
+.wires .mod-wire { stroke: var(--amp); stroke-width: 2.4; stroke-dasharray: 5 4; }
+.is-playing .wires .mod-wire { animation: march .8s linear infinite; }
+.is-connecting .node.can-drop .port-mod .port-dot { background: var(--accent); animation: ping 1s ease-in-out infinite; }
+.node-lfo .node-head { background: var(--amp); color: var(--on-ink); }
+.node-lfo.selected .node-head { background: var(--ink); }
+.node-noise .node-head, .node-binaural .node-head, .node-chord .node-head { background: var(--ink); color: var(--on-ink); }
+.node-body .choice-switch { margin: 8px 0 2px; flex-wrap: wrap; width: max-content; max-width: 100%; }
+.choice-switch button { min-height: 30px; padding: 0 9px; font-size: 10px; }
+.band-switch button { padding: 0 7px; }
+.mod-info { font-size: 11px; color: var(--muted); border-top: 1px dashed var(--hairline); padding-top: 8px; }
+.inspector .plain { font-size: 13px; color: var(--ink); font-weight: 700; }
+
+/* ---------- Kette: Klartext, LFO-Abteilung, neue Quellen ---------- */
+.chain-plain { margin: 10px 0 0; font-size: 13px; line-height: 1.4; }
+.chain-lfos { margin-top: 14px; padding: 12px; border: 1px dashed var(--amp); background: var(--paper); }
+.chain-lfo .chain-sym { background: var(--amp); color: var(--on-ink); border-color: var(--amp); }
+.chain-noise .chain-sym, .chain-binaural .chain-sym, .chain-chord .chain-sym { background: var(--ink); color: var(--on-ink); }
+.chain-card .couple .seq-seg { flex-wrap: wrap; }
+.chain-card .couple .seq-seg button { min-height: 38px; }
+.chain-ghosts { grid-template-columns: 1fr 1fr; }
+.chain-ghosts .chain-ghost:first-child { grid-column: 1 / -1; }
+
+/* ---------- Aufnehmen ---------- */
+#record { min-width: 128px; font-size: 12px; white-space: nowrap; }
+.is-recording #record { background: var(--accent); color: var(--accent-ink); border-color: var(--ink); animation: blink 1.2s ease-in-out infinite; }
+@media (max-width: 760px) {
+  .transport { display: flex; gap: 8px; }
+  #audio-toggle { flex: 1; width: auto; }
+  #record { min-width: 0; padding: 0 10px; font-size: 12px; }
+}
+@media (max-width: 560px) { .palette button { flex: 1 0 30%; } }

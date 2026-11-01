@@ -26,7 +26,7 @@ Bewusst minimal: **plain HTML, CSS und JavaScript, ohne Framework und ohne Build
 | Bereich | Adresse | Was es ist |
 |---|---|---|
 | Startseite | `index.html` | Hero, Labor-Teaser, neueste Notizen und Projekte, „Hinter dem Signal.“ (Bio mit Datenblatt) |
-| Crashtest-Labor | `labor/` | Lab 0: Missionen, Sequencer, Effekte, Pult mit baumelnden Kabeln |
+| Crashtest-Labor | `labor/` | Lab 0: Klangbilder zum Reinhören (Regen, Meer, Wind, Fokus, Tiefschlaf, Drone, Glockenspiel, Techno-Keller, Überrasch mich), 16 Bausteine inklusive Rauschen, Binaural, Akkord, LFO, Hall und Panorama, Missionen, Sequencer, Pult mit baumelnden Kabeln, Aufnehmen als Datei |
 | Messplatz | `messplatz/` | Lab 1: Steckbrett mit Funktionsgenerator, Oszilloskop, zwei Multimetern und Netzgerät, Bode-Diagramm, Arbeitspunkt, Messreihe, eigener Schaltungssimulator, 16 Versuche |
 | Notizen | `notizen/` | Blog für Gelerntes aus dem Studium, mit Suche und Themenfilter |
 | Eine Notiz | `notizen/beitrag.html?b=name` | wird aus `notizen/texte/name.md` erzeugt |
@@ -68,7 +68,8 @@ projekte/
   _vorlage/             zum Kopieren für neue Projekte
 assets/
   site.css / site.js    gemeinsames Design (Farben als Variablen, hell + dunkel), Kopf- und Fußzeile, Menü, ◐-Dunkelmodus, ⋮-Lexikon-Knopf, Links
-  labor.css / labor.js  Labor: Bausteine, Sequencer, Kabelphysik, Einfach-Ansicht und freies Pult
+  labor.css / labor.js  Labor: Bausteine, Klangbilder, Sequencer, Kabelphysik, Modulation, Einfach-Ansicht und freies Pult, Aufnehmen
+  labor-worklet.js      Rechenwerk im Audio-Thread: RC/CR-Filter mit beweglicher Grenzfrequenz, LFO mit vier Formen
   missionen.js          Missionen, XP, Stufen, Abzeichen
   schaltung.js          Schaltungssimulator (Knotenanalyse wie SPICE), ohne Oberfläche
   messplatz.css / .js   Messplatz: Steckbrett, Kabel, Geräte, Analyse, Versuche
@@ -157,19 +158,25 @@ Projekte können auch nur auf etwas anderes verlinken (z. B. ein anderes GitHub-
 
 ## Das Crashtest-Labor (`labor/`)
 
-**Missionen:** 13 kurze Aufgaben vom ersten Ton bis zum eigenen Werk — Oktave, Rechteck, Tief- und Hochpass, Tremolo, Schwebung, Melodie, Kopplung, Quinte, Echo, Verzerrer. Ziele werden live geprüft. **Jedes erreichte Ziel gibt sofort +20 XP** (aufsteigende Zahl, Ding, auf Android kurzes Vibrieren), eine geschaffte Mission +50 XP, ohne Tipp +30 XP und 3 Sterne. Dazu 5 Stufen, 6 Abzeichen, eine Tages-Serie und ein „Startaufbau“-Knopf. Geschafft heißt: Konfetti-Explosion und eine kurze Einblendung, die nach ein paar Sekunden von selbst zur nächsten Mission springt („Warum funktioniert das?“ aufklappbar). Fortschritt bleibt im Browser (`osci-log-missionen`). „Frei spielen“ blendet die Missionen aus.
+**Klangbilder:** Acht fertige Aufbauten über dem Pult — Regen am Fenster, Meer, Wind, Fokus (Alpha 10 Hz), Tiefschlaf (Delta 2 Hz), Drone Ultramarin, Glockenspiel, Techno-Keller — plus „Überrasch mich“ (zufälliger Aufbau aus Quelle, Filtern, Bewegung und Raum). Ein Tipp lädt alles verkabelt, startet den Ton und sagt, woran man drehen soll. Neue Klangbilder: in `assets/labor.js` in `KLANGBILDER` (Bausteine wie bei `loadChain`: `control: i` = vom Sequencer i gespielt, `mod: i` = vom LFO i bewegt).
+
+**Missionen:** 17 kurze Aufgaben vom ersten Ton bis zum eigenen Werk — Oktave, Rechteck, Tief- und Hochpass, Tremolo, Schwebung, Melodie, Kopplung, Quinte, Echo, Verzerrer, Hochpass, Regen bauen, Atmen lassen (LFO), Kathedrale (Hall), Zwei Ohren (Binaural). Ziele werden live geprüft. **Jedes erreichte Ziel gibt sofort +20 XP** (aufsteigende Zahl, Ding, auf Android kurzes Vibrieren), eine geschaffte Mission +50 XP, ohne Tipp +30 XP und 3 Sterne. Dazu 5 Stufen, 7 Abzeichen, eine Tages-Serie und ein „Startaufbau“-Knopf. Geschafft heißt: Konfetti-Explosion und eine kurze Einblendung, die nach ein paar Sekunden von selbst zur nächsten Mission springt („Warum funktioniert das?“ aufklappbar). Fortschritt bleibt im Browser (`osci-log-missionen`). „Frei spielen“ blendet die Missionen aus.
 Neue Mission: in `assets/missionen.js` in `MISSIONEN` ergänzen (Ziele = Text + Prüffunktion).
 
-**Bausteine:** Oszillator, Sequencer (8 × 8-Raster in Dur- oder Moll-Pentatonik, Zufall, Tonlage, Tempo), Tiefpass (RC), Hochpass (CR), Spule (RL), Widerstand, Tremolo, Echo (Laufzeit + Rückkopplung), Verzerrer (Diodenbegrenzer, tanh), Ausgang.
+**Bausteine** (in vier Gruppen, jeder mit einem Klartext-Satz für Einsteiger): *Klang* — Oszillator, Sequencer (8 × 8-Raster in Dur- oder Moll-Pentatonik, Zufall, Tonlage, Tempo), Akkord (Quinte, Dur, Moll, Sus4, Oktaven; drei Töne doppelt und in Cent verstimmt), Rauschen (weiß, rosa, braun), Binaural (Trägerton und Differenz Δf mit den Bändern Delta 2, Theta 6, Alpha 10, Beta 18, Gamma 40 Hz; links f, rechts f + Δf). *Formen* — Tiefpass (RC), Hochpass (CR), Spule (RL), Widerstand, Verzerrer (Diodenbegrenzer, tanh). *Bewegung* — Tremolo, LFO (Sinus, Dreieck, Rechteck, Zufall), Panorama (Position, eigene Bewegung). *Raum* — Echo (Laufzeit + Rückkopplung), Hall (Faltung mit künstlicher Raumantwort, Nachhallzeit 0,3–8 s). Dazu der Ausgang.
 
-**Kopplung:** Ein Sequencer kann Oszillatoren spielen — im Pult per gestricheltem Steuerkabel von OUT des Sequencers in SEQ des Oszillators, in der Einfach-Ansicht per „Gespielt von ♪︎“. Der Oszillator spielt dann die Melodie mit seiner eigenen Wellenform; sein Frequenzregler verschiebt die Tonhöhe relativ zu 220 Hz (×2 = Oktave höher, 330 Hz = Quinte darüber). Mehrere Oszillatoren an einem Sequencer = Akkorde. Ein steuernder Sequencer klingt selbst nur, wenn er zusätzlich per Audiokabel weiterführt.
+**Kopplung:** Ein Sequencer kann Oszillatoren und Akkorde spielen — im Pult per gestricheltem Steuerkabel von OUT des Sequencers in SEQ, in der Einfach-Ansicht per „Gespielt von ♪︎“. Der Oszillator spielt dann die Melodie mit seiner eigenen Wellenform; sein Frequenzregler verschiebt die Tonhöhe relativ zu 220 Hz (×2 = Oktave höher, 330 Hz = Quinte darüber). Mehrere Oszillatoren an einem Sequencer = Akkorde. Ein steuernder Sequencer klingt selbst nur, wenn er zusätzlich per Audiokabel weiterführt.
+
+**Modulation:** Ein LFO bewegt einen Regler eines anderen Bausteins — im Pult per blauem, gepunktetem Kabel von OUT des LFO in den MOD-Eingang (unten links), in der Einfach-Ansicht per „Bewegt von ∾“ mit „+ LFO“. Was er bewegt, steht am Baustein: beim Tiefpass, Hochpass und der Spule die Grenzfrequenz (bis ±4 Oktaven, im Audio-Thread gerechnet), beim Oszillator und Akkord die Tonhöhe (Vibrato, bis eine Oktave), beim Echo die Verzögerung (Chorus), beim Widerstand die Lautstärke, beim Panorama die Position. Tempo und Tiefe stehen am LFO.
+
+**Aufnehmen:** „● Aufnehmen“ neben dem Play-Knopf schreibt den Ausgang als Datei (webm/opus, in Safari m4a) in die Downloads, bis drei Minuten.
 
 **Saft:** Bausteine zucken auf jede Note, Kabel werden angezupft, das Pult leuchtet mit der Lautstärke, Stecker machen ein Geräusch. Neue Besucher starten direkt mit „Melodie · Echo“, der Play-Knopf pulsiert, bis man drückt.
 
 **Kabel** hängen mit Schwerkraft durch und schwingen nach (Verlet-Seilsimulation). Mit „Bewegung reduzieren“ hängen sie still.
 
 
-- Bis zu zwölf Bausteine, davon bis zu vier Klangquellen (Oszillator oder Sequencer).
+- Bis zu sechzehn Bausteine, davon bis zu fünf Klangquellen (Oszillator, Sequencer, Akkord, Rauschen, Binaural). Neue Bausteine werden sofort eingesteckt: Quellen an den Anfang der Kette, Effekte vor den Ausgang, LFOs an den ersten freien MOD-Eingang.
 - **Zwei Ansichten**, umschaltbar über „Einfach“ / „Frei patchen“. Die Wahl wird im Browser gemerkt.
   - **Einfach** (Standard auf Handy und Tablet): der Signalweg als senkrechte Kette mit großen Karten und großen Reglern. **÷2 / ×2** halbiert oder verdoppelt einen Wert und erklärt kurz, was das bewirkt. „+ Baustein einfügen“ zwischen den Karten, „+ Weiterer Ton“ für Akkorde und Schwebungen. Die Play-Leiste mit Mini-Oszilloskop bleibt beim Scrollen oben.
   - **Frei patchen** (Standard am Computer): Pult mit frei verschiebbaren Bausteinen und Kabeln. Ein verzweigter Patch lässt sich in der einfachen Ansicht per Knopf wieder als Kette ordnen.
@@ -180,7 +187,7 @@ Neue Mission: in `assets/missionen.js` in `MISSIONEN` ergänzen (Ziele = Text + 
 - **Zoom** unten rechts, „Alles zeigen“ passt den Patch ein.
 - Entf/Backspace auf einem Baustein-Kopf entfernt ihn, Pfeiltasten verschieben ihn (Shift = größere Schritte).
 - Patch, Werte und Positionen bleiben lokal im Browser gespeichert. Ton startet erst auf Knopfdruck und stoppt, wenn der Tab verlassen wird.
-- Frequenz, Widerstand, Tremolo und Pegel ändern sich beim Regler-Ziehen ohne Knacksen; C und L bauen den Klang kurz neu auf.
+- Frequenz, Widerstand, Tremolo, Pegel, Grenzfrequenzen, Hall, Panorama, LFO, Akkord und Binaural ändern sich beim Regler-Ziehen ohne Knacksen; Rauschfarbe und Akkordtyp bauen den Klang kurz neu auf.
 - Auf iPhones mit aktuellem iOS soll der Ton auch im Lautlos-Modus spielen (`navigator.audioSession`); zusätzlich erscheint ein Hinweis zum Lautlos-Schalter.
 
 ### Was die Modelle bedeuten
@@ -190,7 +197,11 @@ Die Kabel sind gerichtete Audiosignale. Jeder Baustein ist ein idealisiertes, ge
 - R: Uaus/Uein = Rlast / (Rserie + Rlast) mit fester Last 10 kΩ.
 - RC: Ausgang über C; fc = 1/(2πRC), τ = RC.
 - RL: Ausgang über R; fc = R/(2πL), τ = L/R.
-- RC und RL sind digitale Tiefpässe erster Ordnung (bilineare Transformation mit Vorverzerrung), Grenzfrequenz auf 45 % der Abtastrate begrenzt. Angezeigte Werte stammen aus den idealen analogen Formeln.
+- RC, CR und RL sind digitale Filter erster Ordnung (bilineare Transformation mit Vorverzerrung), Grenzfrequenz auf 45 % der Abtastrate begrenzt. Sie laufen als AudioWorklet (`assets/labor-worklet.js`) mit der Grenzfrequenz als Parameter; ein LFO am MOD-Eingang verschiebt sie um bis zu ±4 Oktaven (f = fc · 2^(mod · Oktaven)). Ohne Worklet (alte Browser) rechnet ein IIRFilter, dann ohne Modulation. Angezeigte Werte stammen aus den idealen analogen Formeln.
+- Rauschen: drei Sekunden vorberechnet und in Schleife — weiß gleichverteilt, rosa nach Paul Kellets Filter (−3 dB/Oktave), braun durch leckendes Integrieren (−6 dB/Oktave).
+- Hall: Faltung (ConvolverNode) mit einer künstlichen Raumantwort — Rauschen, das in der Nachhallzeit um 60 dB abklingt, links und rechts verschieden.
+- Binaural: zwei Sinusse auf getrennten Kanälen (ChannelMerger). Akkord: drei Intervalle, je zwei Oszillatoren mit ±Cent, Vibrato über einen gemeinsamen Verstimm-Knoten. Panorama: StereoPanner (gleiche Leistung).
+- LFO: Worklet mit Sinus, Dreieck, Rechteck, Zufall (Sample & Hold); Tiefe skaliert je Ziel (Oktaven beim Filter, Cent bei der Tonhöhe, Millisekunden beim Echo).
 - Mehrere Signale an einem Eingang werden summiert. Der Ausgang gleicht die Zahl der Quellen aus und begrenzt Spitzen.
 
 Die Brücken-Simulation (`bruecke`) rechnet dagegen exakt über die Ersatzspannungsquelle — mit denselben Formeln wie das Jupyter-Notebook zur Rechenübung.
@@ -256,10 +267,10 @@ Ein Elektroniklabor auf TU-Niveau, gedacht zum Vorbereiten von Laborübungen und
 - Notiz *Vom Sinus zum Sound*: Kurs in fünf Teilen von Schall, Sinus und Dezibel über Obertöne, Modulation, Abtasten, Bits, komplexe Zeiger und FFT bis zu Filter, Biquad, Faltung und Hall, dazu die Projekte Karplus-Strong, Stimmgerät und Mini-Synthesizer. 26 getestete Python-Programme, 14 SVG-Diagramme, Formelsammlung und Aufgaben zu jedem Teil. Checkpoints (`- [ ]`) lassen sich in jeder Notiz abhaken, der Stand bleibt im Browser (`osci-log-haken`) und steht im Kopf der Notiz. Neue Simulationen `klang` (Obertöne) und `abtastung` (Aliasing), beide mit Ton über Web Audio (ein gemeinsamer AudioContext, immer nur eine Quelle, stoppt beim Verlassen des Tabs). Codeblöcke haben einen Knopf „Kopieren“, Tabellen trennen am Handy Wörter statt seitlich zu scrollen. 16 Synth-Lexikon-Einträge verlinken auf die passenden Abschnitte. Das Inhaltsverzeichnis scrollt bei langen Notizen selbst.
 - Notizen A3.4 *Ersatzspannungsquelle mit gesteuerten Quellen* (Leerlauf und Kurzschluss statt Abschalten, Probe mit Testquelle), A3.5 *Brückenschaltung zur Messwertumsetzung* (Thévenin, Stromteiler auf zwei Wegen, Potentiale, Spannungsteiler) und A3.6 *Wirkungsgrad einer Spannungsquelle* (η über R<sub>a</sub>/R<sub>i</sub> mit Graph). Alle Zwischenschritte mit Zufallswerten gegen eine direkte Netzwerkrechnung geprüft. Schaltbilder mit farbigen Zählpfeilen (Klassen `pu`/`pi`), neuer Lexikon-Eintrag *Gesteuerte Quelle*.
 - Neues Erscheinungsbild: Schrift überall Meslo LG; Farben aus der Elektronik (Lötstopplack Ultramarin, Kupfer Mennige, Bestückungsdruck Kreide, Oszilloskop Tinte); Logo als Lissajous-Figur. Startseite als geroutete Leiterplatte mit Tastkopf und Oszilloskop (`assets/platine.js`, Beispielsignale), Karten als ICs, Titelbilder als XY-Oszillogramme, Netzlabels und Vias an den Abschnitten. Formen stehen in `assets/design.css`, das auf jeder Seite zuletzt lädt.
-- Instagram, zweites Karussell „Ohm ist kein Gesetz" (`instagram/ohmsches-gesetz/`): sechs Slides im Stil des ersten — Kennlinie als Steigung, die drei Größen, Drude-Modell als Datenblatt, Gültigkeitsbereich, Aufruf zum Nachmessen. Gebaut als HTML (`slides.html`, Schrift wie auf der Seite, Helvetica durch FreeSans ersetzt) und mit Playwright auf 1080×1350 gerendert; neue Karussells entstehen durch Kopieren dieser Datei.
 - Instagram, zweites Karussell „Ohm ist kein Gesetz" (`instagram/ohmsches-gesetz/`): sechs Slides im Stil des ersten — Kennlinie als Steigung, die drei Größen, Drude-Modell als Datenblatt, Gültigkeitsbereich, Aufruf zum Nachmessen. Gebaut als HTML (`slides.html`, Schrift wie auf der Seite, Helvetica durch FreeSans ersetzt) und mit Playwright auf 1080×1350 gerendert; neue Karussells entstehen durch Kopieren dieser Datei. Noch im alten Erscheinungsbild (Gelb, Helvetica, N-Logo).
 - Instagram, Intro-Reel (`instagram/reel-intro/`, 25 s) im neuen Erscheinungsbild: Tastkopf, Platine, Labor, Messplatz, Notizen, XY-Betrieb, Logo. Der Track (124 BPM, a-Moll: Kick, Hats, Clap, Sidechain-Bass mit Filtersweep, Arpeggio mit Ping-Pong-Delay, Pad, Riser, Impact) entsteht in `track.py` aus Grundbausteinen; dasselbe Skript schreibt die Daten fürs Bild. `reel.html` zeichnet daraus jeden Frame: Das Oszilloskop zeigt den echten Mix, der Sequencer das echte Arpeggio, das Bode-Diagramm die echte Grenzfrequenz des Bassfilters. Pointe: Das Logo ist die Lissajous-Figur x = cos 3θ, y = sin 2θ, also eine reine Quinte — die Schlusstöne E4 (330 Hz) und A3 (220 Hz) zeichnen es im XY-Betrieb exakt. `render.js` rendert 751 Frames mit Playwright und schneidet mit ffmpeg.
 - Instagram, Reel „Von Newton bis Ohm" (`instagram/reel-grundlagen/`, 30 s): die acht Größen der gleichnamigen Notiz, je ein Takt. Die Formel schreibt sich mit Stift (Formel-Renderer mit Brüchen, Sub- und Superskript, Schreibmaske), das Diagramm bewegt sich im Takt, Einheit und SI-Kette kommen auf Schlag 3 und 4. Der Track (120 BPM, e-Moll) baut sich additiv auf, jede Größe bringt eine Spur: Kraft die Kick, Arbeit die Hats, Ladung die Zähl-Blips (die Elektronen im Bild erscheinen auf die Blips), Feld die Snare, Potential das Pad, Spannung den Akkordwechsel, Strom das Arpeggio (jede Note eine Ladung durch den Querschnitt), Widerstand den Filter. Takt 11–12 füllt die Kette und verwandelt R = U/I Glyph für Glyph in U = R · I; Takt 13–14 Merke-Kasten, Notiz-Karte und Link.
+- Klanglabor 2.0 — vom Crashtest zum Klangbild: sechs neue Bausteine (Rauschen weiß/rosa/braun, Binaural mit Hirnwellen-Bändern, Akkord mit Verstimmung, LFO mit vier Formen, Hall per Faltung, Panorama), eine dritte Kabelart (Modulation: LFO → MOD-Eingang, in der Kette „Bewegt von“), Filter als AudioWorklet mit beweglicher Grenzfrequenz, acht Klangbilder plus „Überrasch mich“ über dem Pult, Klartext-Satz an jedem Baustein, automatisches Einstecken neuer Bausteine, „● Aufnehmen“ als Datei, vier neue Missionen und das Abzeichen „Klangmaler“, vier neue Lexikon-Einträge (Rauschen, Binaural, Akkord, Panorama), bis zu 16 Bausteine und 5 Quellen, Aufräumen stapelt nach echter Kartenhöhe und die Fläche wächst mit.
 
 **Inhalte**
 - Notiz Brückenschaltung (A2.3) mit Simulation `bruecke`: Schaltplan, Potentialskala, Zweig-Tabelle mit Leistungsbilanz, Lastleistungs-Kurve.
