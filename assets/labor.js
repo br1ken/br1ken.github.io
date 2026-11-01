@@ -11,15 +11,22 @@ const NOISE_COLORS = {weiss: 'Weiß', rosa: 'Rosa', braun: 'Braun'};
 const LFO_SHAPES = {sine: 'Sinus', triangle: 'Dreieck', square: 'Rechteck', random: 'Zufall'};
 const CHORDS = {quinte: {label: 'Quinte', iv: [0, 7, 12]}, dur: {label: 'Dur', iv: [0, 4, 7]}, moll: {label: 'Moll', iv: [0, 3, 7]}, sus: {label: 'Sus4', iv: [0, 5, 7]}, oktaven: {label: 'Oktaven', iv: [0, 12, 24]}};
 const BANDS = [['delta', 2, 'Delta', 'Tiefschlaf'], ['theta', 6, 'Theta', 'Dösen'], ['alpha', 10, 'Alpha', 'ruhig wach'], ['beta', 18, 'Beta', 'konzentriert'], ['gamma', 40, 'Gamma', 'hellwach']];
+/* Kick: Option am Oszillator. Jede Sequencer-Note startet höher und fällt in KICK_SWEEP Sekunden auf ihren Ton. */
+const KICK_SWEEP = .05;
+const isKick = p => p.hit === 'kick';
+const kickText = p => `Kick: Jede Note startet ${number(p.drop)} Oktaven höher (× ${number(2 ** p.drop)}), fällt in ${number(KICK_SWEEP * 1000)} ms auf ihren Ton und klingt in ${number(p.decay)} ms um 60 dB ab.`;
 const bandName = beat => beat < 4 ? 'Delta, wie im Tiefschlaf' : beat < 8 ? 'Theta, wie beim Dösen' : beat < 13 ? 'Alpha, ruhig und wach' : beat < 30 ? 'Beta, konzentriert' : 'Gamma, hellwach';
 const DEFINITIONS = {
   osc: {
     lex: 'oszillator', title: 'Oszillator', symbol: '∿', kind: 'Signalquelle', unit: 'f / Frequenz / Hertz [Hz]', plain: 'Der Grundton: eine Schwingung, die du hörst.', mod: {label: 'Tonhöhe (Vibrato)'},
     text: 'Ein Oszillator erzeugt eine regelmäßige Schwingung. Die Frequenz zählt, wie oft sie sich pro Sekunde wiederholt. Mehr Hertz hörst du als höheren Ton.',
-    formula: 'T = 1 / f', detail: p => `${number(p.frequency)} Hz · ${waveNames[p.wave]}`,
-    result: p => `Eine Periode dauert ${number(1000 / p.frequency)} ms.`,
+    formula: 'T = 1 / f', detail: p => `${number(p.frequency)} Hz · ${waveNames[p.wave]}${p.hit === 'kick' ? ' · Kick' : ''}`,
+    result: p => p.hit === 'kick' ? kickText(p) : `Eine Periode dauert ${number(1000 / p.frequency)} ms.`,
     nudge: 'Verdopple die Frequenz von 220 auf ungefähr 440 Hz. Du hörst eine Oktave höher. Wähle Sägezahn, um die Wirkung eines Filters deutlicher zu hören.',
-    params: {frequency: {label: 'Frequenz', unit: 'Hz', min: 55, max: 1760, initial: 220, log: true}}
+    params: {frequency: {label: 'Frequenz', unit: 'Hz', min: 55, max: 1760, initial: 220, log: true},
+      drop: {label: 'Tonhöhenabfall', unit: 'Okt.', min: 0, max: 4, initial: 2, log: false, when: isKick},
+      decay: {label: 'Abklingen', unit: 'ms', min: 60, max: 1500, initial: 350, log: true, when: isKick}},
+    choices: {hit: {label: 'Anschlag', options: {ton: 'Ton', kick: 'Kick'}, initial: 'ton'}}
   },
   resistor: {
     lex: 'spannungsteiler', title: 'Widerstand', symbol: 'R', kind: 'Spannungsteiler', unit: 'R / Widerstand / Ohm [Ω]', plain: 'Macht leiser — wie ein Spannungsteiler.', mod: {label: 'Lautstärke'},
@@ -334,6 +341,8 @@ function sliderValue(position, spec) {
   const v = spec.log ? spec.min * Math.pow(spec.max / spec.min, position / 100) : spec.min + (spec.max - spec.min) * position / 100;
   return Number(v.toPrecision(4));
 }
+/* Manche Regler gibt es nur in einer Betriebsart (spec.when), gespeichert werden sie immer. */
+const shownParams = n => Object.entries(DEFINITIONS[n.type].params).filter(([, spec]) => !spec.when || spec.when(n.p)).map(([key]) => key);
 function parameterControl(node, key, inline = false) {
   const spec = DEFINITIONS[node.type].params[key];
   const id = `${inline ? 'quick' : 'edit'}-${node.id}-${key}`;
@@ -364,7 +373,7 @@ function nodeResult(n) {
   if (n.type === 'capacitor') return `Grenzfrequenz ${hz(LabModels.rcCutoff(n.p.r * 1000, n.p.c * 1e-9))}`;
   if (n.type === 'inductor') return `Grenzfrequenz ${hz(LabModels.rlCutoff(n.p.r, n.p.l / 1000))}`;
   if (n.type === 'resistor') return `Spannungsfaktor ${number(LabModels.divider(n.p.r * 1000, 10000))}`;
-  if (n.type === 'osc') return 'Signalquelle / periodisch';
+  if (n.type === 'osc') return isKick(n.p) ? 'Tonhöhe fällt, Pegel klingt ab' : 'Signalquelle / periodisch';
   if (n.type === 'seq') return `${SCALES[n.p.scale].label}-Pentatonik · ${OCTAVES.find(o => o[0] === n.p.octave)[1]}`;
   if (n.type === 'tremolo') return 'Lautstärke in Bewegung';
   if (n.type === 'highpass') return `Grenzfrequenz ${hz(LabModels.rcCutoff(n.p.r * 1000, n.p.c * 1e-9))}`;
@@ -403,7 +412,7 @@ function renderInspector() {
   const cables = state.edges.map((e, i) => e.from === n.id || e.to === n.id ? `<button type="button" data-unlink="${i}">${nodeName(getNode(e.from))} → ${nodeName(getNode(e.to))} <span aria-hidden="true">×</span></button>` : '').join('');
   const choices = Object.entries(d.choices || {}).map(([k, spec]) => `<label class="control" for="edit-${n.id}-${k}">${spec.label}<select id="edit-${n.id}-${k}" data-choice="${n.id}" data-choice-key="${k}">${Object.entries(spec.options).map(([v, t]) => `<option value="${v}" ${n.p[k] === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>`).join('');
   const modInfo = d.mod ? `<p class="mod-info">MOD-Eingang: ein LFO bewegt hier <b>${d.mod.label}</b>.${state.edges.some(e => e.to === n.id && isMod(e)) ? ' Angeschlossen.' : ''}</p>` : '';
-  $('inspector').innerHTML = `<div class="inspector-main"><span class="inspector-kicker">Baustein ${n.id.slice(1).padStart(2, '0')} / Verstehen</span><h3>${d.title}<button type="button" class="lex-q" data-lex="${d.lex}" aria-label="${d.title} im Lexikon nachschlagen" title="Im Lexikon nachschlagen">?</button></h3><div class="unit">${d.unit}</div><p class="plain">${d.plain}</p><p>${d.text}</p><div class="formula">${d.formula}</div><p id="model-result">${d.result(n.p)}</p>${modInfo}</div><div class="inspector-settings">${n.type === 'seq' ? seqGrid(n, true) + seqControls(n) : ''}${n.type === 'binaural' ? bandSwitch(n) : ''}${Object.hasOwn(n.p, 'wave') ? `<label class="control" for="edit-wave">Wellenform<select id="edit-wave" data-wave="${n.id}">${Object.entries(waveNames).map(([v, t]) => `<option value="${v}" ${n.p.wave === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>` : ''}${choices}${Object.keys(d.params).map(k => parameterControl(n, k)).join('')}<div class="learn-nudge"><strong>Probier das</strong><p>${d.nudge}</p></div><div class="inspector-actions">${n.type !== 'out' ? '<button class="button small" id="auto-connect" type="button">In Patch einsetzen ↗︎</button><button class="button small" id="remove-node" type="button">Entfernen ×</button>' : ''}</div><div class="edge-list"><span class="inspector-kicker">Kabel dieses Bausteins</span>${cables || '<p>Noch keine Verbindung. Zieh von OUT ● zu einem IN ●.</p>'}</div></div>`;
+  $('inspector').innerHTML = `<div class="inspector-main"><span class="inspector-kicker">Baustein ${n.id.slice(1).padStart(2, '0')} / Verstehen</span><h3>${d.title}<button type="button" class="lex-q" data-lex="${d.lex}" aria-label="${d.title} im Lexikon nachschlagen" title="Im Lexikon nachschlagen">?</button></h3><div class="unit">${d.unit}</div><p class="plain">${d.plain}</p><p>${d.text}</p><div class="formula">${d.formula}</div><p id="model-result">${d.result(n.p)}</p>${modInfo}</div><div class="inspector-settings">${n.type === 'seq' ? seqGrid(n, true) + seqControls(n) : ''}${n.type === 'binaural' ? bandSwitch(n) : ''}${Object.hasOwn(n.p, 'wave') ? `<label class="control" for="edit-wave">Wellenform<select id="edit-wave" data-wave="${n.id}">${Object.entries(waveNames).map(([v, t]) => `<option value="${v}" ${n.p.wave === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>` : ''}${choices}${shownParams(n).map(k => parameterControl(n, k)).join('')}<div class="learn-nudge"><strong>Probier das</strong><p>${d.nudge}</p></div><div class="inspector-actions">${n.type !== 'out' ? '<button class="button small" id="auto-connect" type="button">In Patch einsetzen ↗︎</button><button class="button small" id="remove-node" type="button">Entfernen ×</button>' : ''}</div><div class="edge-list"><span class="inspector-kicker">Kabel dieses Bausteins</span>${cables || '<p>Noch keine Verbindung. Zieh von OUT ● zu einem IN ●.</p>'}</div></div>`;
 }
 function selectNode(id) {
   if (state.selected === id) return;
@@ -836,9 +845,15 @@ function setChoice(node, key, value) {
   node.p[key] = value;
   document.querySelectorAll(`[data-quick-choice="${node.id}"][data-choice-key="${key}"]`).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.choiceValue === value)));
   document.querySelectorAll(`[data-choice="${node.id}"][data-choice-key="${key}"]`).forEach(s => { s.value = value; });
+  if (key === 'hit') {
+    /* Ein Kick braucht einen tiefen Sinus: 55 Hz am Regler spielt die unterste Moll-Zeile als 55 Hz. Ein Rückgängig-Schritt für alles. */
+    if (value === 'kick') { node.p.wave = 'sine'; node.p.frequency = 55; }
+    render();
+    document.querySelector(`[data-quick-choice="${node.id}"][data-choice-key="hit"][data-choice-value="${value}"]`)?.focus({preventScroll: true});
+  }
   refreshTexts(node);
   save(); liveUpdate(node, key) || scheduleAudio();
-  message(`${nodeName(node)}: ${spec.options[value]}.`);
+  message(key === 'hit' && value === 'kick' ? `${nodeName(node)}: Kick. ${controllerOf(node) ? 'Die unterste Zeile im Moll-Raster fällt jetzt von 220 auf 55 Hz.' : 'Steck noch einen Sequencer in SEQ, dann schlägt er.'}` : `${nodeName(node)}: ${spec.options[value]}.`);
 }
 /* Binaural: Hirnwellen-Band setzt die Differenzfrequenz */
 function setBand(node, hz) {
@@ -1031,8 +1046,8 @@ function retireBundle(bundle, engine) {
   let hold = 0;
   for (const {id, type, param} of bundle.heldBack) {
     if (!stillHeard(id, type)) { hush(param); continue; }
-    if (type === 'seq' || playable({type})) { const seq = state.nodes.find(n => n.type === 'seq'); hold = Math.max(hold, .2 + (seq ? 30 / seq.p.tempo : .5)); continue; }
     const p = getNode(id).p;
+    if (type === 'seq' || playable({type})) { const seq = state.nodes.find(n => n.type === 'seq'); hold = Math.max(hold, .2 + (seq ? 30 / seq.p.tempo : .5), isKick(p) ? p.decay / 1000 + .1 : 0); continue; }
     if (type === 'reverb') hold = Math.max(hold, p.size);
     if (type === 'delay') hold = Math.max(hold, p.feedback ? p.time / 1000 * Math.log(.001) / Math.log(Math.min(.98, p.feedback / 100)) : p.time / 1000);
   }
@@ -1058,13 +1073,22 @@ function buildAudio() {
       const p = n.p;
       if (n.type === 'osc') {
         const osc = ctx.createOscillator(); osc.type = p.wave; osc.frequency.value = p.frequency;
-        const gain = ctx.createGain(); gain.gain.value = WAVE_GAIN[p.wave]; osc.connect(gain);
+        const gain = ctx.createGain(); gain.gain.value = WAVE_GAIN[p.wave];
         const controlled = state.edges.some(e => e.to === n.id && isControl(e)), gate = ctx.createGain();
         gate.gain.value = controlled ? 0 : 1; gain.connect(gate); // gesteuert: still bis zur ersten Note
         bundle.sources.push(osc); bundle.nodes.push(osc, gain, gate); output = gate;
         if (controlled) bundle.heldBack.push({id: n.id, type: n.type, param: gate.gain}); else bundle.free.push(gate.gain);
-        mod = {param: osc.detune, scale: 1200}; // Vibrato: bis zu eine Oktave
-        bundle.live.set(n.id, {osc, gate, controlled, amp: gain});
+        if (controlled && isKick(p)) {
+          /* Kick: Jeder Schlag ist ein eigener Oszillator (siehe playKick), damit er mit Phase 0 beginnt und alle gleich klingen.
+             Das Gate bleibt offen, die Hüllkurve sitzt am Schlag, so läuft ein langer Ausklang unter dem nächsten durch. */
+          const vib = ctx.createGain(); gate.gain.value = 1; bundle.nodes.push(vib);
+          mod = {node: vib, scale: 1200};
+          bundle.live.set(n.id, {osc, gate, controlled, amp: gain, kick: {vib}});
+        } else {
+          osc.connect(gain);
+          mod = {param: osc.detune, scale: 1200}; // Vibrato: bis zu eine Oktave
+          bundle.live.set(n.id, {osc, gate, controlled, amp: gain});
+        }
       } else if (n.type === 'chord') {
         /* Drei Töne, jeder doppelt und gegeneinander verstimmt; ein Verstimm-Knoten verteilt den LFO auf alle Stimmen */
         const voices = [], sum = ctx.createGain(), gate = ctx.createGain(), vib = ctx.createGain();
@@ -1122,11 +1146,12 @@ function buildAudio() {
         bundle.live.set(n.id, {line, fb, wet});
       } else if (n.type === 'reverb') {
         input = ctx.createGain(); output = ctx.createGain();
-        const conv = ctx.createConvolver(), wet = ctx.createGain(); conv.buffer = impulse(engine, p.size); wet.gain.value = p.mix / 100;
-        input.connect(output); input.connect(conv); conv.connect(wet); wet.connect(output);
-        bundle.nodes.push(input, output, conv, wet);
+        const wet = ctx.createGain(); wet.gain.value = p.mix / 100;
+        input.connect(output); wet.connect(output);
+        const hall = {input, wet, ringing: [], swappedAt: 0, irTimer: 0}; hall.room = openRoom(engine, hall, p.size, 1);
+        bundle.nodes.push(input, output, wet, hall.room.send, hall.room.conv, hall.room.tail);
         bundle.heldBack.push({id: n.id, type: n.type, param: wet.gain});
-        bundle.live.set(n.id, {conv, wet});
+        bundle.live.set(n.id, hall);
       } else if (n.type === 'pan') {
         input = output = ctx.createStereoPanner(); input.pan.value = p.position / 100;
         const lfo = ctx.createOscillator(), amt = ctx.createGain(); lfo.frequency.value = Math.max(.01, p.rate); amt.gain.value = p.rate ? 1 - Math.abs(p.position / 100) : 0;
@@ -1197,17 +1222,53 @@ function noiseBuffer(engine, color) {
   engine.noise[color] = buf;
   return buf;
 }
+const IR_KEEP = 24, ROOM_FADE = .015, ROOM_EVERY = .12, ROOMS_RINGING = 3;
+const irKey = seconds => Math.round(seconds * 20);
 /* Hall: eine künstliche Raumantwort — Rauschen, das in T Sekunden um 60 dB abklingt, links und rechts verschieden. */
 function impulse(engine, seconds) {
-  const key = Math.round(seconds * 20);
-  if (engine.irs[key]) return engine.irs[key];
+  const key = irKey(seconds);
+  if (engine.irs.has(key)) return engine.irs.get(key);
   const ctx = engine.ctx, n = Math.round(ctx.sampleRate * seconds), buf = ctx.createBuffer(2, n, ctx.sampleRate);
   for (let c = 0; c < 2; c++) {
     const d = buf.getChannelData(c);
     for (let i = 0; i < n; i++) { const t = i / ctx.sampleRate; d[i] = (Math.random() * 2 - 1) * Math.exp(-6.9 * t / seconds) * Math.min(1, t / .004); }
   }
-  engine.irs[key] = buf;
+  engine.irs.set(key, buf);
+  if (engine.irs.size > IR_KEEP) engine.irs.delete(engine.irs.keys().next().value); // Ziehen über den ganzen Regler soll nicht hunderte Megabyte liegen lassen
   return buf;
+}
+/* Ein Raum des Halls: Eingang → send → Faltung → tail → Hall-Anteil. Neue Nachhallzeit heißt neuer Raum (ConvolverNode kann seine Antwort nicht weich tauschen). */
+function openRoom(engine, hall, seconds, level) {
+  const ctx = engine.ctx, room = {seconds, ring: seconds, send: ctx.createGain(), conv: ctx.createConvolver(), tail: ctx.createGain(), timer: 0};
+  room.conv.buffer = impulse(engine, seconds); room.send.gain.value = level;
+  hall.input.connect(room.send); room.send.connect(room.conv); room.conv.connect(room.tail); room.tail.connect(hall.wet);
+  return room;
+}
+function closeRoom(hall, room) {
+  clearTimeout(room.timer);
+  const i = hall.ringing.indexOf(room); if (i >= 0) hall.ringing.splice(i, 1);
+  try { hall.input.disconnect(room.send); } catch { /* schon getrennt */ }
+  [room.send, room.conv, room.tail].forEach(node => { try { node.disconnect(); } catch { /* schon getrennt */ } });
+}
+/* Überblenden am Eingang statt am Ausgang: Ein frischer Faltungshall hat noch keine Vorgeschichte, deshalb darf der alte nicht verstummen.
+   Er bekommt nur kein neues Signal mehr und klingt aus; wird der Raum kleiner, höchstens so lang wie der neue (setTargetAtTime: T60 = 6,9 τ). */
+function swapRoom(hall, seconds) {
+  const engine = audio, now = engine.ctx.currentTime, old = hall.room;
+  hall.swappedAt = now;
+  if (irKey(seconds) === irKey(old.seconds)) return;
+  const room = hall.room = openRoom(engine, hall, seconds, 0);
+  room.send.gain.setTargetAtTime(1, now, ROOM_FADE); old.send.gain.setTargetAtTime(0, now, ROOM_FADE);
+  hall.ringing.push(old);
+  for (const r of hall.ringing) {
+    const ring = Math.min(r.ring, seconds);
+    if (ring < r.ring) r.tail.gain.setTargetAtTime(0, now, ring / 6.9);
+    r.ring = ring;
+    clearTimeout(r.timer); r.timer = setTimeout(() => closeRoom(hall, r), (ring + ROOM_FADE * 6) * 1000);
+  }
+  if (hall.ringing.length > ROOMS_RINGING) { // Wildes Ziehen: Der älteste Raum hört früher auf
+    const r = hall.ringing[0];
+    r.tail.gain.setTargetAtTime(0, now, .03); clearTimeout(r.timer); r.timer = setTimeout(() => closeRoom(hall, r), 180);
+  }
 }
 /* CR-Hochpass erster Ordnung, bilinear transformiert mit Vorverzerrung (Gegenstück zu LabModels.lowpass). */
 function highpassCoeffs(cutoff, sampleRate) {
@@ -1231,6 +1292,8 @@ function liveUpdate(n, key) {
   const ctx = audio.ctx, now = ctx.currentTime, live = audio.current.live.get(n.id), p = n.p;
   if (n.type === 'out') { audio.master.gain.setTargetAtTime(p.volume / 100, now, .02); return true; }
   if (!live) return false;
+  if (n.type === 'osc' && (key === 'drop' || key === 'decay')) return true; // liest playKick bei jedem Schlag neu
+  if (n.type === 'osc' && key === 'hit') return false; // anderer Aufbau: neu aufbauen
   if (n.type === 'osc' && key === 'frequency') { if (!live.controlled) live.osc.frequency.setTargetAtTime(p.frequency, now, .015); return true; }
   if (n.type === 'osc' && key === 'wave') { live.osc.type = p.wave; live.amp.gain.setTargetAtTime(WAVE_GAIN[p.wave], now, .02); return true; }
   if (n.type === 'resistor') { live.gain.gain.setTargetAtTime(LabModels.divider(p.r * 1000, 10000), now, .015); return true; }
@@ -1261,7 +1324,11 @@ function liveUpdate(n, key) {
   if (live.filter) { live.filter.parameters.get('cutoff').setTargetAtTime(filterCutoff(n), now, .02); return true; }
   if (n.type === 'reverb') {
     if (key === 'mix') { live.wet.gain.setTargetAtTime(p.mix / 100, now, .02); return true; }
-    clearTimeout(live.irTimer); live.irTimer = setTimeout(() => { if (audio?.current?.live.get(n.id) === live) live.conv.buffer = impulse(audio, p.size); }, 150);
+    /* Wirkt schon beim Ziehen: höchstens alle ROOM_EVERY Sekunden ein neuer Raum, der letzte Wert kommt immer an */
+    clearTimeout(live.irTimer);
+    const wait = live.swappedAt + ROOM_EVERY - now;
+    if (wait <= 0) swapRoom(live, p.size);
+    else live.irTimer = setTimeout(() => { if (audio?.current?.live.get(n.id) === live) swapRoom(live, p.size); }, wait * 1000);
     return true;
   }
   if (n.type === 'pan') {
@@ -1303,7 +1370,7 @@ async function startAudio() {
     analyser.fftSize = 2048; master.connect(limiter); limiter.connect(analyser); analyser.connect(ctx.destination);
     const recDest = ctx.createMediaStreamDestination ? ctx.createMediaStreamDestination() : null;
     if (recDest) limiter.connect(recDest);
-    audio = {ctx, master, limiter, analyser, samples: new Uint8Array(analyser.fftSize), current: null, retired: [], worklet, noise: {}, irs: {}, recDest};
+    audio = {ctx, master, limiter, analyser, samples: new Uint8Array(analyser.fftSize), current: null, retired: [], worklet, noise: {}, irs: new Map(), recDest};
     buildAudio(); $('audio-toggle').textContent = '■ Ton stoppen'; $('audio-toggle').setAttribute('aria-pressed', 'true');
     seqTimer = setInterval(seqTick, 25); seqTick();
     notify();
@@ -1398,6 +1465,21 @@ function playNote(n, row, t, dur, level) {
   osc.start(t); osc.stop(t + dur);
   osc.onended = () => { osc.disconnect(); env.disconnect(); };
 }
+/* Ein Schlag: Tonhöhe fällt exponentiell auf f, Pegel klingt in p.decay um 60 dB ab. */
+function playKick(n, live, f, t) {
+  const ctx = audio.ctx, hit = ctx.createOscillator(), env = ctx.createGain(), end = t + n.p.decay / 1000;
+  hit.type = n.p.wave;
+  hit.frequency.value = 0; // Steht bis t still: Sonst hinge die Startphase davon ab, wo im 128er-Block der Schlag liegt, und jeder klänge anders
+  hit.frequency.setValueAtTime(f * 2 ** n.p.drop, t);
+  hit.frequency.exponentialRampToValueAtTime(f, t + KICK_SWEEP);
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(1, t + .002);
+  env.gain.exponentialRampToValueAtTime(.001, end);
+  env.gain.linearRampToValueAtTime(0, end + .005);
+  live.kick.vib.connect(hit.detune); hit.connect(env); env.connect(live.amp);
+  hit.start(t - .01); hit.stop(end + .01);
+  hit.onended = () => { hit.disconnect(); env.disconnect(); try { live.kick.vib.disconnect(hit.detune); } catch { /* schon getrennt */ } };
+}
 function playStep(n, step, t, dur) {
   const bits = n.p.grid[step];
   const rows = [0, 1, 2, 3, 4, 5, 6, 7].filter(r => bits >> r & 1);
@@ -1406,6 +1488,7 @@ function playStep(n, step, t, dur) {
   for (const osc of controlled) {
     const live = audio.current.live.get(osc.id);
     if (!live?.controlled) continue;
+    if (live.kick) { if (rows.length) playKick(osc, live, seqFreq(n, rows[rows.length - 1]) * osc.p.frequency / CONTROL_REF, t); continue; }
     const g = live.gate.gain;
     g.cancelScheduledValues(t);
     if (!rows.length) { g.setTargetAtTime(0, t, .01); continue; }
@@ -1589,6 +1672,7 @@ function chainResult(n) {
     const targets = state.edges.filter(e => e.from === n.id && isMod(e)).map(e => getNode(e.to));
     return targets.length ? `Bewegt ${targets.map(t => `${DEFINITIONS[t.type].mod.label} von ${nodeName(t)}`).join(' und ')} — ${DEFINITIONS.lfo.result(n.p)}` : 'Noch mit nichts verbunden. Wähle bei einem Baustein unten „Bewegt von“.';
   }
+  if (n.type === 'osc' && isKick(n.p)) return controllerOf(n) ? kickText(n.p) : 'Kick braucht einen Sequencer: Ohne Noten bleibt es ein Dauerton.';
   if (playable(n) && controllerOf(n)) return `Spielt die Melodie von ${nodeName(controllerOf(n))}, verschoben um × ${number(n.p.frequency / CONTROL_REF)}${n.p.frequency / CONTROL_REF === 2 ? ' (eine Oktave höher)' : n.p.frequency / CONTROL_REF === .5 ? ' (eine Oktave tiefer)' : ''}.`;
   if (n.type === 'osc') return `${number(n.p.frequency)} Hz ≈ Ton ${noteName(n.p.frequency)} · eine Schwingung dauert ${number(1000 / n.p.frequency)} ms`;
   if (n.type === 'seq' && state.edges.some(e => e.from === n.id && isControl(e))) return `Spielt ${state.edges.filter(e => e.from === n.id && isControl(e)).map(e => nodeName(getNode(e.to))).join(' und ')} — klingt selbst nicht. ${seqCount(n.p)} Noten.`;
@@ -1783,7 +1867,7 @@ function chainCard(n) {
   const waves = Object.hasOwn(n.p, 'wave') ? `<div class="big-waves" role="group" aria-label="Wellenform">${Object.entries(waveNames).map(([v, t]) => `<button type="button" data-quick-wave="${n.id}" data-wave-value="${v}" aria-pressed="${n.p.wave === v}"><b>${waveIcons[v]}</b>${t}</button>`).join('')}</div>` : '';
   const choices = Object.keys(d.choices || {}).map(k => `<div class="couple"><span class="couple-label">${d.choices[k].label}</span>${choiceSwitch(n, k)}</div>`).join('');
   const remove = n.type !== 'out' ? `<button type="button" class="chain-remove" data-chain-remove="${n.id}" aria-label="${nodeName(n)} entfernen">×</button>` : '';
-  return `<article class="chain-card chain-${n.type}" data-chain-id="${n.id}"><header class="chain-head"><span class="chain-sym" aria-hidden="true">${d.symbol}</span><div class="chain-title"><h3>${d.title}<button type="button" class="lex-q" data-lex="${d.lex}" aria-label="${d.title} im Lexikon nachschlagen" title="Im Lexikon nachschlagen">?</button></h3><span>${d.kind}</span></div>${remove}</header><p class="chain-plain">${d.plain}</p><p class="chain-result" data-chain-result="${n.id}">${chainResult(n)}</p>${playable(n) ? playerPicker(n) : ''}${n.type === 'seq' ? seqGrid(n, true) + seqControls(n) : ''}${n.type === 'binaural' ? `<div class="couple"><span class="couple-label">Band</span>${bandSwitch(n)}</div>` : ''}${waves}${choices}${Object.keys(d.params).map(k => bigControl(n, k)).join('')}${d.mod ? modPicker(n) : ''}<details class="chain-info"><summary>Was passiert hier?</summary><p>${d.text}</p><div class="formula">${d.formula}</div><p><strong>Probier:</strong> ${d.nudge}</p></details></article>`;
+  return `<article class="chain-card chain-${n.type}" data-chain-id="${n.id}"><header class="chain-head"><span class="chain-sym" aria-hidden="true">${d.symbol}</span><div class="chain-title"><h3>${d.title}<button type="button" class="lex-q" data-lex="${d.lex}" aria-label="${d.title} im Lexikon nachschlagen" title="Im Lexikon nachschlagen">?</button></h3><span>${d.kind}</span></div>${remove}</header><p class="chain-plain">${d.plain}</p><p class="chain-result" data-chain-result="${n.id}">${chainResult(n)}</p>${playable(n) ? playerPicker(n) : ''}${n.type === 'seq' ? seqGrid(n, true) + seqControls(n) : ''}${n.type === 'binaural' ? `<div class="couple"><span class="couple-label">Band</span>${bandSwitch(n)}</div>` : ''}${waves}${choices}${shownParams(n).map(k => bigControl(n, k)).join('')}${d.mod ? modPicker(n) : ''}<details class="chain-info"><summary>Was passiert hier?</summary><p>${d.text}</p><div class="formula">${d.formula}</div><p><strong>Probier:</strong> ${d.nudge}</p></details></article>`;
 }
 function chainLink(index) {
   const open = pickerAt === index;
