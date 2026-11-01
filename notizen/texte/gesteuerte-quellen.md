@@ -65,7 +65,7 @@ $\alpha$ und $\beta$ sind feste Zahlen ohne Einheit. So sehen Verstärker und Tr
 <path class="pu" d="M228 52L322 150" style="stroke-width:2.2"/>
 <circle class="fu" cx="228" cy="52" r="4"/><circle class="fu" cx="322" cy="150" r="4"/>
 <text x="222" y="56" text-anchor="end">U<tspan dy="3" font-size="9">q</tspan></text><text class="c" x="322" y="166">I<tspan dy="3" font-size="9">K</tspan></text>
-<text class="k" x="294" y="92">STEIGUNG −Rᵢ</text>
+<text class="k" x="294" y="92">STEIGUNG −R<tspan dy="3" font-size="9">i</tspan></text>
 <text class="k" x="236" y="46">LEERLAUF</text><text class="k" x="300" y="142" text-anchor="end">KURZSCHLUSS</text>
 </svg><figcaption>Bild 2: links die gesuchte Ersatzspannungsquelle, rechts ihre Kennlinie. Leerlauf und Kurzschluss sind die beiden Endpunkte der Geraden.</figcaption></figure>
 

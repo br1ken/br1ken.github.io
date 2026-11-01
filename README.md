@@ -278,3 +278,7 @@ Ein Elektroniklabor auf TU-Niveau, gedacht zum Vorbereiten von Laborübungen und
 - Bio „Hinter dem Signal.“ mit Datenblatt; Name Brick.
 - Schrift: MesloLGS Nerd Font für Text und Überschriften.
 - Korrekturen: Formeln in Lexikon-Texten, Formelkästen, Brücken-Seitenleiste, echte Tiefstellungen statt R_L.
+
+**Durchsicht (1. November)**
+- Alle Seiten headless geprüft (hell/dunkel, Desktop/Handy): keine Skriptfehler, keine toten Links, keine Formelfehler; alle 21 Notizen und 88 Lexikon-Einträge nachgerechnet, ohne Befund.
+- Behoben: Play-Leiste des Labors lief auf Handys über den rechten Rand (Aufnehmen rutscht jetzt bei Bedarf in eine zweite Zeile); Lautschrift-Hochstellungen (fᶜ, uᴸ) durch echte Indizes ersetzt; Symbole, die Meslo nicht kennt (∿ ⊣⊢ ⏚ ⎓ …), bekommen feste Ausweichschriften; Kicker-Zeile der Karten lesbarer; Binaural-Bereich im Lexikon wie im Labor (0,5 bis 40 Hz, Delta bis Gamma).

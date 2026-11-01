@@ -37,7 +37,7 @@
       story: 'Filter dem Sägezahn die Schärfe weg.',
       goals: [['Der Ton läuft', c => c.playing], ['Ein Tiefpass (C) ist im Signalweg', c => c.of('capacitor').length > 0], ['Grenzfrequenz unter 300 Hz', c => c.of('capacitor').some(n => lab.rcCutoff(n) < 300)]],
       hint: 'Zweimal ×2 bei der Kapazität C. Jedes Verdoppeln halbiert die Grenzfrequenz.',
-      why: 'Beim RC-Tiefpass gilt fᶜ = 1 / (2πRC). Größeres C, kleinere Grenzfrequenz: Alles darüber wird leiser, der Klang dumpf — wie Musik aus dem Nebenzimmer, denn Wände schlucken vor allem die Höhen.',
+      why: 'Beim RC-Tiefpass gilt f<sub>c</sub> = 1 / (2πRC). Größeres C, kleinere Grenzfrequenz: Alles darüber wird leiser, der Klang dumpf — wie Musik aus dem Nebenzimmer, denn Wände schlucken vor allem die Höhen.',
       setup: [{type: 'seq', p: {grid: [1, 0, 8, 4, 2, 0, 4, 0], tempo: 84, scale: 'moll'}}, {type: 'osc', p: {frequency: 220, wave: 'sawtooth'}, control: 0}, {type: 'capacitor', p: {c: 22, r: 10}}]},
     {id: 'puls', lex: 'tremolo', title: 'Puls fühlen', badge: 'takt',
       story: 'Lass den Ton zweimal pro Sekunde pulsieren.',

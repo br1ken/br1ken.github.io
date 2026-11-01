@@ -1428,7 +1428,7 @@ function download(name, data, type = 'text/plain') {
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
 const csvNum = v => typeof v === 'number' && Number.isFinite(v) ? String(Number(v.toPrecision(7))).replace('.', ',') : '';
-const csv = rows => '﻿' + rows.map(r => r.join(';')).join('\r\n') + '\r\n';
+const csv = rows => '\ufeff' + rows.map(r => r.join(';')).join('\r\n') + '\r\n'; // mit BOM, damit Excel UTF-8 erkennt
 function scopeCsv() {
   if (!acq.have) { hint('Noch keine Aufnahme auf dem Schirm.'); return; }
   const used = [0, 1, 2].filter(traceOn), names = ['CH1', 'CH2', `Math ${MATH_NAME[state.osz.math] || ''}`.trim()];

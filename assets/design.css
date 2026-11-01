@@ -61,7 +61,7 @@ a.card:hover, .card:has(.card-link:hover) { background: var(--card); box-shadow:
 .card-cover { aspect-ratio: 16 / 9; border-bottom: 1px solid var(--ink); background: #0a0a14; }
 .card-art { border: 0; background: var(--accent); color: #0a0a14; font-weight: 700; }
 .card-art[data-art="theorie"] { background: #efece2; color: #0a0a14; }
-.card-kicker { font-size: 9.5px; }
+.card-kicker { font-size: 10.5px; }
 
 /* Titelbilder: XY-Oszillogramm, immer auf dunklem Schirm */
 .cover .cv-bg { fill: #0a0a14; }

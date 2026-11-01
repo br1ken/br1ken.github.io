@@ -15,7 +15,8 @@
   --backdrop: rgba(10, 10, 20, .4); --chrome-a: #efece2; --chrome-b: #efece2; --chrome-c: #efece2; --glow: transparent;
   --scope-grid: #c9c5b6; --scope-trace: #0a0a14; --ok: #0f6b3f; --warn: #b4260a;
   --volt: #d9330a; --amp: #1a12ff; --amp-fill: #1a12ff;
-  --mono: 'Meslo', 'MesloLGS Nerd Font', ui-monospace, Menlo, Consolas, monospace;
+  /* Nach der Monospace-Kette folgen Symbolschriften: Zeichen, die Meslo nicht hat (∿ ⊣⊢ ⊓ ⊿ ⋀ ∾ ⏚ ⎓ ⟳ ⌗), kommen so auf jedem System aus einer bekannten Schrift */
+  --mono: 'Meslo', 'MesloLGS Nerd Font', ui-monospace, Menlo, Consolas, monospace, 'Apple Symbols', 'Segoe UI Symbol', 'Noto Sans Symbols', 'Noto Sans Symbols 2', 'Noto Sans Math';
   --sans: var(--mono);
   --gutter: 34px;
   --max: 1248px;

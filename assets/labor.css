@@ -594,10 +594,16 @@ select { width: 100%; min-height: 40px; font: inherit; font-size: 12px; padding:
 
 /* ---------- Aufnehmen ---------- */
 #record { min-width: 128px; font-size: 12px; white-space: nowrap; }
+#record .rec-short { display: none; }
 .is-recording #record { background: var(--accent); color: var(--accent-ink); border-color: var(--ink); animation: blink 1.2s ease-in-out infinite; }
 @media (max-width: 760px) {
-  .transport { display: flex; gap: 8px; }
-  #audio-toggle { flex: 1; width: auto; }
-  #record { min-width: 0; padding: 0 10px; font-size: 12px; }
+  /* Die Leiste ist ein Grid: minmax(0, 1fr) erlaubt der Transport-Spalte, schmaler als ihr Inhalt zu werden;
+     auf sehr schmalen Bildschirmen rutscht der Aufnahme-Knopf in eine zweite Zeile statt über den Rand. */
+  .computer-bar { grid-template-columns: minmax(0, 1fr) 104px; }
+  .transport { display: flex; flex-wrap: wrap; gap: 8px; }
+  #audio-toggle { flex: 3 1 150px; width: auto; min-width: 0; }
+  #record { flex: 1 1 auto; min-width: 0; padding: 0 10px; font-size: 12px; }
+  #record .rec-long { display: none; }
+  #record .rec-short { display: inline; }
 }
 @media (max-width: 560px) { .palette button { flex: 1 0 30%; } }

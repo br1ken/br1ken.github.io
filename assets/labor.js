@@ -32,7 +32,7 @@ const DEFINITIONS = {
   capacitor: {
     lex: 'tiefpass', title: 'Kondensator', symbol: 'C', kind: 'RC / Tiefpass', unit: 'C / Kapazität / Farad [F] · 1 nF = 10⁻⁹ F', plain: 'Macht dumpfer: Höhen raus, Bass bleibt.', mod: {label: 'Grenzfrequenz'},
     text: 'Ein Kondensator speichert Energie im elektrischen Feld. Seine Spannung kann bei endlichem Strom nicht sprunghaft wechseln. Hier liegt C nach einem Serienwiderstand gegen Masse: ein RC-Tiefpass.',
-    formula: 'Q = C · U   /   fᶜ = 1 / (2πRC)', detail: p => `${number(p.c)} nF · ${number(p.r)} kΩ`,
+    formula: 'Q = C · U   /   f<sub>c</sub> = 1 / (2πRC)', detail: p => `${number(p.c)} nF · ${number(p.r)} kΩ`,
     result: p => `Grenzfrequenz: ${hz(LabModels.rcCutoff(p.r * 1000, p.c * 1e-9))}. Zeitkonstante τ: ${number(p.r * p.c / 1000)} ms.`,
     nudge: 'Erhöhe C von 22 auf 100 nF. Die Grenzfrequenz sinkt; der Sägezahn verliert Höhen. Doppeltes C bedeutet bei gleichem R die halbe Grenzfrequenz.',
     params: {c: {label: 'Kapazität C', unit: 'nF', min: 1, max: 2200, initial: 22, log: true}, r: {label: 'Serienwiderstand R', unit: 'kΩ', min: 1, max: 100, initial: 10, log: true}}
@@ -40,7 +40,7 @@ const DEFINITIONS = {
   inductor: {
     lex: 'filter', title: 'Spule', symbol: 'L', kind: 'RL / Tiefpass', unit: 'L / Induktivität / Henry [H] · 1 mH = 10⁻³ H', plain: 'Macht dumpfer, auf die Spulen-Art.', mod: {label: 'Grenzfrequenz'},
     text: 'Eine Spule speichert Energie im magnetischen Feld und wirkt Stromänderungen entgegen. In diesem Modell liegt L in Serie und R gegen Masse. Die Ausgangsspannung wird über R gemessen.',
-    formula: 'uᴸ = L · di/dt   /   fᶜ = R / (2πL)', detail: p => `${number(p.l)} mH · ${number(p.r)} Ω`,
+    formula: 'u<sub>L</sub> = L · di/dt   /   f<sub>c</sub> = R / (2πL)', detail: p => `${number(p.l)} mH · ${number(p.r)} Ω`,
     result: p => `Grenzfrequenz: ${hz(LabModels.rlCutoff(p.r, p.l / 1000))}. Zeitkonstante τ: ${number(p.l / p.r)} ms.`,
     nudge: 'Erhöhe L. Die Grenzfrequenz dieses RL-Tiefpasses sinkt. Erhöhe danach R: Hier steigt die Grenzfrequenz — anders als beim RC-Tiefpass.',
     params: {l: {label: 'Induktivität L', unit: 'mH', min: 10, max: 1000, initial: 100, log: true}, r: {label: 'Lastwiderstand R', unit: 'Ω', min: 10, max: 2000, initial: 100, log: true}}
@@ -64,7 +64,7 @@ const DEFINITIONS = {
   highpass: {
     lex: 'hochpass', title: 'Hochpass', symbol: 'CR', kind: 'CR / Hochpass', unit: 'C / Kapazität [nF] · R / Widerstand [kΩ]', plain: 'Macht dünner: Bass raus, Höhen bleiben.', mod: {label: 'Grenzfrequenz'},
     text: 'Gleiche Bauteile wie beim Tiefpass, nur vertauscht: Der Kondensator sitzt in Serie, der Widerstand gegen Masse. Für tiefe Frequenzen ist C ein großer Widerstand und sperrt — durch kommen nur die Höhen.',
-    formula: 'fᶜ = 1 / (2πRC)   /   |H| = 1 / √(1 + (fᶜ/f)²)', detail: p => `${number(p.c)} nF · ${number(p.r)} kΩ`,
+    formula: 'f<sub>c</sub> = 1 / (2πRC)   /   |H| = 1 / √(1 + (f<sub>c</sub>/f)²)', detail: p => `${number(p.c)} nF · ${number(p.r)} kΩ`,
     result: p => `Grenzfrequenz: ${hz(LabModels.rcCutoff(p.r * 1000, p.c * 1e-9))}. Darunter wird es leiser, weit darüber kommt fast alles durch.`,
     nudge: 'Mach C kleiner: Die Grenzfrequenz steigt, der Klang wird dünner und blechern — wie aus einem alten Telefon.',
     params: {c: {label: 'Kapazität C', unit: 'nF', min: 1, max: 2200, initial: 47, log: true}, r: {label: 'Widerstand R', unit: 'kΩ', min: 1, max: 100, initial: 10, log: true}}
@@ -105,7 +105,7 @@ const DEFINITIONS = {
   chord: {
     lex: 'akkord', title: 'Akkord', symbol: '≡', kind: 'Mehrstimmige Quelle', unit: 'f / Grundton [Hz] · Verstimmung [Cent]', plain: 'Mehrere Töne auf einmal, leicht gegeneinander verstimmt — breit wie ein Synthesizer-Pad.', mod: {label: 'Tonhöhe (Vibrato)'},
     text: 'Drei Oszillatoren spielen die Töne eines Akkords, jeder gleich doppelt und um ein paar Cent gegeneinander verstimmt (100 Cent = ein Halbton). Die fast gleichen Frequenzen schweben langsam gegeneinander — das macht den Klang breit und lebendig. Ein Sequencer kann den ganzen Akkord spielen: Dann wandert er mit der Melodie.',
-    formula: 'fᵢ = f · 2^(nᵢ/12) · 2^(±Cent/1200)', detail: p => `${number(p.frequency)} Hz · ${CHORDS[p.chord].label} · ${waveNames[p.wave]}`,
+    formula: 'f<sub>i</sub> = f · 2^(n<sub>i</sub>/12) · 2^(±Cent/1200)', detail: p => `${number(p.frequency)} Hz · ${CHORDS[p.chord].label} · ${waveNames[p.wave]}`,
     result: p => `Töne ${CHORDS[p.chord].iv.map(iv => noteName(p.frequency * 2 ** (iv / 12))).join(' · ')}. Verstimmung ±${number(p.detune)} Cent → Schwebung etwa ${number(p.frequency * (2 ** (p.detune / 1200) - 1) * 2)} Hz.`,
     nudge: 'Sägezahn, Moll, 12 Cent — und dahinter ein Tiefpass mit LFO. Das ist der Grundstoff für Drones.',
     params: {frequency: {label: 'Grundton', unit: 'Hz', min: 55, max: 880, initial: 110, log: true}, detune: {label: 'Verstimmung', unit: 'Cent', min: 0, max: 30, initial: 8, log: false}},
@@ -361,13 +361,13 @@ function quickSwitches(n) {
 function nodeResult(n) {
   if (n.type === 'noise' || n.type === 'binaural' || n.type === 'reverb' || n.type === 'pan' || n.type === 'lfo') return DEFINITIONS[n.type].result(n.p);
   if (n.type === 'chord') return `${CHORDS[n.p.chord].iv.map(iv => noteName(n.p.frequency * 2 ** (iv / 12))).join(' · ')}`;
-  if (n.type === 'capacitor') return `fᶜ ${hz(LabModels.rcCutoff(n.p.r * 1000, n.p.c * 1e-9))}`;
-  if (n.type === 'inductor') return `fᶜ ${hz(LabModels.rlCutoff(n.p.r, n.p.l / 1000))}`;
+  if (n.type === 'capacitor') return `Grenzfrequenz ${hz(LabModels.rcCutoff(n.p.r * 1000, n.p.c * 1e-9))}`;
+  if (n.type === 'inductor') return `Grenzfrequenz ${hz(LabModels.rlCutoff(n.p.r, n.p.l / 1000))}`;
   if (n.type === 'resistor') return `Spannungsfaktor ${number(LabModels.divider(n.p.r * 1000, 10000))}`;
   if (n.type === 'osc') return 'Signalquelle / periodisch';
   if (n.type === 'seq') return `${SCALES[n.p.scale].label}-Pentatonik · ${OCTAVES.find(o => o[0] === n.p.octave)[1]}`;
   if (n.type === 'tremolo') return 'Lautstärke in Bewegung';
-  if (n.type === 'highpass') return `fᶜ ${hz(LabModels.rcCutoff(n.p.r * 1000, n.p.c * 1e-9))}`;
+  if (n.type === 'highpass') return `Grenzfrequenz ${hz(LabModels.rcCutoff(n.p.r * 1000, n.p.c * 1e-9))}`;
   if (n.type === 'delay') return `${Math.round(n.p.mix)} % Echo`;
   if (n.type === 'distortion') return n.p.drive < 3 ? 'fast sauber' : n.p.drive < 15 ? 'angezerrt' : 'kräftig verzerrt';
   return audibleSources().length ? 'Hier kommt Signal an' : 'Noch still — verbinde eine Quelle';
@@ -1310,7 +1310,7 @@ function toggleRecord() {
   recorder.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
   recorder.onstop = () => {
     const blob = new Blob(chunks, {type: recorder.mimeType || mime}); recorder = null; clearInterval(recTimer);
-    button.textContent = '● Aufnehmen'; button.setAttribute('aria-pressed', 'false'); labEl.classList.remove('is-recording');
+    button.innerHTML = '● <span class="rec-long">Aufnehmen</span><span class="rec-short">Rec</span>'; button.setAttribute('aria-pressed', 'false'); labEl.classList.remove('is-recording');
     const ext = blob.type.includes('mp4') ? 'm4a' : blob.type.includes('ogg') ? 'ogg' : 'webm';
     const url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = `osci-log-klangbild.${ext}`; document.body.append(a); a.click(); a.remove();
@@ -1477,12 +1477,12 @@ window.addEventListener('pagehide', () => { save(); if (audio) stopAudio(); });
 
 /* ---------- Eine Wiederholungsfrage pro Besuch ---------- */
 const LESSONS = [
-  {question: 'Du verdoppelst C im RC-Tiefpass. Was passiert mit der Grenzfrequenz?', answers: ['Sie halbiert sich.', 'Sie verdoppelt sich.', 'Sie bleibt gleich.'], correct: 0, why: 'fᶜ = 1 / (2πRC). C steht im Nenner. Bei gleichem R bedeutet doppeltes C die halbe Grenzfrequenz — und weniger Höhen im Klang.'},
+  {question: 'Du verdoppelst C im RC-Tiefpass. Was passiert mit der Grenzfrequenz?', answers: ['Sie halbiert sich.', 'Sie verdoppelt sich.', 'Sie bleibt gleich.'], correct: 0, why: 'f<sub>c</sub> = 1 / (2πRC). C steht im Nenner. Bei gleichem R bedeutet doppeltes C die halbe Grenzfrequenz — und weniger Höhen im Klang.'},
   {question: 'Welche Größe wird in Henry gemessen?', answers: ['Kapazität', 'Induktivität', 'Widerstand'], correct: 1, why: 'Henry [H] ist die Einheit der Induktivität L. Eine Spule speichert Energie im magnetischen Feld. Kapazität misst du in Farad, Widerstand in Ohm.'},
   {question: '220 Hz werden zu 440 Hz. Was hörst du?', answers: ['Eine Oktave höher.', 'Doppelte Lautstärke.', 'Eine Oktave tiefer.'], correct: 0, why: 'Die Frequenz verdoppelt sich. Das entspricht einer Oktave nach oben. Die Lautstärke wird durch diese Frequenzänderung nicht festgelegt.'},
   {question: 'Zwei gleiche Widerstände teilen eine Spannung. Wie groß ist Uaus über dem unteren Widerstand, ohne weitere Last?', answers: ['Uein', 'Ein Viertel von Uein', 'Die Hälfte von Uein'], correct: 2, why: 'Uaus = Uein · R₂ / (R₁ + R₂). Bei R₁ = R₂ ergibt das 1/2. Im Widerstandsmodul ist R₂ der feste Lastwiderstand von 10 kΩ.'},
   {question: 'Was bleibt beim Tremolo an der Quelle gleich?', answers: ['Ihre Lautstärke.', 'Ihre Tonhöhe.', 'Beides.'], correct: 1, why: 'Beim Tremolo verändert ein langsamer Oszillator die Lautstärke. Die eingestellte Frequenz der Tonquelle bleibt gleich. Eine veränderliche Tonhöhe wäre Vibrato.'},
-  {question: 'Du verdoppelst L im RL-Tiefpass. R bleibt gleich. Was passiert mit fᶜ?', answers: ['Sie verdoppelt sich.', 'Sie bleibt gleich.', 'Sie halbiert sich.'], correct: 2, why: 'Beim RL-Tiefpass mit Ausgang über R gilt fᶜ = R / (2πL). Größeres L senkt die Grenzfrequenz. Größeres R hebt sie hier an.'},
+  {question: 'Du verdoppelst L im RL-Tiefpass. R bleibt gleich. Was passiert mit f<sub>c</sub>?', answers: ['Sie verdoppelt sich.', 'Sie bleibt gleich.', 'Sie halbiert sich.'], correct: 2, why: 'Beim RL-Tiefpass mit Ausgang über R gilt f<sub>c</sub> = R / (2πL). Größeres L senkt die Grenzfrequenz. Größeres R hebt sie hier an.'},
   {question: 'Zwei Sinustöne mit 220 Hz und 223 Hz klingen zusammen. Was hörst du?', answers: ['Einen Ton mit 443 Hz.', 'Ein Pulsieren, dreimal pro Sekunde.', 'Zwei klar getrennte Töne.'], correct: 1, why: 'Liegen zwei Frequenzen dicht beieinander, verstärken und schwächen sie sich abwechselnd: eine Schwebung mit |f₁ − f₂| = 3 Hz. Probier es mit dem Starter-Patch „Schwebung“.'}
 ];
 let lessonIndex = 0;
@@ -1504,7 +1504,7 @@ $('lesson').addEventListener('click', event => {
       button.classList.toggle('right', i === lesson.correct && (correct || button !== answer));
       button.classList.toggle('wrong', button === answer && !correct);
     });
-    $('lesson-feedback').textContent = (correct ? 'Genau. ' : 'Nicht ganz — die richtige Antwort ist markiert. ') + lesson.why;
+    $('lesson-feedback').innerHTML = (correct ? 'Genau. ' : 'Nicht ganz — die richtige Antwort ist markiert. ') + lesson.why;
   }
   if (event.target.closest('#next-lesson')) {
     lessonIndex = (lessonIndex + 1) % LESSONS.length; renderLesson();
