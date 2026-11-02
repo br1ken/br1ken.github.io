@@ -18,6 +18,7 @@ const OSCI = (() => {
   const NAV = [
     {id: 'labor', href: 'labor/', title: 'Labor', text: 'Missionen, Sequencer, Kabel stecken.'},
     {id: 'messplatz', href: 'messplatz/', title: 'Messplatz', text: 'Oszi, Generator, Multimeter: Schaltungen messen.'},
+    {id: 'audiolabor', href: 'audiolabor/', title: 'Audiolabor', text: 'Schaltungen entwerfen, messen und hören.'},
     {id: 'notizen', href: 'notizen/', title: 'Notizen', text: 'Gelerntes aus dem E-Technik-Studium.'},
     {id: 'projekte', href: 'projekte/', title: 'Projekte', text: 'Simulationen, Schaltungen, Code.'},
     {id: 'about', href: '#about', title: 'Über mich', text: 'Wer hinter osci//log steckt.'}
@@ -56,6 +57,32 @@ const OSCI = (() => {
     try { localStorage.setItem('osci-log-theme', theme); } catch { /* egal */ }
     syncThemeColor();
     dispatchEvent(new CustomEvent('osci-theme'));
+  }
+
+  /* Einmal je Tab-Sitzung, bevor irgendein Hörweg freigegeben wird. */
+  let audioBestaetigt = false, audioFrage = null;
+  function audioFreigabe() {
+    try { audioBestaetigt ||= sessionStorage.getItem('osci-audio-hinweis-v1') === 'ja'; } catch { /* ohne Speicher gilt die Freigabe für diese Seite */ }
+    if (audioBestaetigt) return Promise.resolve(true);
+    if (audioFrage) return audioFrage;
+    audioFrage = new Promise(resolve => {
+      const vorher = document.activeElement;
+      const dialog = document.createElement('dialog');
+      dialog.className = 'audio-warnung';
+      dialog.setAttribute('aria-labelledby', 'audio-warnung-titel');
+      dialog.setAttribute('aria-describedby', 'audio-warnung-text');
+      dialog.innerHTML = `<form method="dialog"><span class="eyebrow">Vor dem ersten Ton</span><h2 id="audio-warnung-titel">Vorsicht: Das kann laut werden.</h2><div id="audio-warnung-text"><p>Plötzliche Pegelsprünge, hohe Töne und Rückkopplungen können dein Gehör und deine Lautsprecher schädigen.</p><p><strong>Dreh die Lautstärke am Gerät, Verstärker oder Kopfhörer zuerst ganz herunter.</strong> Starte leise und erhöhe sie langsam. Setze Kopfhörer erst auf, wenn du den Pegel geprüft hast.</p><p>Der Software-Begrenzer ist keine Garantie für einen sicheren Schallpegel. Auch eine leise Reglereinstellung kann an deinem Gerät laut sein.</p></div><div class="audio-warnung-aktionen"><button class="button" value="nein" autofocus>Ohne Ton bleiben</button><button class="button primary" value="ja">Lautstärke reduziert – Ton freigeben</button></div><small>Gilt für diese Tab-Sitzung. Die Gerätelautstärke wird hierdurch nicht verändert.</small></form>`;
+      dialog.addEventListener('close', () => {
+        audioBestaetigt = dialog.returnValue === 'ja';
+        if (audioBestaetigt) try { sessionStorage.setItem('osci-audio-hinweis-v1', 'ja'); } catch { /* optional */ }
+        dialog.remove();
+        if (vorher?.isConnected) vorher.focus();
+        resolve(audioBestaetigt);
+      }, {once: true});
+      document.body.append(dialog);
+      dialog.showModal();
+    }).finally(() => { audioFrage = null; });
+    return audioFrage;
   }
   darkQuery.addEventListener('change', () => { syncThemeColor(); dispatchEvent(new CustomEvent('osci-theme')); });
 
@@ -220,7 +247,7 @@ const OSCI = (() => {
   if (location.hash === '#neuigkeiten') newsOeffnen();
   else (window.requestIdleCallback || (f => setTimeout(f, 600)))(() => neuigkeiten().then(() => OSCINeuigkeiten.start()).catch(() => {}));
   return {
-    url, escape, cover, date, frontMatter, notizenLaden, notizKarte, projektKarte, loadKatex, lexikon, isDark, ARTEN,
+    url, escape, cover, date, frontMatter, notizenLaden, notizKarte, projektKarte, loadKatex, lexikon, isDark, audioFreigabe, ARTEN,
     projekte: () => store.projekte.slice(),
     notizenSlugs: () => store.notizen.slice(),
     /* Wird von notizen/beitraege.js und projekte/projekte.js aufgerufen. */

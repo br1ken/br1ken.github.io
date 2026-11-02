@@ -28,6 +28,7 @@ Bewusst minimal: **plain HTML, CSS und JavaScript, ohne Framework und ohne Build
 | Startseite | `index.html` | Hero, Labor-Teaser, neueste Notizen und Projekte, „Hinter dem Signal.“ (Bio mit Datenblatt) |
 | Crashtest-Labor | `labor/` | Lab 0: Klangbilder zum Reinhören (Regen, Meer, Wind, Fokus, Tiefschlaf, Drone, Glockenspiel, Techno-Keller, Überrasch mich), 16 Bausteine inklusive Rauschen, Binaural, Akkord, LFO, Hall und Panorama, Missionen, Sequencer, Pult mit baumelnden Kabeln, Aufnehmen als Datei |
 | Messplatz | `messplatz/` | Lab 1: Steckbrett mit Funktionsgenerator, Oszilloskop, zwei Multimetern und Netzgerät, Bode-Diagramm, Arbeitspunkt, Messreihe, eigener Schaltungssimulator, 16 Versuche |
+| Audiolabor | `audiolabor/` | Lab 2: freie Schaltungen in Schaltplan und Steckbrett, ngspice im Browser, eigener Live-Löser, Faust-Module, Multimeter am Zeiger, 19 Versuche. `audiolabor/pruefstand.html` rechnet alles nach |
 | Notizen | `notizen/` | Blog für Gelerntes aus dem Studium, mit Suche und Themenfilter |
 | Eine Notiz | `notizen/beitrag.html?b=name` | wird aus `notizen/texte/name.md` erzeugt |
 | Schreibstube | `notizen/schreiben.html` | Editor mit Live-Vorschau für neue Notizen (nicht verlinkt) |
@@ -42,13 +43,16 @@ Bewusst minimal: **plain HTML, CSS und JavaScript, ohne Framework und ohne Build
 - Notizen, Theorie: *Von Newton bis Ohm* · *Widerstandsnetzwerke* · *Die Kirchhoffschen Gesetze* · *Stern-Dreieck-Umwandlung* · *Strom in Flüssigkeiten* · *Mittelwert, Gleichrichtwert, Effektivwert*
 - Notizen, Audiotechnik: *Vom Sinus zum Sound*, ein Kurs in fünf Teilen (19 Abschnitte, 58 Checkpoints, 26 getestete Python-Programme, drei Projekte; `werkzeug.py` in `notizen/dateien/`)
 - Notizen, Sonstiges: *Hallo, Labor.*
-- Projekte: Messplatz · RC-Filter-Explorer · Crashtest-Labor
+- Projekte: Audiolabor · Messplatz · RC-Filter-Explorer · Crashtest-Labor
 - Simulationen zum Einbetten: `rc`, `welle`, `teiler`, `bruecke`, `ueberlagerung`, `ersatzquelle`, `klang` und `abtastung` (die letzten beiden zum Anhören, siehe SCHREIBEN.md)
 
 ```
 index.html              Startseite mit Labor-Teaser und Bio
 labor/index.html        Crashtest-Labor (Lab 0)
 messplatz/index.html    Messplatz (Lab 1)
+audiolabor/index.html   Audiolabor (Lab 2)
+audiolabor/pruefstand.html  Abnahme des Audiolabors im Browser
+audiolabor/STAND.md     Stand, Messwerte, Modelle, Quellen und Lizenzen des Audiolabors
 404.html                Seite für falsche Links
 favicon.svg             Logo (Signal formt ein N)
 neuigkeiten.js          Neuerungen an der Seite für das Neuigkeiten-Fenster (neue Notizen kommen von selbst)
@@ -73,6 +77,10 @@ assets/
   missionen.js          Missionen, XP, Stufen, Abzeichen
   schaltung.js          Schaltungssimulator (Knotenanalyse wie SPICE), ohne Oberfläche
   messplatz.css / .js   Messplatz: Steckbrett, Kabel, Geräte, Analyse, Versuche
+  audiolabor.css        Audiolabor: Oberfläche
+  audiolabor/           Audiolabor: Editor, Steckbrett, Router, Netze, Netlist, Live-Löser, Geräte, Versuche, Prüfstand
+  vendor/eecircuit-engine/  ngspice als WebAssembly
+  vendor/faustwasm/     Faust-Compiler als WebAssembly
   models.js             Formeln des Labors, Patch-Links
   start.js              Startseite: neueste Notizen und Projekte, alte Patch-Links ins Labor
   markdown.js           Markdown → HTML für Notizen
@@ -212,6 +220,21 @@ Die Brücken-Simulation (`bruecke`) rechnet dagegen exakt über die Ersatzspannu
 - [Kondensator / MathWorks](https://www.mathworks.com/help/simscape/ref/capacitor.html)
 - [Spule / MathWorks](https://www.mathworks.com/help/simscape/ref/inductor.html)
 - [Passive components and circuits / TI Precision Labs](https://www.ti.com/content/dam/videos/external-videos/en-us/4/3816841626001/6119035031001.mp4/subassets/passive_components_and_circuits_2.pdf)
+
+## Tonfreigabe
+
+Vor dem ersten Ton erscheint ein Warnfenster für Gehör und Lautsprecher. Audiolabor, Prüfstand, Crashtest und Hörsimulationen verwenden gemeinsam `OSCI.audioFreigabe()`. Abbrechen lässt den Ton aus; eine Bestätigung gilt für die Tab-Sitzung. Die Gerätelautstärke wird nicht verändert. Neue Audiolabor-Projekte beginnen bei 15 Prozent Monitorlautstärke.
+
+## Das Audiolabor (`audiolabor/`)
+
+Eine Schaltung, zwei Rechenwege. Was gezeichnet, gemessen oder gehört wird, entsteht aus demselben Projekt über `assets/audiolabor/netz.js`.
+
+- **Berechnen und anhören:** ngspice 45.2 über eecircuit-engine 1.9.0 in einem Worker. Der Hörpunkt wird auf die Ausgabe-Abtastrate gebracht und fest mit 10 V = 1,0 skaliert.
+- **Live spielen:** Eigener Löser auf dem Audio-Thread (`live-plan.js`, `live-kern.js`, `live-worklet.js`): Knotenanalyse, Trapezregel, Nodal-DK, Newton mit begrenzter Iterationszahl. Änderungen übernehmen die Zustände der Kondensatoren und Spulen.
+- **Stecken:** Schaltplan (`editor.js`, `router.js`) und Steckbrett (`steckbrett.js`) arbeiten an derselben Schaltung; `umbau.js` hält beide auf denselben Netzen.
+- **Lernen:** Versuche mit abhakbaren Schritten (`versuche.js`), Bauteilkarten, Zeile „Wirkung“ und Multimeter am Zeiger (`lehre.js`).
+- **Digitale Module:** FaustWasm 0.19.6 im selben Audiokontext (`faustmodule.js`, `digital.js`).
+- **Prüfstand:** `audiolabor/pruefstand.html` rechnet Stecken, Abnahme, Versuche, Pegel, Live gegen ngspice und das Rechenbudget im Browser nach. Stand, Messwerte, Modelle und Lizenzen stehen in `audiolabor/STAND.md`.
 
 ## Der Messplatz (`messplatz/`)
 

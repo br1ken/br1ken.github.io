@@ -1,0 +1,1623 @@
+{
+  "datum": "2026-11-02T20:55:49.718Z",
+  "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+  "ergebnisse": [
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Vom Pin auf einen Pin ziehen",
+      "erwartet": "R9.1 hängt am Netz von C1.1",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Vom Pin auf einen Draht ziehen",
+      "erwartet": "R9.2 liegt auf Masse",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Ins Leere ziehen",
+      "erwartet": "kein neuer Draht, eine Meldung",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Aus einem Draht herausziehen",
+      "erwartet": "Abzweig: R9.1 liegt auf Masse",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Pin antippen, Ziel antippen",
+      "erwartet": "R9.1 hängt am Netz von C1.1",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Drahtende am Griff umstecken",
+      "erwartet": "C1.1 liegt am Eingang",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Griff ins Leere: Abziehen",
+      "erwartet": "C1.2 ist frei, Generator und Masse bleiben verbunden",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Kondensator verschieben",
+      "erwartet": "alle Verbindungen unverändert, auch der Massepunkt auf dem Draht",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Drehen mit R",
+      "erwartet": "alle Verbindungen unverändert",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Spiegeln mit M",
+      "erwartet": "alle Verbindungen unverändert",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Pfeiltaste",
+      "erwartet": "alle Verbindungen unverändert",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Sonde auf ein anderes Netz ziehen",
+      "erwartet": "CH1 misst jetzt dort, sonst bleibt alles",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Sonde auf freie Fläche ziehen",
+      "erwartet": "bleibt über einen Draht am alten Netz",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Angeschlossenen Pin auf fremdes Netz",
+      "erwartet": "bleibt ohne Kurzschluss, die Netze stimmen",
+      "gemessen": "abgelehnt oder umgelegt",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Widerstand auf einen Draht fallen lassen",
+      "erwartet": "wird in Reihe eingeschleift",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Rückgängig",
+      "erwartet": "derselbe Stand wie vorher",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Drahtstück verschieben",
+      "erwartet": "der Draht verläuft anders, die Netze bleiben gleich",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Drahtstück auf ein fremdes Netz",
+      "erwartet": "abgelehnt, alles wie vorher",
+      "gemessen": "Dort würde der Draht ein anderes Netz berühren. Er bleibt, wo er war.",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Massezeichen auf der Verzweigung löschen",
+      "erwartet": "die Drähte daran bleiben verbunden",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "184 zufällige Züge in 19 Versuchen",
+      "erwartet": "die Netze ändern sich nie, nichts liegt übereinander",
+      "gemessen": "keine Abweichung",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Spannungsteiler",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "8 Beine, 6 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: LED mit Vorwiderstand",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "4 Beine, 5 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: RC-Tiefpass",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "4 Beine, 7 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: RC-Hochpass",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "4 Beine, 6 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Reihenschwingkreis",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "6 Beine, 6 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Diodenbegrenzer",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "6 Beine, 8 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Einweggleichrichter mit Elko",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "6 Beine, 8 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Transistor als Schalter",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "9 Beine, 10 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Emitterschaltung",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "22 Beine, 17 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Invertierender Verstärker",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "10 Beine, 15 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Sallen-Key-Tiefpass",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "13 Beine, 12 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Schmitt-Trigger-Oszillator",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "18 Beine, 11 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Rechteckgenerator mit OPV",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "13 Beine, 14 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Astabiler Multivibrator",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "18 Beine, 18 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Wien-Brücken-Oszillator",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "23 Beine, 16 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Resonanzfilter",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "16 Beine, 14 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: VCA mit Hüllkurve",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "36 Beine, 30 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Bridged-T-Trommel",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "13 Beine, 13 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Fuzz mit zwei Transistoren",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "25 Beine, 19 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Zwei Finger: Zoom ohne Wandern",
+      "erwartet": "Brettpunkt bleibt unter der Mitte, Wiederholung verschiebt nichts",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Bein auf einen freien Streifen stecken",
+      "erwartet": "C1.1 ist vom Ausgang getrennt, Plan und Brett gleich",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Bein in den Streifen von R1 stecken",
+      "erwartet": "C1.1 liegt wieder am Ausgang",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Kabel von der Buchse CH3 auf den Ausgang",
+      "erwartet": "neue Sonde am Ausgang, sie klemmt ohne eigenen Draht",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Kabelende ins Leere ziehen",
+      "erwartet": "Kabel weg, die Sonde auch",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Widerstand aus der Liste einstecken",
+      "erwartet": "steht um Spalte 31 herum, im Plan ist er auch da",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Teil auf dem Brett versetzen",
+      "erwartet": "beide Beine wandern mit",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Kabel zwischen zwei Streifen",
+      "erwartet": "R2.2 liegt am Ausgang",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Diode auf dem Brett umdrehen (R)",
+      "erwartet": "Anode und Kathode tauschen die Löcher, im Plan auch",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Gewähltes Kabel entfernen",
+      "erwartet": "ein Kabel weniger, Plan und Brett gleich",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "160-mal zufällig umgesteckt",
+      "erwartet": "Plan und Brett bleiben gleich",
+      "gemessen": "keine Abweichung",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "ngspice startet im Worker",
+      "erwartet": "Modul lädt, Banner meldet die Version",
+      "gemessen": "ngspice-45.2, Start in 113 ms",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "Operationspunkt, Frequenzgang, Zeitverlauf",
+      "erwartet": ".op, .ac und .tran liefern Ergebnisse",
+      "gemessen": "alle drei laufen",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "Bipolartransistor (Gummel-Poon)",
+      "erwartet": "vorhanden oder ehrlich fehlend",
+      "gemessen": "vorhanden",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "MOSFET Level 1",
+      "erwartet": "vorhanden oder ehrlich fehlend",
+      "gemessen": "vorhanden",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "Verhaltensquellen (B)",
+      "erwartet": "nötig für CD40106 und Slew Rate",
+      "gemessen": "vorhanden",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "XSPICE-Code-Modelle (A)",
+      "erwartet": "Laut Docker/run.sh abgeschaltet",
+      "gemessen": "bestätigt: „unknown device type“",
+      "ok": true,
+      "notiz": "CD40106 ist deshalb ein Verhaltensmodell, kein Digitalmodell."
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "Nicht lösbare Schaltung",
+      "erwartet": "Meldung statt Hängen oder altem Ergebnis, danach weiter nutzbar",
+      "gemessen": "Fehler gemeldet: Keine Antwort von ngspice nach 15 s; nächster Lauf korrekt",
+      "ok": true,
+      "notiz": "Die Engine lässt beim Scheitern die alte out.raw liegen. spice-worker.js löscht sie, spice.js prüft die Laufnummer im Ergebnis."
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "40 Läufe hintereinander",
+      "erwartet": "stabil, kein Abriss",
+      "gemessen": "alle korrekt, im Mittel 0,4 ms je Lauf",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "FaustWasm lädt",
+      "erwartet": "Compiler im Browser",
+      "gemessen": "Faust 2.90.19, geladen in 57 ms",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "Spannungsteiler, 10 V, zweimal 10 kΩ",
+      "erwartet": "5,000 V",
+      "gemessen": "5,00000 V",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "Dazu 10 kΩ Last",
+      "erwartet": "3,3333 V (5 kΩ / 15 kΩ)",
+      "gemessen": "3,33333 V",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "RC-Tiefpass 10 kΩ, 10 nF: Grenzfrequenz",
+      "erwartet": "1591,55 Hz",
+      "gemessen": "1591,54 Hz (Abweichung −0,000 %)",
+      "ok": true,
+      "notiz": "Ziel laut Briefing: unter 1 %"
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "… Betrag bei 1591,55 Hz",
+      "erwartet": "−3,01 dB",
+      "gemessen": "−3,010 dB",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "… Phase bei 1591,55 Hz",
+      "erwartet": "−45,00°",
+      "gemessen": "−45,000°",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "R auf 20 kΩ: Grenzfrequenz halbiert",
+      "erwartet": "795,77 Hz",
+      "gemessen": "795,77 Hz (Verhältnis 0,50000)",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "Klang: Rechteck 220 Hz, Oberwellen im Hörweg",
+      "erwartet": "Theorie 4A/(πm)·|H(mf)| bei 10 kΩ und 20 kΩ",
+      "gemessen": "m=5: 1,048 → 0,746 V; m=11: 0,318 → 0,181 V; m=21: 0,099 → 0,051 V; größte Abweichung 0,073 %",
+      "ok": true,
+      "notiz": "Der Pegel jeder Oberwelle ändert sich mit R so, wie der Frequenzgang es verlangt."
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "Kondensator an anderen Knoten: Netlist",
+      "erwartet": "tatsächlich andere Netlist",
+      "gemessen": "− C1 aus 0 1e-8  + C1 ein 0 1e-8",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "… und anderes Ergebnis",
+      "erwartet": "kein Tiefpass mehr am Ausgang: flach, keine Grenzfrequenz",
+      "gemessen": "Betrag bei 10 kHz: 0,000 dB statt −16,07 dB; Grenzfrequenz keine",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "Diode umdrehen (1N4148, 5 V Sinus, 10 kΩ)",
+      "erwartet": "Begrenzung wechselt die Seite, Betrag etwa gleich",
+      "gemessen": "vorwärts: −5,000 V bis 568,7 mV; umgedreht: −568,7 mV bis 5,000 V",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "Transistor-Arbeitspunkt über das Poti (10 / 50 / 90 %)",
+      "erwartet": "Ruhestrom sinkt mit der Stellung, Verstärkung und Verzerrung ändern sich",
+      "gemessen": "Ic 1,95 mA, Uc 2,85 V, v = 120, Klirr 23,98 % → Ic 1,40 mA, Uc 5,42 V, v = 169, Klirr 10,30 % → Ic 826 µA, Uc 8,12 V, v = 115, Klirr 13,83 %",
+      "ok": true,
+      "notiz": "Bei 10 % fehlt der Stufe Aussteuerung nach unten: Der Klirr steigt, die Verstärkung fällt wieder."
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "… Kontrolle bei 50 %: v ≈ gm·(RC ∥ RL)",
+      "erwartet": "rund 243 (ideal, ohne Basisbahnwiderstand)",
+      "gemessen": "169",
+      "ok": true,
+      "notiz": "Abweichung nach unten erwartet: re′, Rb, Early-Effekt."
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "Oszillator ohne Audiokabel: CD40106, 100 kΩ, 10 nF",
+      "erwartet": "1201,43 Hz aus Schwellen und RC",
+      "gemessen": "1209,06 Hz über 47 Perioden, Abweichung 0,635 %",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "… bei 5 V statt 12 V Versorgung",
+      "erwartet": "Frequenz fast gleich, Hub folgt der Versorgung",
+      "gemessen": "1210,41 Hz, Hub 4,99 V",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "Astabiler Multivibrator, Start aus Anfangswerten",
+      "erwartet": "um 326,55 Hz, Faustformel 1/(2·ln2·R·C); real etwas darunter durch U_BE",
+      "gemessen": "317,37 Hz über 10 Perioden",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "… ohne Anstoß: Start aus dem symmetrischen Arbeitspunkt",
+      "erwartet": "bleibt stehen oder schwingt nur aus numerischem Rauschen an",
+      "gemessen": "Hub 8,99 V",
+      "ok": null,
+      "notiz": "Genau deshalb steht die Startbedingung sichtbar an C1."
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "Projekt speichern und laden",
+      "erwartet": "gleiche Topologie, Modelle, Parameter und Hörpunkte",
+      "gemessen": "Netlist identisch, Teile und Drähte identisch, Hörpunkt n_r5_1 = n_r5_1, Datei 4,0 kB, 0 Modellhinweise",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Abnahme: Schaltungsverhalten, berechnet mit ngspice",
+      "versuch": "… Inhalt der Datei",
+      "erwartet": "Bauteile mit Modell und Version, Werte mit Einheiten, Netze aus der Geometrie",
+      "gemessen": "R1: {\"R\":{\"wert\":10000,\"einheit\":\"Ω\"}}, Modell {\"name\":\"ideal\",\"art\":\"ideal\",\"version\":\"osci-audiolabor 1\"}",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "Spannungsteiler",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "8 Teile, 6 Drähte, 2 Schritte, 0,31 s für 0,5 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "LED mit Vorwiderstand",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "5 Teile, 4 Drähte, 2 Schritte, 0,31 s für 0,5 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "RC-Tiefpass",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "7 Teile, 4 Drähte, 2 Schritte, 0,33 s für 0,5 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "RC-Hochpass",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "6 Teile, 4 Drähte, 1 Schritte, 0,32 s für 0,5 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "Reihenschwingkreis",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "7 Teile, 5 Drähte, 2 Schritte, 0,35 s für 0,5 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "Diodenbegrenzer",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "8 Teile, 6 Drähte, 3 Schritte, 0,36 s für 0,5 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "Einweggleichrichter mit Elko",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "8 Teile, 6 Drähte, 2 Schritte, 0,28 s für 0,4 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "Transistor als Schalter",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "10 Teile, 5 Drähte, 2 Schritte, 0,22 s für 0,2 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "Emitterschaltung",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "16 Teile, 13 Drähte, 3 Schritte, 0,50 s für 0,5 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "Invertierender Verstärker",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "11 Teile, 8 Drähte, 3 Schritte, 0,45 s für 0,5 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "Sallen-Key-Tiefpass",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "11 Teile, 9 Drähte, 1 Schritte, 0,50 s für 0,5 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "Schmitt-Trigger-Oszillator",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "8 Teile, 7 Drähte, 2 Schritte, 0,91 s für 0,5 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "Rechteckgenerator mit OPV",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "12 Teile, 10 Drähte, 2 Schritte, 1,06 s für 0,5 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "Astabiler Multivibrator",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "13 Teile, 12 Drähte, 2 Schritte, 0,71 s für 0,3 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "Wien-Brücken-Oszillator",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "16 Teile, 18 Drähte, 2 Schritte, 0,54 s für 0,5 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "Resonanzfilter",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "13 Teile, 13 Drähte, 3 Schritte, 0,51 s für 0,5 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "VCA mit Hüllkurve",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "29 Teile, 26 Drähte, 3 Schritte, 0,80 s für 0,6 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "Bridged-T-Trommel",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "12 Teile, 11 Drähte, 2 Schritte, 0,91 s für 1,0 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Alle 19 Versuche",
+      "versuch": "Fuzz mit zwei Transistoren",
+      "erwartet": "alle Pins auf dem Raster, keine Ersatz-Netznamen, keine Fehler, kein Schritt schon erfüllt",
+      "gemessen": "20 Teile, 17 Drähte, 3 Schritte, 0,64 s für 0,5 s",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Arbeitspunkt: ngspice gegen Live-Löser",
+      "versuch": "Spannungsteiler",
+      "erwartet": "größte Abweichung unter 20 mV",
+      "gemessen": "25,0 nV an mitte, 3 Netze",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Arbeitspunkt: ngspice gegen Live-Löser",
+      "versuch": "LED mit Vorwiderstand",
+      "erwartet": "größte Abweichung unter 20 mV",
+      "gemessen": "24,0 µV an n_r1_2, 2 Netze",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Arbeitspunkt: ngspice gegen Live-Löser",
+      "versuch": "RC-Tiefpass",
+      "erwartet": "größte Abweichung unter 20 mV",
+      "gemessen": "50,0 nV an n_r1_2, 2 Netze",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Arbeitspunkt: ngspice gegen Live-Löser",
+      "versuch": "RC-Hochpass",
+      "erwartet": "größte Abweichung unter 20 mV",
+      "gemessen": "0 V, 2 Netze",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Arbeitspunkt: ngspice gegen Live-Löser",
+      "versuch": "Reihenschwingkreis",
+      "erwartet": "größte Abweichung unter 20 mV",
+      "gemessen": "254 pV an n_r1_2, 3 Netze",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Arbeitspunkt: ngspice gegen Live-Löser",
+      "versuch": "Diodenbegrenzer",
+      "erwartet": "größte Abweichung unter 20 mV",
+      "gemessen": "0 V an n_r1_2, 2 Netze",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Arbeitspunkt: ngspice gegen Live-Löser",
+      "versuch": "Einweggleichrichter mit Elko",
+      "erwartet": "größte Abweichung unter 20 mV",
+      "gemessen": "0 V an n_r1_1, 2 Netze",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Arbeitspunkt: ngspice gegen Live-Löser",
+      "versuch": "Transistor als Schalter",
+      "erwartet": "größte Abweichung unter 250 mV",
+      "gemessen": "25,6 mV an n_d1_k, 5 Netze",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Arbeitspunkt: ngspice gegen Live-Löser",
+      "versuch": "Emitterschaltung",
+      "erwartet": "größte Abweichung unter 250 mV",
+      "gemessen": "18,2 mV an n_r3_2, 8 Netze",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Arbeitspunkt: ngspice gegen Live-Löser",
+      "versuch": "Invertierender Verstärker",
+      "erwartet": "größte Abweichung unter 20 mV",
+      "gemessen": "0,999 fV an n_p1_2, 5 Netze",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Arbeitspunkt: ngspice gegen Live-Löser",
+      "versuch": "Sallen-Key-Tiefpass",
+      "erwartet": "größte Abweichung unter 20 mV",
+      "gemessen": "3,01 µV an n_u1_m, 6 Netze",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Arbeitspunkt: ngspice gegen Live-Löser",
+      "versuch": "Resonanzfilter",
+      "erwartet": "größte Abweichung unter 20 mV",
+      "gemessen": "2,08 µV an n_p1_1, 7 Netze",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Arbeitspunkt: ngspice gegen Live-Löser",
+      "versuch": "VCA mit Hüllkurve",
+      "erwartet": "größte Abweichung unter 20 mV",
+      "gemessen": "1,14 mV an n_t1_e, 13 Netze",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Arbeitspunkt: ngspice gegen Live-Löser",
+      "versuch": "Bridged-T-Trommel",
+      "erwartet": "größte Abweichung unter 20 mV",
+      "gemessen": "0,333 fV an n_r2_1, 6 Netze",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Arbeitspunkt: ngspice gegen Live-Löser",
+      "versuch": "Fuzz mit zwei Transistoren",
+      "erwartet": "größte Abweichung unter 250 mV",
+      "gemessen": "32,0 mV an n_r3_2, 9 Netze",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Versuche gegen die Theorie",
+      "versuch": "LED: Strom aus dem Vorwiderstand",
+      "erwartet": "(9 V − U_LED) / 470 Ω",
+      "gemessen": "1,861 V, 15,20 mA",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Versuche gegen die Theorie",
+      "versuch": "Gleichrichter: Brummspannung",
+      "erwartet": "etwa I / (f·C) = 1,70 V; bei 470 µF rund ein Fünftel",
+      "gemessen": "1,50 V; bei 470 µF 349 mV",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Versuche gegen die Theorie",
+      "versuch": "Transistor als Schalter",
+      "erwartet": "gesättigt unter 0,2 V; mit 1 MΩ nicht mehr",
+      "gemessen": "kleinster Wert 59,6 mV; mit 1 MΩ 6,62 V",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Versuche gegen die Theorie",
+      "versuch": "Wien-Brücke: Frequenz und Klirr",
+      "erwartet": "1,5915 kHz, Klirr unter 3 %, stehende Amplitude",
+      "gemessen": "1,5857 kHz, 1,28 %, Hub 16,6 V",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Versuche gegen die Theorie",
+      "versuch": "… mit Verstärkung unter 3",
+      "erwartet": "schwingt nicht an",
+      "gemessen": "Hub 0 V",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Versuche gegen die Theorie",
+      "versuch": "Resonanzfilter bei 60 %: Überhöhung",
+      "erwartet": "Q = 2,0, also 6,3 dB über dem Durchlass",
+      "gemessen": "6,3 dB, Art Tiefpass",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Versuche gegen die Theorie",
+      "versuch": "Resonanzfilter bei 65 %: Überhöhung",
+      "erwartet": "Q = 7,0, also 16,9 dB über dem Durchlass",
+      "gemessen": "16,9 dB, Art Tiefpass",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Versuche gegen die Theorie",
+      "versuch": "Resonanzfilter: Arbeitspunkt bei −1 V am Eingang",
+      "erwartet": "K = 2,5, also −2,5 V am Ausgang",
+      "gemessen": "−2,500 V",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Versuche gegen die Theorie",
+      "versuch": "Resonanzfilter bei 70 %",
+      "erwartet": "schwingt von selbst bei rund 1,5 kHz, bis an den Hub des OPV",
+      "gemessen": "1,503 kHz, Hub 21,0 V",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Versuche gegen die Theorie",
+      "versuch": "Rechteckgenerator: Frequenz",
+      "erwartet": "1 / (2·R·C·ln 3) = 455,1 Hz, mit 200 nF die Hälfte",
+      "gemessen": "454,0 Hz, Hub 20,9 V; mit 200 nF 227,2 Hz",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Versuche gegen die Theorie",
+      "versuch": "VCA: Hüllkurve steuert die Lautstärke",
+      "erwartet": "Gleichanteil fast 0: kein Knacken durch die Steuerspannung; Ton nur mit Hüllkurve",
+      "gemessen": "Hub 2,14 V, Mittelwert −310 µV; Hüllkurve 4,17 V",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Versuche gegen die Theorie",
+      "versuch": "Bridged-T: gedämpfter Sinus",
+      "erwartet": "um 61,4 Hz, klingt aus",
+      "gemessen": "61,3 Hz, Hub am Anfang 11,5 V, nach 180 ms 1,30 V",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Versuche gegen die Theorie",
+      "versuch": "Fuzz: Pegel entscheidet",
+      "erwartet": "bei 0,5 mV fast linear, bei 20 mV über 50 % Klirr",
+      "gemessen": "1,3 % bei Verstärkung 1775; 72,5 %",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Versuche gegen die Theorie",
+      "versuch": "… P1 stellt die Gegenkopplung",
+      "erwartet": "90 % weniger, 10 % mehr Verstärkung als 50 %",
+      "gemessen": "Hub 1,01 V / 1,78 V / 5,45 V",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Neue Versuche: Live-Löser gegen ngspice",
+      "versuch": "Gleichrichter",
+      "erwartet": "Effektivfehler unter 1 %",
+      "gemessen": "0,000 %, Newton ⌀ 2,42, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Neue Versuche: Live-Löser gegen ngspice",
+      "versuch": "Transistor als Schalter",
+      "erwartet": "Effektivfehler unter 3 %",
+      "gemessen": "2,401 %, Newton ⌀ 1,05, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Neue Versuche: Live-Löser gegen ngspice",
+      "versuch": "Resonanzfilter, 60 %",
+      "erwartet": "Effektivfehler unter 1 %",
+      "gemessen": "0,121 %, Newton ⌀ 2,00, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Neue Versuche: Live-Löser gegen ngspice",
+      "versuch": "VCA mit Hüllkurve",
+      "erwartet": "Effektivfehler unter 3 %",
+      "gemessen": "0,001 %, Newton ⌀ 2,80, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Neue Versuche: Live-Löser gegen ngspice",
+      "versuch": "Bridged-T-Trommel",
+      "erwartet": "Effektivfehler unter 3 %",
+      "gemessen": "0,001 %, Newton ⌀ 1,80, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Neue Versuche: Live-Löser gegen ngspice",
+      "versuch": "Fuzz",
+      "erwartet": "Effektivfehler unter 5 %",
+      "gemessen": "4,366 %, Newton ⌀ 3,08, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Neue Versuche: Live-Löser gegen ngspice",
+      "versuch": "Wien-Brücke: Frequenz und Hub",
+      "erwartet": "Abweichung unter 2 %",
+      "gemessen": "1,5870 kHz / 1,5868 kHz; Hub 16,58 V / 16,56 V",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Neue Versuche: Live-Löser gegen ngspice",
+      "versuch": "Rechteckgenerator: Frequenz und Hub",
+      "erwartet": "Abweichung unter 1 %, ohne Nichtkonvergenz",
+      "gemessen": "453,98 Hz / 454,98 Hz; Hub 20,90 V / 20,90 V; ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Neue Versuche: Live-Löser gegen ngspice",
+      "versuch": "Resonanzfilter, selbstschwingend",
+      "erwartet": "Abweichung unter 3 %",
+      "gemessen": "1,5042 kHz / 1,5041 kHz; Hub 21,04 V / 21,04 V",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "Audiokontext",
+      "erwartet": "läuft nach Nutzeraktion",
+      "gemessen": "running, 48000 Hz, Basislatenz 5,33 ms",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "Hörweg, Spannung am Hörpunkt nach Resampling",
+      "erwartet": "4,8192 V Sinus 440 Hz",
+      "gemessen": "4,8191 V (−0,002 %)",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "Digitaler Pegel am Monitor-Eingang (10 V = 1,0)",
+      "erwartet": "0,48192",
+      "gemessen": "0,48191 (−0,002 %)",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "Monitorlautstärke 0,5 wirkt nur dahinter",
+      "erwartet": "Eingang unverändert, Ausgang halbiert",
+      "gemessen": "Eingang 0,48191, Ausgang 0,24096",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "Faust-Knoten im selben Audiokontext (process = *(0.5))",
+      "erwartet": "0,24096, Knoten FaustMonoAudioWorkletNode",
+      "gemessen": "0,24096 (−0,001 %)",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "Faust-Bibliothek vaeffects: Moog-Filter",
+      "erwartet": "übersetzt und erzeugt Regler",
+      "gemessen": "54 ms, Regler Grenzfrequenz, Resonanz",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "DC-Sperre nur im Lautsprecherweg",
+      "erwartet": "Eingang behält 0,2 Gleichanteil, Ausgang ≈ 0",
+      "gemessen": "Eingang Mittel 0,2000, Ausgang Mittel −0,0000",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "Schutzbegrenzer bei 20 V am Hörpunkt (2,0 digital)",
+      "erwartet": "Eingang 2,0, Ausgang unter 1,0",
+      "gemessen": "Eingang 2,000, Ausgang 1,000",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "WAV-Datei: 32 Bit Float, Pegel über 1,0 bleibt",
+      "erwartet": "Kopf RIFF/WAVE, Format 3, Wert 1,5",
+      "gemessen": "RIFF, Format 3, letzter Wert 1,5",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "Faust-Sinus über den digitalen Eingang in die Schaltung, gerendert",
+      "erwartet": "4,8192 V (0,5 digital = 5 V, dann RC)",
+      "gemessen": "4,8177 V, 207 ms Rechenzeit (−0,032 %)",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live-Löser gegen ngspice",
+      "versuch": "RC-Tiefpass, Sinus 440 Hz",
+      "erwartet": "Effektivfehler unter 1 %",
+      "gemessen": "Effektivfehler 0,0001 %, größter Einzelfehler 98,6 µV bei Spitze 9,64 V; Newton ⌀ 0,00, max 0, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": "lineares Ziel laut Briefing: unter 1 %"
+    },
+    {
+      "gruppe": "Live-Löser gegen ngspice",
+      "versuch": "RC-Tiefpass, Rechteck 220 Hz",
+      "erwartet": "Effektivfehler unter 1 %",
+      "gemessen": "Effektivfehler 0,1873 %, größter Einzelfehler 207 mV bei Spitze 10,0 V; Newton ⌀ 0,00, max 0, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": "Der Einzelfehler sitzt an den Flanken: Der Live-Löser kennt nur das feste Raster."
+    },
+    {
+      "gruppe": "Live-Löser gegen ngspice",
+      "versuch": "Schwingkreis 47 Ω, 10 mH, 100 nF, Rechteck",
+      "erwartet": "Effektivfehler unter 1 %",
+      "gemessen": "Effektivfehler 0,2564 %, größter Einzelfehler 370 mV bei Spitze 15,5 V; Newton ⌀ 0,00, max 0, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": "Resonanz bei 5 kHz: Hier zeigt sich die Frequenzverzerrung der Trapezregel."
+    },
+    {
+      "gruppe": "Live-Löser gegen ngspice",
+      "versuch": "Diodenbegrenzer 1N4148, Sinus",
+      "erwartet": "Effektivfehler unter 0,5 %",
+      "gemessen": "Effektivfehler 0,0017 %, größter Einzelfehler 97,3 µV bei Spitze 1,14 V; Newton ⌀ 3,73, max 6, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": "Verlauf. Der Live-Löser rechnet ohne Sperrschicht- und Diffusionskapazität."
+    },
+    {
+      "gruppe": "Live-Löser gegen ngspice",
+      "versuch": "… Spektrum: Klirrfaktor",
+      "erwartet": "ngspice 34,10 %",
+      "gemessen": "Live 34,10 %",
+      "ok": true,
+      "notiz": "Kriterium: unter 0,5 Prozentpunkte"
+    },
+    {
+      "gruppe": "Live-Löser gegen ngspice",
+      "versuch": "Emitterschaltung, NPN generisch",
+      "erwartet": "Effektivfehler unter 0,5 %",
+      "gemessen": "Effektivfehler 0,0229 %, größter Einzelfehler 4,07 mV bei Spitze 7,42 V; Newton ⌀ 2,98, max 3, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live-Löser gegen ngspice",
+      "versuch": "Emitterschaltung, BC847B",
+      "erwartet": "dokumentierte Abweichung",
+      "gemessen": "Effektivfehler 0,4919 %, größter Einzelfehler 70,3 mV bei Spitze 6,86 V; Newton ⌀ 2,98, max 3, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": "Live rechnet nur den Haupttransistor mit festem RB und ohne Kapazitäten."
+    },
+    {
+      "gruppe": "Live-Löser gegen ngspice",
+      "versuch": "Invertierender OPV-Verstärker (TL07x), linear",
+      "erwartet": "Effektivfehler unter 0,5 %",
+      "gemessen": "Effektivfehler 0,0002 %, größter Einzelfehler 108 µV bei Spitze 4,70 V; Newton ⌀ 2,00, max 2, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live-Löser gegen ngspice",
+      "versuch": "… übersteuert bis an die Versorgung",
+      "erwartet": "Effektivfehler unter 1 %",
+      "gemessen": "Effektivfehler 0,0028 %, größter Einzelfehler 11,8 mV bei Spitze 21,0 V; Newton ⌀ 3,22, max 11, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": "Hub und Klemmen sind dieselben Grundelemente wie in ngspice."
+    },
+    {
+      "gruppe": "Live-Löser gegen ngspice",
+      "versuch": "Schmitt-Oszillator: Schwingfrequenz",
+      "erwartet": "Abweichung unter 2 % (Theorie 1201,43 Hz)",
+      "gemessen": "ngspice 1201,67 Hz, Live 1200,00 Hz (−0,14 %)",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live-Löser gegen ngspice",
+      "versuch": "… Amplitude",
+      "erwartet": "Abweichung unter 2 %",
+      "gemessen": "ngspice 11,97 V, Live 11,97 V (0,00 %)",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live-Löser gegen ngspice",
+      "versuch": "Multivibrator: Schwingfrequenz",
+      "erwartet": "Abweichung unter 1 %, ohne Nichtkonvergenz",
+      "gemessen": "ngspice 317,36 Hz, Live 317,36 Hz (−0,00 %), ohne Konvergenz 0",
+      "ok": true,
+      "notiz": "Beim Kippen endet der Lösungszweig: Die Rechnung muss in einem Schritt die Lösung auf der anderen Seite finden."
+    },
+    {
+      "gruppe": "Live-Löser gegen ngspice",
+      "versuch": "… Amplitude",
+      "erwartet": "Abweichung unter 1 %",
+      "gemessen": "ngspice 8,991 V, Live 8,991 V (−0,00 %)",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live-Löser gegen ngspice",
+      "versuch": "OPV-Schmitt-Trigger, Sinus",
+      "erwartet": "Effektivfehler unter 1,5 %",
+      "gemessen": "Effektivfehler 0,5995 %, größter Einzelfehler 4,38 V bei Spitze 21,1 V; Newton ⌀ 2,34, max 28, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": "Der Fehler sitzt an den Flanken: Der Live-Löser kippt auf dem festen Raster."
+    },
+    {
+      "gruppe": "Live-Löser gegen ngspice",
+      "versuch": "Arbeitspunkt Emitterschaltung: Live gegen ngspice .op",
+      "erwartet": "Abweichung unter 0,5 %",
+      "gemessen": "Uc 5,6473 V / 5,6473 V; Ub 2,0202 V / 2,0202 V; Ue 1,3582 V / 1,3581 V",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live-Löser gegen ngspice",
+      "versuch": "Betrag bei 1591,55 Hz im Live-Löser",
+      "erwartet": "−3,01 dB; Fehler der Trapezregel sinkt mit Überabtastung",
+      "gemessen": "1×: −3,026 dB; 4×: −3,011 dB",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "WDF-Prüfung",
+      "versuch": "RC-Tiefpass: WDF gegen allgemeinen Löser",
+      "erwartet": "beide sind die bilineare Abbildung, also gleiches Ergebnis",
+      "gemessen": "größte Differenz 47 nV; Rechenzeit für 0,5 s: Löser 5,4 ms, WDF 1,2 ms",
+      "ok": true,
+      "notiz": "Die Differenz kommt vom Hilfsleitwert 1 pS je Knoten im Löser. Beim linearen Netz gibt es keinen Genauigkeitsgewinn."
+    },
+    {
+      "gruppe": "WDF-Prüfung",
+      "versuch": "Diodenbegrenzer: Wurzel-Nichtlinearität gegen allgemeinen Löser",
+      "erwartet": "gleicher Verlauf; der Spezialfall darf schneller sein",
+      "gemessen": "größte Differenz 990 nV; Rechenzeit für 0,5 s: Löser 32,2 ms, spezialisiert 10,0 ms",
+      "ok": true,
+      "notiz": "Der allgemeine Löser kostet hier etwas mehr, reicht für den Livebetrieb aber aus. WDF scheitert an frei verdrahteten Netzen mit mehreren Nichtlinearitäten ohne eigene Topologie-Zerlegung."
+    },
+    {
+      "gruppe": "Rechenbudget des Live-Lösers",
+      "versuch": "Gerät und Browser",
+      "erwartet": "festhalten",
+      "gemessen": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36; 8 logische Kerne",
+      "ok": null,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Rechenbudget des Live-Lösers",
+      "versuch": "RC-Tiefpass",
+      "erwartet": "unter 100 % ist live spielbar",
+      "gemessen": "4,7 %; längster Block 1,0 ms von 2,67 ms; 0 von 752 Blöcken über Budget; 3 Unbekannte, 1 Zustände, 0 nichtlineare Anschlüsse; ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Rechenbudget des Live-Lösers",
+      "versuch": "Diodenbegrenzer 1N4148",
+      "erwartet": "unter 100 % ist live spielbar",
+      "gemessen": "11,4 %; längster Block 2,0 ms von 2,67 ms; 0 von 752 Blöcken über Budget; 5 Unbekannte, 0 Zustände, 2 nichtlineare Anschlüsse; ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Rechenbudget des Live-Lösers",
+      "versuch": "1 Transistorstufe",
+      "erwartet": "unter 100 % ist live spielbar",
+      "gemessen": "16,2 %; längster Block 2,0 ms von 2,67 ms; 0 von 752 Blöcken über Budget; 7 Unbekannte, 2 Zustände, 2 nichtlineare Anschlüsse; ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Rechenbudget des Live-Lösers",
+      "versuch": "2 Transistorstufen",
+      "erwartet": "unter 100 % ist live spielbar",
+      "gemessen": "24,9 %; längster Block 2,0 ms von 2,67 ms; 0 von 752 Blöcken über Budget; 10 Unbekannte, 4 Zustände, 4 nichtlineare Anschlüsse; ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Rechenbudget des Live-Lösers",
+      "versuch": "4 Transistorstufen",
+      "erwartet": "unter 100 % ist live spielbar",
+      "gemessen": "25,1 %; längster Block 2,0 ms von 2,67 ms; 0 von 752 Blöcken über Budget; 16 Unbekannte, 8 Zustände, 8 nichtlineare Anschlüsse; ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Rechenbudget des Live-Lösers",
+      "versuch": "8 Transistorstufen",
+      "erwartet": "unter 100 % ist live spielbar",
+      "gemessen": "55,1 %; längster Block 2,0 ms von 2,67 ms; 0 von 752 Blöcken über Budget; 28 Unbekannte, 16 Zustände, 16 nichtlineare Anschlüsse; ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Rechenbudget des Live-Lösers",
+      "versuch": "12 Transistorstufen",
+      "erwartet": "unter 100 % ist live spielbar",
+      "gemessen": "126,6 %; längster Block 6,0 ms von 2,67 ms; 649 von 752 Blöcken über Budget; 40 Unbekannte, 24 Zustände, 24 nichtlineare Anschlüsse; ohne Konvergenz 1205",
+      "ok": null,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Rechenbudget des Live-Lösers",
+      "versuch": "1 OPV",
+      "erwartet": "unter 100 % ist live spielbar",
+      "gemessen": "6,7 %; längster Block 1,0 ms von 2,67 ms; 0 von 752 Blöcken über Budget; 19 Unbekannte, 2 Zustände, 3 nichtlineare Anschlüsse; ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Rechenbudget des Live-Lösers",
+      "versuch": "4 OPV",
+      "erwartet": "unter 100 % ist live spielbar",
+      "gemessen": "27,4 %; längster Block 2,0 ms von 2,67 ms; 0 von 752 Blöcken über Budget; 58 Unbekannte, 8 Zustände, 12 nichtlineare Anschlüsse; ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Rechenbudget des Live-Lösers",
+      "versuch": "8 OPV",
+      "erwartet": "unter 100 % ist live spielbar",
+      "gemessen": "42,2 %; längster Block 2,0 ms von 2,67 ms; 0 von 752 Blöcken über Budget; 110 Unbekannte, 16 Zustände, 24 nichtlineare Anschlüsse; ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Rechenbudget des Live-Lösers",
+      "versuch": "12 OPV",
+      "erwartet": "unter 100 % ist live spielbar",
+      "gemessen": "60,2 %; längster Block 4,0 ms von 2,67 ms; 9 von 752 Blöcken über Budget; 162 Unbekannte, 24 Zustände, 36 nichtlineare Anschlüsse; ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "Spannungsteiler",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "0,8 %, längster Block 2,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "LED mit Vorwiderstand",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "2,0 %, längster Block 1,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "RC-Tiefpass",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "2,2 %, längster Block 1,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "RC-Hochpass",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "3,5 %, längster Block 1,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "Reihenschwingkreis",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "6,9 %, längster Block 1,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "Diodenbegrenzer",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "20,3 %, längster Block 2,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "Einweggleichrichter mit Elko",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "5,8 %, längster Block 1,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "Transistor als Schalter",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "3,5 %, längster Block 1,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "Emitterschaltung",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "11,9 %, längster Block 2,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "Invertierender Verstärker",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "9,3 %, längster Block 1,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "Sallen-Key-Tiefpass",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "7,6 %, längster Block 1,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "Schmitt-Trigger-Oszillator",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "3,4 %, längster Block 1,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "Rechteckgenerator mit OPV",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "12,8 %, längster Block 1,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "Astabiler Multivibrator",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "12,7 %, längster Block 1,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "Wien-Brücken-Oszillator",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "17,0 %, längster Block 2,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "Resonanzfilter",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "13,7 %, längster Block 1,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "VCA mit Hüllkurve",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "40,2 %, längster Block 2,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "Bridged-T-Trommel",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "16,1 %, längster Block 1,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Jeder Versuch live",
+      "versuch": "Fuzz mit zwei Transistoren",
+      "erwartet": "unter 90 %, ohne Nichtkonvergenz",
+      "gemessen": "42,0 %, längster Block 3,0 ms, ohne Konvergenz 0",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "Uhr auf dem Audio-Thread",
+      "erwartet": "festhalten",
+      "gemessen": "performance.now fehlt im AudioWorklet, also Date.now mit 1 ms Auflösung: Mittelwert belastbar, Spitzen nur grob",
+      "ok": null,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "RC live: Pegel am Monitor-Eingang",
+      "erwartet": "0,48192 (Sinus 440 Hz)",
+      "gemessen": "0,48193 (0,001 %)",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "R auf 20 kΩ während der Wiedergabe",
+      "erwartet": "0,43757, neuer Plan an einer Blockgrenze",
+      "gemessen": "0,43757 (0,000 %), Übernahme 1,0 ms",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "Kondensator umstecken während der Wiedergabe",
+      "erwartet": "Ausgang folgt dem Eingang: 0,5",
+      "gemessen": "0,50000",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "Zweig trennen: Der Kondensator entlädt sich über R2",
+      "erwartet": "τ = R2·C = 10 ms; vorher 4,950 V",
+      "gemessen": "gemessene Zeitkonstante 10,00 ms; kein Sprung im Moment des Trennens",
+      "ok": true,
+      "notiz": "Der Zweig fällt aus, die gespeicherte Energie klingt modellgerecht ab."
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "CD40106-Oszillator live, ohne Audiokabel",
+      "erwartet": "1201,43 Hz aus Schwellen und RC",
+      "gemessen": "1200,00 Hz (−0,119 %), Hub 13,69 V",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "… Rechenlast dabei",
+      "erwartet": "festhalten",
+      "gemessen": "⌀ 4,4 %, längster Block 1,0 ms",
+      "ok": null,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "Live-Schaltung → Faust → Monitor",
+      "erwartet": "0,24096",
+      "gemessen": "0,24096 (0,001 %)",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "Stopp direkt nach Start",
+      "erwartet": "kein wartender Plan startet später wieder",
+      "gemessen": "Spitze 0",
+      "ok": true,
+      "notiz": ""
+    }
+  ],
+  "status": "fertig nach 126,5 s · 197 bestanden, 0 nicht bestanden, 5 nur gemessen"
+}

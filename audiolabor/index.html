@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="de" data-root="../">
+<head>
+<meta charset="utf-8">
+<script>try{var t=localStorage.getItem("osci-log-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Audiolabor — osci//log</title>
+<meta name="description" content="Lab 2: Schaltungen frei entwerfen, messen und hören. ngspice rechnet im Browser, ein eigener Löser spielt live, Faust liefert digitale Module.">
+<meta name="theme-color" content="#efece2">
+<meta property="og:title" content="Audiolabor — osci//log">
+<meta property="og:description" content="Bauteile setzen, verdrahten, messen und das Ergebnis hören: Der Ton kommt aus der berechneten Spannung, nicht aus einem Preset.">
+<meta property="og:image" content="https://br1ken.github.io/assets/og-bild.png">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/touch-icon.png">
+<link rel="stylesheet" href="../assets/site.css?v=33">
+<link rel="stylesheet" href="../assets/audiolabor.css?v=1">
+<link rel="stylesheet" href="../assets/design.css?v=9">
+<script src="../assets/site.js?v=35" defer></script>
+<script type="module" src="../assets/audiolabor/app.js?v=2"></script>
+</head>
+<body id="top" data-page="audiolabor">
+<a class="skip-link" href="#pult">Zum Pult springen</a>
+<div data-site-header></div>
+<main class="page al-seite">
+  <header class="page-hero al-held">
+    <span class="eyebrow">Lab 2 / Audiolabor</span>
+    <h1>Audio<span>//</span>labor</h1>
+    <p class="intro">Entwirf deine Schaltung, verdrahte sie, miss sie und höre sie. Der Ton ist die berechnete Spannung am Hörpunkt. ngspice rechnet im Browser, ein eigener Löser spielt unterstützte Schaltungen live, und Faust liefert digitale Module daneben. Steckst du einen Kondensator um, wird eine andere Schaltung gerechnet.</p>
+    <p class="audio-hinweis"><strong>Vorsicht: laute Töne.</strong> Pegelsprünge können Gehör und Lautsprecher schädigen. Gerätelautstärke vor dem Hören ganz herunterdrehen und langsam erhöhen.</p>
+  </header>
+
+  <section class="al-pult" id="pult" aria-label="Audiolabor">
+    <div class="al-leiste">
+      <div class="al-gruppe al-titel">
+        <label class="visually-hidden" for="al-name">Name der Schaltung</label>
+        <input id="al-name" class="al-eingabe al-name" maxlength="60" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="al-gruppe">
+        <button type="button" id="al-undo" title="Rückgängig (⌘Z / Strg+Z)" disabled>↶ Zurück</button>
+        <button type="button" id="al-redo" title="Wiederholen (⇧⌘Z / Strg+Y)" disabled>↷ Vor</button>
+      </div>
+      <div class="al-gruppe">
+        <button type="button" id="al-neu">Neu</button>
+        <button type="button" id="al-oeffnen">Öffnen</button><input type="file" id="al-datei" accept=".json,application/json" hidden>
+        <button type="button" id="al-speichern" title="Projekt als Datei speichern">Speichern</button>
+        <button type="button" id="al-teilen" title="Link mit dieser Schaltung kopieren">Teilen</button>
+      </div>
+      <div class="al-gruppe al-rechts">
+        <label class="al-feld">Versuch
+          <select id="al-versuch" class="al-eingabe"></select>
+        </label>
+      </div>
+    </div>
+
+    <div class="al-leiste al-betrieb">
+      <div class="al-schalter" role="group" aria-label="Betriebsart">
+        <button type="button" id="al-modus-render" aria-pressed="true">Berechnen und anhören</button>
+        <button type="button" id="al-modus-live" aria-pressed="false">Live spielen</button>
+      </div>
+      <div class="al-gruppe" id="al-render-regler">
+        <button type="button" class="al-haupt" id="al-berechnen">▶ Berechnen</button>
+        <button type="button" id="al-anhoeren" aria-pressed="false" disabled>♪ Anhören</button>
+      </div>
+      <div class="al-gruppe" id="al-live-regler" hidden>
+        <button type="button" class="al-haupt" id="al-live-start">▶ Start</button>
+        <button type="button" id="al-live-neu" title="Alle Kondensatoren und Spulen neu initialisieren">⟲ Neu einschalten</button>
+        <span class="al-last" id="al-last" title="Rechenzeit auf dem Audio-Thread, bezogen auf die Blockdauer"><i></i><b>–</b></span>
+      </div>
+      <details class="al-klapp al-gruppe">
+        <summary>Einstellungen</summary>
+        <div class="al-klapp-feld">
+          <label class="al-feld">Start
+            <select id="al-start" class="al-eingabe"><option value="op">Arbeitspunkt</option><option value="uic">Anfangswerte</option></select>
+          </label>
+          <label class="al-feld" data-nur="render">Dauer <input id="al-dauer" class="al-eingabe al-kurz" value="0,5 s" autocomplete="off"></label>
+          <label class="al-feld" data-nur="render" title="Größter Zeitschritt von ngspice">Zeitschritt
+            <select id="al-genau" class="al-eingabe"><option value="192000">≤ 5,2 µs</option><option value="384000">≤ 2,6 µs</option><option value="96000">≤ 10,4 µs</option></select>
+          </label>
+          <label class="al-haken" data-nur="render"><input type="checkbox" id="al-schleife" checked> Wiedergabe in Schleife</label>
+          <label class="al-haken" data-nur="render" title="Nach jeder Änderung neu berechnen"><input type="checkbox" id="al-auto" checked> Nach jeder Änderung rechnen</label>
+          <label class="al-feld" data-nur="live" title="Rechenschritte je Abtastwert" hidden>Überabtastung
+            <select id="al-ueber" class="al-eingabe"><option value="1">1×</option><option value="2">2×</option><option value="4" selected>4×</option><option value="8">8×</option></select>
+          </label>
+          <label class="al-haken" title="Sperrt Gleichspannung nur auf dem Lautsprecherweg. Die Messung behält sie."><input type="checkbox" id="al-dc"> DC-Sperre im Lautsprecherweg</label>
+        </div>
+      </details>
+      <div class="al-gruppe al-rechts al-monitor">
+        <label class="al-feld" title="Monitorlautstärke. Liegt hinter dem Messabgriff.">Lautstärke <input id="al-laut" type="range" min="0" max="1" step="0.01" value="0.15"></label>
+        <button type="button" id="al-stumm" aria-pressed="false">Stumm</button>
+        <span class="al-spitze" id="al-spitze" title="Spitzenwert vor dem Begrenzer. Skala: 10 V am Hörpunkt = 1,0"><i></i></span>
+        <button type="button" id="al-aufnahme" aria-pressed="false" title="Ausgang aufnehmen">● Aufnahme</button>
+        <button type="button" id="al-wav" title="Berechneten Hörpunkt als WAV (32 Bit Float) speichern" disabled>WAV</button>
+      </div>
+    </div>
+
+    <div class="al-quellen" id="al-quellen" aria-label="Quellen dieser Schaltung"></div>
+
+    <div class="al-mitte">
+      <aside class="al-bauteile" id="al-bauteile" aria-label="Bauteile einsetzen"></aside>
+
+      <div class="al-arbeit">
+        <div class="al-reiter" role="tablist" aria-label="Ansicht der Schaltung">
+          <button type="button" role="tab" data-ansicht="plan" aria-selected="true">Schaltplan</button>
+          <button type="button" role="tab" data-ansicht="brett" aria-selected="false">Steckbrett</button>
+          <span class="al-werkzeuge">
+            <button type="button" id="al-drehen" title="Drehen (R)">Drehen</button>
+            <button type="button" id="al-spiegeln" title="Spiegeln (M)">Spiegeln</button>
+            <button type="button" id="al-loeschen" title="Löschen (Entf)">Löschen</button>
+            <span class="al-zoom"><button type="button" id="al-zoom-aus" aria-label="Verkleinern">−</button><b id="al-zoom">100 %</b><button type="button" id="al-zoom-ein" aria-label="Vergrößern">+</button><button type="button" id="al-zoom-alles">Alles</button></span>
+          </span>
+        </div>
+        <div class="al-flaeche">
+          <svg id="al-plan" class="al-plan" tabindex="0" role="application" aria-label="Schaltplan"></svg>
+          <div id="al-brett" class="al-brett" hidden></div>
+          <output id="al-tipp" class="al-tipp" hidden></output>
+        </div>
+        <div class="al-statuszeile"><span id="al-status" role="status"></span><span id="al-hinweis" class="al-hinweis"></span></div>
+      </div>
+
+      <aside class="al-geraete">
+        <div class="al-reiter" role="tablist" aria-label="Messgeräte">
+          <button type="button" role="tab" data-geraet="oszilloskop" aria-selected="true">Oszilloskop</button>
+          <button type="button" role="tab" data-geraet="spektrum" aria-selected="false">Spektrum</button>
+          <button type="button" role="tab" data-geraet="frequenzgang" aria-selected="false">Frequenzgang</button>
+          <button type="button" role="tab" data-geraet="arbeitspunkt" aria-selected="false">Arbeitspunkt</button>
+        </div>
+
+        <div class="al-geraet" data-geraet-seite="oszilloskop">
+          <canvas class="al-schirm" id="al-oszi" role="img" aria-label="Oszilloskop"></canvas>
+          <div class="al-regler">
+            <label class="al-feld">Zeit <select id="al-zeit" class="al-eingabe"></select></label>
+            <label class="al-feld al-breit">Position <input id="al-pos" type="range" min="0" max="1" step="0.001" value="1"></label>
+            <label class="al-haken"><input type="checkbox" id="al-trigger" checked> Trigger</label>
+          </div>
+          <table class="al-werte" id="al-messwerte"></table>
+        </div>
+
+        <div class="al-geraet" data-geraet-seite="spektrum" hidden>
+          <canvas class="al-schirm" id="al-spektrum" role="img" aria-label="Spektrum"></canvas>
+          <p class="al-notiz" id="al-spektrum-text">Hann-Fenster, Skala in dB bezogen auf 1 V Scheitelwert.</p>
+        </div>
+
+        <div class="al-geraet" data-geraet-seite="frequenzgang" hidden>
+          <canvas class="al-schirm al-hoch" id="al-bode" role="img" aria-label="Bode-Diagramm"></canvas>
+          <div class="al-regler">
+            <button type="button" id="al-bode-rechnen">Frequenzgang rechnen</button>
+            <label class="al-feld">von <input id="al-ac-von" class="al-eingabe al-kurz" value="1 Hz"></label>
+            <label class="al-feld">bis <input id="al-ac-bis" class="al-eingabe al-kurz" value="100 kHz"></label>
+          </div>
+          <table class="al-werte" id="al-bode-werte"></table>
+        </div>
+
+        <div class="al-geraet" data-geraet-seite="arbeitspunkt" hidden>
+          <div class="al-regler">
+            <button type="button" id="al-op-rechnen">Arbeitspunkt rechnen</button>
+            <label class="al-haken"><input type="checkbox" id="al-op-plan" checked> Im Schaltplan zeigen</label>
+          </div>
+          <div class="al-op" id="al-op"></div>
+        </div>
+
+        <p class="al-wirkung" id="al-wirkung" role="status" hidden><b>Wirkung</b> <span id="al-wirkung-text"></span></p>
+        <div class="al-eigenschaften" id="al-eigenschaften"></div>
+      </aside>
+    </div>
+
+    <div class="al-unten">
+      <div class="al-reiter" role="tablist" aria-label="Weitere Bereiche">
+        <button type="button" role="tab" data-unten="anleitung" aria-selected="true">Anleitung</button>
+        <button type="button" role="tab" data-unten="digital" aria-selected="false">Digitale Module</button>
+        <button type="button" role="tab" data-unten="netlist" aria-selected="false">Netlist</button>
+        <button type="button" role="tab" data-unten="meldungen" aria-selected="false">Meldungen <b id="al-meld-zahl"></b></button>
+        <button type="button" role="tab" data-unten="modelle" aria-selected="false">Modelle</button>
+      </div>
+      <div class="al-seite-unten" data-unten-seite="anleitung" id="al-anleitung"></div>
+      <div class="al-seite-unten" data-unten-seite="digital" id="al-digital" hidden></div>
+      <div class="al-seite-unten" data-unten-seite="netlist" hidden>
+        <div class="al-netlist">
+          <div>
+            <div class="al-unterkopf"><span class="eyebrow">An ngspice übergeben</span><button type="button" id="al-cir">Als .cir speichern</button></div>
+            <pre id="al-netlist-text" class="al-code"></pre>
+          </div>
+          <div>
+            <div class="al-unterkopf"><span class="eyebrow">Unterschied zum vorherigen Lauf</span></div>
+            <pre id="al-netlist-diff" class="al-code"></pre>
+          </div>
+        </div>
+      </div>
+      <div class="al-seite-unten" data-unten-seite="meldungen" hidden>
+        <ul class="al-meldungen" id="al-meldungen"></ul>
+        <details class="al-log"><summary>Ausgabe von ngspice</summary><pre id="al-ngspice" class="al-code"></pre></details>
+      </div>
+      <div class="al-seite-unten" data-unten-seite="modelle" id="al-modelle" hidden></div>
+    </div>
+  </section>
+
+  <section class="section" id="versuche" aria-labelledby="versuche-titel">
+    <div class="section-heading"><h2 id="versuche-titel">Versuche</h2><span class="eyebrow">Laden, messen, umbauen</span></div>
+    <div class="al-karten" id="al-versuche"></div>
+  </section>
+
+  <section class="section al-text" id="stand" aria-labelledby="stand-titel">
+    <div class="section-heading"><h2 id="stand-titel">Was hier rechnet</h2><span class="eyebrow">Stand und Grenzen</span></div>
+    <div class="al-spalten">
+      <div>
+        <h3>Berechnen und anhören</h3>
+        <p>ngspice 45.2 läuft über eecircuit-engine 1.9.0 als WebAssembly in einem eigenen Thread. Ein Lauf liefert die Zeitverläufe, die Sonden lesen sie direkt. Für den Hörweg werden sie auf 192 kHz gebracht, gefiltert und auf die Ausgabe-Abtastrate verringert. Dieser Build enthält weder XSPICE noch OSDI. Digitale Code-Modelle gibt es deshalb nicht; der CD40106 ist ein Verhaltensmodell.</p>
+        <h3>Live spielen</h3>
+        <p>Ein eigener Löser rechnet auf dem Audio-Thread: Knotenanalyse mit Trapezregel, Newton mit begrenzter Iterationszahl, lineare Teile vorab reduziert. Die innere Kapazität des OPV-Makromodells verwendet gedämpftes implizites Euler. Beim Kippen folgt auf die erste Newton-Suche ein Kaltstart; findet sich keine Lösung, bleiben die Zustände stehen. Er arbeitet ohne Netlist-Vorlage und ohne Presets. Halbleiterkapazitäten, die Hilfszweige der Herstellermodelle und das Bauteilrauschen fehlen hier. Unter „Modelle“ steht je Bauteil, was gerechnet wird.</p>
+      </div>
+      <div>
+        <h3>Hörschnittstelle</h3>
+        <p>10 V am Hörpunkt entsprechen 1,0 digital. Diese Festlegung gilt immer und wird nie automatisch nachgeregelt, damit Vergleiche auch hörbar stimmen. Monitorlautstärke, DC-Sperre und Schutzbegrenzer liegen hinter dem Messabgriff und verändern die gemessenen Werte nicht.</p>
+        <h3>Digitale Module</h3>
+        <p>Faust-Module sind digitale Signalverarbeitung und bleiben als solche gekennzeichnet. An der Grenze zur Schaltung stehen eine gepufferte Quelle und ein Messabgriff. Sie sind nie Ersatz für eine Schaltungsberechnung.</p>
+        <p>Abnahme am 2. November 2026 auf Apple M3, Chrome 156: 197 bestanden, keine Fehler, fünf zusätzliche Messungen. Alle 19 Versuche liefen mit vierfacher Überabtastung ohne Nichtkonvergenz. Acht Transistorstufen benötigten 55,1 % des Rechenbudgets, zwölf bereits 126,6 %. Diese Messung ist keine allgemeine Echtzeitgarantie. Bei anhaltender Überlast hält Live an und bietet den Renderbetrieb an.</p>
+        <p><a class="text-link" href="STAND.md">Messbedingungen, Grenzen und Lizenzen →</a></p>
+        <p><a class="text-link" href="pruefstand.html">Zum Prüfstand mit allen Messwerten →</a></p>
+      </div>
+    </div>
+  </section>
+  <noscript><p class="section">Für das Audiolabor aktiviere bitte JavaScript.</p></noscript>
+</main>
+<div data-site-footer></div>
+</body>
+</html>

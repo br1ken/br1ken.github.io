@@ -22,6 +22,8 @@ h1, h2, h3 { overflow-wrap: break-word; hyphens: auto; }
 .brand-top { font-size: 15px; font-weight: 700; letter-spacing: -.03em; }
 .brand-line { display: none; }
 .nav-link, .menu-pill { font-size: 12px; letter-spacing: 0; text-transform: none; opacity: 1; padding: 6px 0; }
+.nav-link { white-space: nowrap; }
+@media (max-width: 900px) { .nav { gap: 14px; } }
 .nav-link:hover { color: var(--accent); }
 .nav-link[aria-current="page"] { background: var(--ink); color: var(--on-ink); padding: 6px 8px; text-decoration: none; }
 .menu-panel { top: 56px; right: 0; left: 0; border-width: 0 0 1px; box-shadow: none; }

@@ -12,6 +12,15 @@
    welle   optional: Wellenform des generierten Bildes: sinus, rechteck, dreieck, saege, gedaempft, lade, am */
 OSCI.projekteListe([
   {
+    titel: 'Audiolabor',
+    text: 'Eigene Schaltungen entwerfen, messen und hören: ngspice im Browser, ein eigener Live-Löser auf dem Audio-Thread, Schaltplan und Steckbrett als zwei Ansichten derselben Schaltung. 19 Versuche mit dokumentierten Prüfungen.',
+    link: 'audiolabor/',
+    status: 'Spielbar',
+    datum: '2026-11-02',
+    tags: ['ngspice', 'Web Audio', 'Simulation'],
+    welle: 'gedaempft'
+  },
+  {
     titel: 'Messplatz',
     text: 'Elektroniklabor im Browser: Steckbrett, Oszilloskop, Funktionsgenerator, zwei Multimeter und Netzgerät, dazu Bode-Diagramm und Arbeitspunkt. Eigener Schaltungssimulator wie SPICE, sechzehn Versuche.',
     link: 'messplatz/',

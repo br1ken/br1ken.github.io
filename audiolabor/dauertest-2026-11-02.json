@@ -1,0 +1,24 @@
+{
+  "minuten": 3,
+  "schaltung": "Emitterschaltung BC847B (Näherung), 4×",
+  "plan": {
+    "n": 13,
+    "zustaende": 3,
+    "nichtlinear": 2
+  },
+  "aenderungen": 3458,
+  "berichte": 718,
+  "lastMittel": 20.828024062111066,
+  "lastMax": 33.51063829787234,
+  "laengsterBlockMs": 6,
+  "budgetMs": 2.6666666666666665,
+  "bloeckeUeberBudget": 1,
+  "bloecke": 67492,
+  "ohneKonvergenz": 0,
+  "verworfeneScopeWerte": 0,
+  "uhrAbweichungS": 0.006700000002979323,
+  "basisLatenzMs": 5.333333333333333,
+  "ausgabeLatenzMs": 40,
+  "uhr": "Date.now",
+  "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+}

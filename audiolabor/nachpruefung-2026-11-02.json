@@ -1,0 +1,630 @@
+{
+  "datum": "2026-11-02T21:18:24.166Z",
+  "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+  "ergebnisse": [
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Vom Pin auf einen Pin ziehen",
+      "erwartet": "R9.1 hängt am Netz von C1.1",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Vom Pin auf einen Draht ziehen",
+      "erwartet": "R9.2 liegt auf Masse",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Ins Leere ziehen",
+      "erwartet": "kein neuer Draht, eine Meldung",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Aus einem Draht herausziehen",
+      "erwartet": "Abzweig: R9.1 liegt auf Masse",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Pin antippen, Ziel antippen",
+      "erwartet": "R9.1 hängt am Netz von C1.1",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Drahtende am Griff umstecken",
+      "erwartet": "C1.1 liegt am Eingang",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Griff ins Leere: Abziehen",
+      "erwartet": "C1.2 ist frei, Generator und Masse bleiben verbunden",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Kondensator verschieben",
+      "erwartet": "alle Verbindungen unverändert, auch der Massepunkt auf dem Draht",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Drehen mit R",
+      "erwartet": "alle Verbindungen unverändert",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Spiegeln mit M",
+      "erwartet": "alle Verbindungen unverändert",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Pfeiltaste",
+      "erwartet": "alle Verbindungen unverändert",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Sonde auf ein anderes Netz ziehen",
+      "erwartet": "CH1 misst jetzt dort, sonst bleibt alles",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Sonde auf freie Fläche ziehen",
+      "erwartet": "bleibt über einen Draht am alten Netz",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Angeschlossenen Pin auf fremdes Netz",
+      "erwartet": "bleibt ohne Kurzschluss, die Netze stimmen",
+      "gemessen": "abgelehnt oder umgelegt",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Widerstand auf einen Draht fallen lassen",
+      "erwartet": "wird in Reihe eingeschleift",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Rückgängig",
+      "erwartet": "derselbe Stand wie vorher",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Drahtstück verschieben",
+      "erwartet": "der Draht verläuft anders, die Netze bleiben gleich",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Drahtstück auf ein fremdes Netz",
+      "erwartet": "abgelehnt, alles wie vorher",
+      "gemessen": "Dort würde der Draht ein anderes Netz berühren. Er bleibt, wo er war.",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "Massezeichen auf der Verzweigung löschen",
+      "erwartet": "die Drähte daran bleiben verbunden",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken im Schaltplan",
+      "versuch": "204 zufällige Züge in 19 Versuchen",
+      "erwartet": "die Netze ändern sich nie, nichts liegt übereinander",
+      "gemessen": "keine Abweichung",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Spannungsteiler",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "8 Beine, 6 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: LED mit Vorwiderstand",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "4 Beine, 5 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: RC-Tiefpass",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "4 Beine, 7 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: RC-Hochpass",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "4 Beine, 6 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Reihenschwingkreis",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "6 Beine, 6 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Diodenbegrenzer",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "6 Beine, 8 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Einweggleichrichter mit Elko",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "6 Beine, 8 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Transistor als Schalter",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "9 Beine, 10 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Emitterschaltung",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "22 Beine, 17 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Invertierender Verstärker",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "10 Beine, 15 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Sallen-Key-Tiefpass",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "13 Beine, 12 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Schmitt-Trigger-Oszillator",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "18 Beine, 11 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Rechteckgenerator mit OPV",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "13 Beine, 14 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Astabiler Multivibrator",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "18 Beine, 18 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Wien-Brücken-Oszillator",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "23 Beine, 16 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Resonanzfilter",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "16 Beine, 14 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: VCA mit Hüllkurve",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "36 Beine, 30 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Bridged-T-Trommel",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "13 Beine, 13 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Aufbau: Fuzz mit zwei Transistoren",
+      "erwartet": "Brett und Plan gleich, zweiter Abgleich ändert nichts",
+      "gemessen": "25 Beine, 19 Kabel",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Zwei Finger: Zoom ohne Wandern",
+      "erwartet": "Brettpunkt bleibt unter der Mitte, Wiederholung verschiebt nichts",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Bein auf einen freien Streifen stecken",
+      "erwartet": "C1.1 ist vom Ausgang getrennt, Plan und Brett gleich",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Bein in den Streifen von R1 stecken",
+      "erwartet": "C1.1 liegt wieder am Ausgang",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Kabel von der Buchse CH3 auf den Ausgang",
+      "erwartet": "neue Sonde am Ausgang, sie klemmt ohne eigenen Draht",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Kabelende ins Leere ziehen",
+      "erwartet": "Kabel weg, die Sonde auch",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Widerstand aus der Liste einstecken",
+      "erwartet": "steht um Spalte 31 herum, im Plan ist er auch da",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Teil auf dem Brett versetzen",
+      "erwartet": "beide Beine wandern mit",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Kabel zwischen zwei Streifen",
+      "erwartet": "R2.2 liegt am Ausgang",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Diode auf dem Brett umdrehen (R)",
+      "erwartet": "Anode und Kathode tauschen die Löcher, im Plan auch",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "Gewähltes Kabel entfernen",
+      "erwartet": "ein Kabel weniger, Plan und Brett gleich",
+      "gemessen": "wie erwartet",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stecken auf dem Brett",
+      "versuch": "160-mal zufällig umgesteckt",
+      "erwartet": "Plan und Brett bleiben gleich",
+      "gemessen": "keine Abweichung",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "ngspice startet im Worker",
+      "erwartet": "Modul lädt, Banner meldet die Version",
+      "gemessen": "ngspice-45.2, Start in 135 ms",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "Operationspunkt, Frequenzgang, Zeitverlauf",
+      "erwartet": ".op, .ac und .tran liefern Ergebnisse",
+      "gemessen": "alle drei laufen",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "Bipolartransistor (Gummel-Poon)",
+      "erwartet": "vorhanden oder ehrlich fehlend",
+      "gemessen": "vorhanden",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "MOSFET Level 1",
+      "erwartet": "vorhanden oder ehrlich fehlend",
+      "gemessen": "vorhanden",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "Verhaltensquellen (B)",
+      "erwartet": "nötig für CD40106 und Slew Rate",
+      "gemessen": "vorhanden",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "XSPICE-Code-Modelle (A)",
+      "erwartet": "Laut Docker/run.sh abgeschaltet",
+      "gemessen": "bestätigt: „unknown device type“",
+      "ok": true,
+      "notiz": "CD40106 ist deshalb ein Verhaltensmodell, kein Digitalmodell."
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "Nicht lösbare Schaltung",
+      "erwartet": "Meldung statt Hängen oder altem Ergebnis, danach weiter nutzbar",
+      "gemessen": "Fehler gemeldet: Keine Antwort von ngspice nach 15 s; nächster Lauf korrekt",
+      "ok": true,
+      "notiz": "Die Engine lässt beim Scheitern die alte out.raw liegen. spice-worker.js löscht sie, spice.js prüft die Laufnummer im Ergebnis."
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "40 Läufe hintereinander",
+      "erwartet": "stabil, kein Abriss",
+      "gemessen": "alle korrekt, im Mittel 1,0 ms je Lauf",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Stufe 1: Browser-Schnittstelle der konkreten Version",
+      "versuch": "FaustWasm lädt",
+      "erwartet": "Compiler im Browser",
+      "gemessen": "Faust 2.90.19, geladen in 138 ms",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "Audiokontext",
+      "erwartet": "läuft nach Nutzeraktion",
+      "gemessen": "running, 48000 Hz, Basislatenz 5,33 ms",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "Hörweg, Spannung am Hörpunkt nach Resampling",
+      "erwartet": "4,8192 V Sinus 440 Hz",
+      "gemessen": "4,8191 V (−0,002 %)",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "Digitaler Pegel am Monitor-Eingang (10 V = 1,0)",
+      "erwartet": "0,48192",
+      "gemessen": "0,48191 (−0,002 %)",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "Monitorlautstärke 0,5 wirkt nur dahinter",
+      "erwartet": "Eingang unverändert, Ausgang halbiert",
+      "gemessen": "Eingang 0,48191, Ausgang 0,24096",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "Faust-Knoten im selben Audiokontext (process = *(0.5))",
+      "erwartet": "0,24096, Knoten FaustMonoAudioWorkletNode",
+      "gemessen": "0,24096 (−0,001 %)",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "Faust-Bibliothek vaeffects: Moog-Filter",
+      "erwartet": "übersetzt und erzeugt Regler",
+      "gemessen": "46 ms, Regler Grenzfrequenz, Resonanz",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "DC-Sperre nur im Lautsprecherweg",
+      "erwartet": "Eingang behält 0,2 Gleichanteil, Ausgang ≈ 0",
+      "gemessen": "Eingang Mittel 0,2000, Ausgang Mittel −0,0000",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "Schutzbegrenzer bei 20 V am Hörpunkt (2,0 digital)",
+      "erwartet": "Eingang 2,0, Ausgang unter 1,0",
+      "gemessen": "Eingang 2,000, Ausgang 1,000",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "WAV-Datei: 32 Bit Float, Pegel über 1,0 bleibt",
+      "erwartet": "Kopf RIFF/WAVE, Format 3, Wert 1,5",
+      "gemessen": "RIFF, Format 3, letzter Wert 1,5",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Daten- und Pegelübergänge im selben Audiokontext",
+      "versuch": "Faust-Sinus über den digitalen Eingang in die Schaltung, gerendert",
+      "erwartet": "4,8192 V (0,5 digital = 5 V, dann RC)",
+      "gemessen": "4,8177 V, 212 ms Rechenzeit (−0,032 %)",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "Uhr auf dem Audio-Thread",
+      "erwartet": "festhalten",
+      "gemessen": "performance.now fehlt im AudioWorklet, also Date.now mit 1 ms Auflösung: Mittelwert belastbar, Spitzen nur grob",
+      "ok": null,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "RC live: Pegel am Monitor-Eingang",
+      "erwartet": "0,48192 (Sinus 440 Hz)",
+      "gemessen": "0,48193 (0,001 %)",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "R auf 20 kΩ während der Wiedergabe",
+      "erwartet": "0,43757, neuer Plan an einer Blockgrenze",
+      "gemessen": "0,43757 (0,000 %), Übernahme 1,0 ms",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "Kondensator umstecken während der Wiedergabe",
+      "erwartet": "Ausgang folgt dem Eingang: 0,5",
+      "gemessen": "0,50000",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "Zweig trennen: Der Kondensator entlädt sich über R2",
+      "erwartet": "τ = R2·C = 10 ms; vorher 4,950 V",
+      "gemessen": "gemessene Zeitkonstante 10,00 ms; kein Sprung im Moment des Trennens",
+      "ok": true,
+      "notiz": "Der Zweig fällt aus, die gespeicherte Energie klingt modellgerecht ab."
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "CD40106-Oszillator live, ohne Audiokabel",
+      "erwartet": "1201,43 Hz aus Schwellen und RC",
+      "gemessen": "1200,00 Hz (−0,119 %), Hub 13,69 V",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "… Rechenlast dabei",
+      "erwartet": "festhalten",
+      "gemessen": "⌀ 4,3 %, längster Block 1,0 ms",
+      "ok": null,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "Live-Schaltung → Faust → Monitor",
+      "erwartet": "0,24096",
+      "gemessen": "0,24096 (0,001 %)",
+      "ok": true,
+      "notiz": ""
+    },
+    {
+      "gruppe": "Live auf dem Audio-Thread",
+      "versuch": "Stopp direkt nach Start",
+      "erwartet": "kein wartender Plan startet später wieder",
+      "gemessen": "Spitze 0",
+      "ok": true,
+      "notiz": ""
+    }
+  ]
+}

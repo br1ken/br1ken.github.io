@@ -321,3 +321,13 @@ html.news-open { overflow: hidden; }
 .cover .cv-ghost { fill: none; stroke: var(--soft); stroke-width: 2; }
 .cover .cv-trace { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
 .cover .cv-text { font: 15px var(--mono); fill: var(--muted); }
+
+/* Hörwarnung: echter modaler Dialog, mit Tastatur und auf schmalen Bildschirmen bedienbar. */
+.audio-warnung { width: min(36rem, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: clamp(18px, 4vw, 30px); border: 2px solid var(--accent); background: var(--bg); color: var(--fg); overflow: auto; font-family: var(--mono); }
+.audio-warnung::backdrop { background: rgba(10, 10, 20, .8); }
+.audio-warnung h2 { font-size: clamp(21px, 4vw, 29px); line-height: 1.2; margin: 14px 0 18px; }
+.audio-warnung p { font-size: 14px; line-height: 1.6; margin: 12px 0; }
+.audio-warnung small { display: block; font-size: 11px; line-height: 1.5; color: var(--muted); }
+.audio-warnung-aktionen { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0 14px; }
+.audio-warnung .button { flex: 1 1 170px; white-space: normal; line-height: 1.5; text-align: center; }
+.audio-hinweis { border-left: 3px solid var(--accent); padding-left: 12px; font-size: 12px; line-height: 1.6; color: var(--fg); max-width: 70ch; }

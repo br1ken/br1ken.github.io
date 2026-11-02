@@ -1360,6 +1360,7 @@ async function startAudio() {
   starting = true; const generation = ++audioGeneration; $('audio-toggle').disabled = true;
   let ctx;
   try {
+    if (!await OSCI.audioFreigabe() || generation !== audioGeneration || document.hidden) return;
     ctx = new Context(); await ctx.resume();
     /* Rechenwerk für Filter mit beweglicher Grenzfrequenz und für LFOs; ohne Worklet geht alles, nur ohne Modulation */
     let worklet = false;

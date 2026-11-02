@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="de" data-root="../">
+<head>
+<meta charset="utf-8">
+<script>try{var t=localStorage.getItem("osci-log-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prüfstand — osci//log</title>
+<meta name="description" content="Der Prüfstand des Audiolabors: Alle Abnahmekriterien werden im Browser nachgerechnet, mit echten Zahlen.">
+<meta name="theme-color" content="#efece2">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/touch-icon.png">
+<link rel="stylesheet" href="../assets/site.css?v=33">
+<link rel="stylesheet" href="../assets/audiolabor.css?v=1">
+<link rel="stylesheet" href="../assets/design.css?v=9">
+<style>
+.p-kopf { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-bottom: 14px; font-size: 12px; }
+.p-kopf canvas { display: none; }
+.p-tab { width: 100%; border-collapse: collapse; font-size: 11.5px; line-height: 1.45; }
+.p-tab th { text-align: left; font-weight: 700; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--ink); }
+.p-tab td { vertical-align: top; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--hairline); }
+.p-tab td small { display: block; color: var(--muted); font-size: 10.5px; margin-top: 2px; }
+.p-tab tr.p-gruppe th { padding: 22px 0 6px; border-bottom: 1px solid var(--ink); font-size: 14px; letter-spacing: -.02em; }
+.p-tab tr.p-gruppe small { display: block; font-size: 10.5px; font-weight: 400; color: var(--muted); letter-spacing: 0; margin-top: 2px; }
+.p-ja { color: var(--ok); white-space: nowrap; }
+.p-nein { color: var(--warn); font-weight: 700; white-space: nowrap; }
+.p-info { color: var(--muted); white-space: nowrap; }
+.p-dauer { margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--ink); font-size: 12px; }
+.p-dauer pre { white-space: pre-wrap; font-size: 11px; line-height: 1.5; }
+@media (max-width: 760px) { .p-tab { font-size: 10.5px; } .p-tab td { padding-right: 6px; } }
+</style>
+<script src="../assets/site.js?v=35" defer></script>
+<script type="module" src="../assets/audiolabor/pruefstand.js?v=2"></script>
+</head>
+<body id="top" data-page="audiolabor">
+<div data-site-header></div>
+<main class="page">
+  <header class="page-hero">
+    <span class="eyebrow">Lab 2 / Audiolabor</span>
+    <h1>Prüf<span>//</span>stand</h1>
+    <p class="intro">Hier rechnet das Audiolabor sich selbst nach. Jede Zeile entsteht beim Lauf aus denselben Rechenkernen wie im Pult, nichts ist fest eingetragen. Die Kriterien stammen aus der Abnahmeliste des Entwurfs. Bei den Live-Tests läuft kurz ein Ton.</p>
+    <p class="intro"><a class="text-link" href="./">← Zum Audiolabor</a></p>
+  </header>
+  <section class="section">
+    <div class="p-kopf">
+      <button type="button" class="button primary" id="p-start">▶ Prüfung starten</button>
+      <button type="button" class="button" id="p-json" disabled>Ergebnis als JSON</button>
+      <span id="p-stand" role="status">Noch nicht gelaufen. Der Start ist ein Klick, weil der Audiokontext eine Nutzeraktion braucht.</span>
+    </div>
+    <table class="p-tab" id="p-tabelle"></table>
+    <div class="p-dauer">
+      <h3>Dauertest</h3>
+      <p>Lässt die Emitterschaltung live laufen, bewegt Poti und Generator und zeichnet nebenbei. Erfasst Rechenlast, Spitzen und Blocküberläufe. Die Werte gelten für dieses Gerät und diesen Browser.</p>
+      <label>Minuten <input id="p-dauer-min" type="number" min="1" max="30" value="3" style="width:60px"></label>
+      <button type="button" class="button small" id="p-dauer">Dauertest starten</button>
+      <canvas id="p-dauer-schirm" width="400" height="60" style="display:block;margin-top:8px;max-width:100%"></canvas>
+      <pre id="p-dauer-aus"></pre>
+    </div>
+  </section>
+</main>
+<div data-site-footer></div>
+</body>
+</html>

@@ -491,8 +491,9 @@ const OSCISims = (() => {
      leise und mit kurzen Rampen gegen Knacksen. Wer den Tab verlässt, schaltet den Ton ab. */
   const ton = (() => {
     const Context = window.AudioContext || window.webkitAudioContext;
-    let ctx = null, now = null;
+    let ctx = null, now = null, generation = 0;
     function stop() {
+      generation++;
       if (!now) return;
       const {osc, gain, aus} = now, t = ctx.currentTime;
       now = null;
@@ -502,11 +503,14 @@ const OSCISims = (() => {
       aus();
     }
     /* Spielt einen Oszillator, bis stop() kommt. aus() sagt der Simulation, dass ihr Ton aus ist. */
-    function start(aus) {
+    async function start(aus) {
       stop();
+      const lauf = generation;
+      if (!await OSCI.audioFreigabe() || lauf !== generation || document.hidden) return null;
       try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch { /* ältere Browser */ }
       ctx ||= new Context();
-      ctx.resume();
+      await ctx.resume();
+      if (lauf !== generation || document.hidden) return null;
       const osc = ctx.createOscillator(), gain = ctx.createGain();
       gain.gain.value = 0;
       osc.connect(gain).connect(ctx.destination);
@@ -614,9 +618,10 @@ const OSCISims = (() => {
       }
     }
     function aus() { laeuft = null; play.textContent = '▶ Anhören'; play.setAttribute('aria-pressed', 'false'); }
-    play.addEventListener('click', () => {
+    play.addEventListener('click', async () => {
       if (laeuft) { ton.stop(); return; }
-      laeuft = ton.start(aus);
+      laeuft = await ton.start(aus);
+      if (!laeuft) return;
       laeuft.osc.frequency.value = F0.value;
       laeuft.laut(LEISE);
       play.textContent = '■ Stopp'; play.setAttribute('aria-pressed', 'true');
@@ -706,11 +711,12 @@ const OSCISims = (() => {
       }
     }
     function aus() { laeuft = null; mode = 'aus'; update(); }
-    seg.addEventListener('click', ev => {
+    seg.addEventListener('click', async ev => {
       const btn = ev.target.closest('[data-mode]');
       if (!btn) return;
       if (btn.dataset.mode === 'aus') { ton.stop(); mode = 'aus'; update(); return; }
-      if (!laeuft) laeuft = ton.start(aus);
+      if (!laeuft) laeuft = await ton.start(aus);
+      if (!laeuft) return;
       mode = btn.dataset.mode;
       update();
     });
