@@ -11,7 +11,7 @@
 
 import { BAUTEILE, standardWerte } from './bauteile.js';
 import { loeseNetze } from './netz.js';
-import { freieKennung } from './aufbau.js?v=2';
+import { freieKennung } from './aufbau.js?v=3';
 import { setzeNetze, freierPlatz, entferneTeile, gruppenAusPlan, gleicheGruppen } from './umbau.js';
 export { gruppenAusPlan, gleicheGruppen };
 import { KANAL_FARBEN } from './geraete.js';

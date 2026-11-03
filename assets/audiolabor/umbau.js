@@ -3,7 +3,7 @@
 
 import { BAUTEILE, pinOrt, pinRichtung, weltRechteck, platzVon, standardWerte } from './bauteile.js';
 import { loeseNetze } from './netz.js';
-import { freieKennung } from './aufbau.js?v=2';
+import { freieKennung } from './aufbau.js?v=3';
 import { baueHindernisse, findeWeg, punktKey, RASTER } from './router.js';
 
 export const fang = v => Math.round(v / RASTER) * RASTER;

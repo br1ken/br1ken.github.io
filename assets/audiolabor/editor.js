@@ -12,7 +12,7 @@
 
 import { BAUTEILE, pinOrt, pinRichtung, weltRechteck, platzVon, standardWerte } from './bauteile.js';
 import { loeseNetze } from './netz.js';
-import { freieKennung } from './aufbau.js?v=2';
+import { freieKennung } from './aufbau.js?v=3';
 import { baueHindernisse, findeWeg, geraderWeg, RASTER } from './router.js';
 import { fang, ordneDraht, neueDrahtId, pinVon, anschlussBei, entferneTeile, schleifeEin, freieDrehung, freierPlatz, koerperStoesst, laeuftDurch, versatzFuerKopie, gruppenAusPlan, gleicheGruppen, schliesstKurz, bewahreVerbindungen } from './umbau.js';
 import { esc } from './hilfen.js';

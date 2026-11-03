@@ -3,7 +3,7 @@
    Die Kriterien für nichtlineare Schaltungen sind einzeln benannt: Arbeitspunkt, Schwingfrequenz, Amplitude, Spektrum, Verlauf. */
 
 import { Spice, spalte } from './spice.js';
-import { ausNetzen, zuDatei, ausDatei } from './aufbau.js?v=2';
+import { ausNetzen, zuDatei, ausDatei } from './aufbau.js?v=3';
 import { baueSchaltung, netlistUnterschied } from './netz.js';
 import { spiceText, spiceName } from './netlist.js';
 import { frequenzgang, grenzfrequenz, wertBei, zuAudio, amplitudeBei, pegel, pegelZeit, frequenzAusDurchgaengen, klirr, DB_3, wavFloat32 } from './messung.js';

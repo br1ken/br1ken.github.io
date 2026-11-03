@@ -1,7 +1,7 @@
 /* Audiolabor: die Versuchssammlung. Jeder Versuch ist ein gewöhnliches Projekt, das danach frei weiterverändert werden kann.
    Die Zahlen in den Texten sind mit dem Prüfstand nachgerechnet. Sie sind keine Hardwaremessungen. */
 
-import { leeresProjekt, neuesTeil } from './aufbau.js?v=2';
+import { leeresProjekt, neuesTeil } from './aufbau.js?v=3';
 import { gruppenAusPlan, setzeNetze } from './umbau.js';
 
 /* Für die Schritte: Hat der Wert sein Ziel erreicht? Sind die Pins verbunden? Gibt es das Teil noch? */

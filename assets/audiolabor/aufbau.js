@@ -76,28 +76,48 @@ export function zuDatei(projekt) {
   };
 }
 
+/* Datei und geteilter Link sind fremde Eingaben: Kennungen, Koordinaten und Werte landen später in Attributen der Zeichnung.
+   Darum nur Kennungen aus Buchstaben und Ziffern, Zahlen als endliche Zahl, Auswahlwerte aus der Liste. */
+const KENNUNG = /^[A-Za-z][A-Za-z0-9_]{0,31}$/;
+const zahlOder = (v, ersatz) => typeof v === 'number' && Number.isFinite(v) ? v : ersatz;
+function wertAusDatei(pd, v, ersatz) {
+  if (pd.typ === 'zahl') return zahlOder(v !== null && typeof v === 'object' ? v.wert : v, ersatz);
+  if (pd.typ === 'wahl') return pd.optionen.some(([w]) => w === v) ? v : ersatz;
+  if (pd.typ === 'schalter') return typeof v === 'boolean' ? v : ersatz;
+  return typeof v === 'string' ? v.slice(0, 64) : ersatz;
+}
+const punktOk = q => Array.isArray(q) && Number.isFinite(q[0]) && Number.isFinite(q[1]);
+
 export function ausDatei(daten) {
   const meldungen = [];
   if (daten?.format !== FORMAT) throw new Error('Das ist keine Audiolabor-Datei.');
   if (daten.version > FORMAT_VERSION) throw new Error(`Die Datei hat Format ${daten.version}; diese Seite kennt bis ${FORMAT_VERSION}.`);
-  const p = leeresProjekt(daten.titel);
+  if (!Array.isArray(daten.teile)) throw new Error('Die Datei enthält keine Bauteilliste.');
+  const p = leeresProjekt(typeof daten.titel === 'string' ? daten.titel.slice(0, 120) : undefined);
+  const kennungen = new Set();
   for (const roh of daten.teile) {
-    const def = BAUTEILE[roh.typ];
-    if (!def) throw new Error(`Unbekanntes Bauteil „${roh.typ}“ in ${roh.id}.`);
+    const def = Object.hasOwn(BAUTEILE, roh?.typ) ? BAUTEILE[roh.typ] : null;
+    if (!def) throw new Error(`Unbekanntes Bauteil „${String(roh?.typ).slice(0, 32)}“.`);
+    if (typeof roh.id !== 'string' || !KENNUNG.test(roh.id) || kennungen.has(roh.id)) throw new Error(`Ungültige oder doppelte Kennung „${String(roh.id).slice(0, 32)}“.`);
+    kennungen.add(roh.id);
     const werte = standardWerte(roh.typ);
     for (const pd of def.werte) {
       const v = roh.werte?.[pd.key];
-      if (v === undefined) continue;
-      werte[pd.key] = pd.typ === 'zahl' ? (typeof v === 'object' ? v.wert : v) : v;
+      if (v !== undefined) werte[pd.key] = wertAusDatei(pd, v, werte[pd.key]);
     }
-    const t = {id: roh.id, typ: roh.typ, x: roh.darstellung?.x ?? 0, y: roh.darstellung?.y ?? 0, rot: roh.darstellung?.rot ?? 0, spiegel: !!roh.darstellung?.spiegel, werte};
+    const lage = roh.darstellung;
+    const t = {id: roh.id, typ: roh.typ, x: zahlOder(lage?.x, 0), y: zahlOder(lage?.y, 0), rot: zahlOder(lage?.rot, 0), spiegel: !!lage?.spiegel, werte};
     const m = def.modell(t);
     if (roh.modell && (roh.modell.version !== m.version || roh.modell.name !== m.name)) {
       meldungen.push(`${roh.id}: gespeichert mit Modell „${roh.modell.name}“ (${roh.modell.version}), jetzt „${m.name}“ (${m.version}).`);
     }
     p.teile.push(t);
   }
-  p.draehte = (daten.draehte || []).map(d => ({id: d.id, punkte: d.punkte}));
+  const draehte = Array.isArray(daten.draehte) ? daten.draehte : [];
+  p.draehte = draehte.filter(d => typeof d?.id === 'string' && KENNUNG.test(d.id) && Array.isArray(d.punkte) && d.punkte.length >= 2 && d.punkte.every(punktOk))
+    .map(d => ({id: d.id, punkte: d.punkte}));
+  const verworfen = draehte.length - p.draehte.length;
+  if (verworfen) meldungen.push(`${verworfen === 1 ? 'Ein Draht' : `${verworfen} Drähte`} ohne gültige Kennung oder Punkte ${verworfen === 1 ? 'wurde' : 'wurden'} nicht geladen.`);
   Object.assign(p.analyse, daten.analyse);
   if (daten.digital) p.digital = daten.digital;
   if (daten.monitor) p.monitor = daten.monitor;

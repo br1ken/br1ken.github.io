@@ -3,7 +3,7 @@
 
 import { BAUTEILE, GRUPPEN, standardWerte } from './bauteile.js';
 import { leseWert, fmtWert, fmtMess, komma, naechsterNormwert } from './einheiten.js';
-import { leeresProjekt, zuDatei, ausDatei } from './aufbau.js?v=2';
+import { leeresProjekt, zuDatei, ausDatei } from './aufbau.js?v=3';
 import { baueSchaltung, netlistUnterschied } from './netz.js';
 import { spiceText, speicherListe, spiceName } from './netlist.js';
 import { Spice, spalte } from './spice.js';
@@ -429,13 +429,13 @@ function quellenFelder(t, schluessel) {
     const p = def.werte.find(x => x.key === key);
     if (!p || (p.nurWenn && !p.nurWenn(t.werte))) return '';
     if (p.typ === 'wahl') {
-      return `<label class="al-feld">${esc(p.label)} <select class="al-eingabe" data-teil-feld="${t.id}" data-wert="${key}">${p.optionen.map(([w, n]) => `<option value="${esc(w)}"${w === t.werte[key] ? ' selected' : ''}>${esc(n)}</option>`).join('')}</select></label>`;
+      return `<label class="al-feld">${esc(p.label)} <select class="al-eingabe" data-teil-feld="${esc(t.id)}" data-wert="${key}">${p.optionen.map(([w, n]) => `<option value="${esc(w)}"${w === t.werte[key] ? ' selected' : ''}>${esc(n)}</option>`).join('')}</select></label>`;
     }
-    let s = `<label class="al-feld">${esc(p.label)} <input class="al-eingabe al-kurz" data-teil-feld="${t.id}" data-wert="${key}" value="${esc(fmtWert(t.werte[key], p.einheit))}" autocomplete="off" spellcheck="false"></label>`;
+    let s = `<label class="al-feld">${esc(p.label)} <input class="al-eingabe al-kurz" data-teil-feld="${esc(t.id)}" data-wert="${key}" value="${esc(fmtWert(t.werte[key], p.einheit))}" autocomplete="off" spellcheck="false"></label>`;
     if (p.regler) {
       const log = p.regler === 'log';
       const mi = log ? Math.log10(p.min) : p.min, ma = log ? Math.log10(p.max) : p.max;
-      s += `<input type="range" data-teil-feld="${t.id}" data-regler="${key}" min="${mi}" max="${ma}" step="${(ma - mi) / 400}" value="${log ? Math.log10(t.werte[key]) : t.werte[key]}" aria-label="${esc(t.id)} ${esc(p.label)}">`;
+      s += `<input type="range" data-teil-feld="${esc(t.id)}" data-regler="${key}" min="${mi}" max="${ma}" step="${(ma - mi) / 400}" value="${log ? Math.log10(t.werte[key]) : t.werte[key]}" aria-label="${esc(t.id)} ${esc(p.label)}">`;
     }
     return s;
   }).join('');
@@ -448,7 +448,7 @@ function zeigeQuellen() {
   for (const t of S.projekt.teile) {
     if (!felder[t.typ]) continue;
     html += `<div class="al-quelle"><b>${esc(t.id)}</b>${quellenFelder(t, felder[t.typ])}`;
-    if (t.typ === 'gate') html += `<button type="button" class="al-taster" data-taster="${t.id}">Auslösen</button>`;
+    if (t.typ === 'gate') html += `<button type="button" class="al-taster" data-taster="${esc(t.id)}">Auslösen</button>`;
     html += '</div>';
   }
   html += `<div class="al-quelle-neu"><span>+ Quelle</span>${['rail', 'gen', 'cv', 'gate', 'rausch', 'audioein'].map(typ => `<button type="button" data-neu="${typ}">${esc({rail: 'Versorgung', gen: 'Generator', cv: 'Steuerquelle', gate: 'Gate', rausch: 'Rauschen', audioein: 'Digitaler Eingang'}[typ])}</button>`).join('')}</div>`;

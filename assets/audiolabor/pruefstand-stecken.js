@@ -5,7 +5,7 @@ import { Schaltplan } from './editor.js';
 import { Steckbrett, abgleichen, gruppenAusBrett, buchsen, lochOrt } from './steckbrett.js';
 import { gruppenAusPlan, gleicheGruppen, setzeNetze, koerperStoesst, laeuftDurch } from './umbau.js';
 import { BAUTEILE, pinOrt } from './bauteile.js';
-import { neuesTeil } from './aufbau.js?v=2';
+import { neuesTeil } from './aufbau.js?v=3';
 import { VERSUCHE } from './versuche.js';
 
 const versuch = id => VERSUCHE.find(v => v.id === id).bau();
