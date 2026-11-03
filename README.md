@@ -18,7 +18,7 @@ Bewusst minimal: **plain HTML, CSS und JavaScript, ohne Framework und ohne Build
 | Grafik | SVG (Schaltpläne, Diagramme, Titelbilder), Canvas (Oszilloskop) |
 | Formeln | KaTeX 0.19, lokal in `assets/vendor/katex`, nur bei Bedarf geladen |
 | Notizen | Markdown-Dateien, eigener Renderer (`assets/markdown.js`) mit Kästen, Aufgaben, Simulationen und Lexikon-Links |
-| Schrift | MesloLGS Nerd Font (verkleinert, eingebettet) für Text, Helvetica Neue für große Überschriften |
+| Schrift | MesloLGS Nerd Font (verkleinert, eingebettet) für alles, auch für Überschriften |
 | Rechnungen | in Python/Jupyter entwickelt, auf der Seite live in JavaScript nachgebaut |
 
 ## Was drin ist
@@ -54,12 +54,14 @@ audiolabor/index.html   Audiolabor (Lab 2)
 audiolabor/pruefstand.html  Abnahme des Audiolabors im Browser
 audiolabor/STAND.md     Stand, Messwerte, Modelle, Quellen und Lizenzen des Audiolabors
 404.html                Seite für falsche Links
-favicon.svg             Logo (Signal formt ein N)
+favicon.svg             Logo (Lissajous-Figur 3 : 2, Kreide auf Ultramarin)
 neuigkeiten.js          Neuerungen an der Seite für das Neuigkeiten-Fenster (neue Notizen kommen von selbst)
-instagram/              Profilbild, Cover-Bilder, Story und Text für @_br1ken_ (nicht verlinkt)
+instagram/              Material für @_br1ken_ (nicht verlinkt), ein Ordner je Beitrag
+  osci-log-start/       erstes Karussell: osci-log_01–06.png und caption.txt
   ohmsches-gesetz/      zweites Karussell: slides.html ist die Quelle, ohm_01–06.png die gerenderten Slides, caption.txt der Posttext
   reel-intro/           Intro-Reel (reel.mp4, 25 s, 1080×1920): track.py synthetisiert den Track und schreibt die Daten fürs Bild, reel.html zeichnet jeden Frame daraus, render.js rendert und schneidet mit ffmpeg
   reel-grundlagen/      Reel „Von Newton bis Ohm" (30 s), gleicher Aufbau: acht Größen, je ein Takt, Formeln schreiben sich mit Stift
+  profil/alt/           erstes Profil-Set im alten Erscheinungsbild: Logo, Profilbild, Story
 notizen/
   beitraege.js          Liste der Notizen (nur Dateinamen)
   texte/*.md            die Notizen selbst  (_vorlage.md = Vorlage)
@@ -72,6 +74,8 @@ projekte/
   _vorlage/             zum Kopieren für neue Projekte
 assets/
   site.css / site.js    gemeinsames Design (Farben als Variablen, hell + dunkel), Kopf- und Fußzeile, Menü, ◐-Dunkelmodus, ⋮-Lexikon-Knopf, Links
+  design.css            Erscheinungsbild „Platine“: Lötstopplack, Kupfer, Bestückungsdruck; wird auf jeder Seite zuletzt geladen
+  platine.js            Startseite: Leiterplatte mit Tastkopf und Oszilloskop
   labor.css / labor.js  Labor: Bausteine, Klangbilder, Sequencer, Kabelphysik, Modulation, Einfach-Ansicht und freies Pult, Aufnehmen
   labor-worklet.js      Rechenwerk im Audio-Thread: RC/CR-Filter mit beweglicher Grenzfrequenz, LFO mit vier Formen
   missionen.js          Missionen, XP, Stufen, Abzeichen
@@ -99,6 +103,8 @@ assets/
   touch-icon.png        Homescreen-Icon
 vorschau.command        Doppelklick = lokale Vorschau
 ```
+
+**Nur auf der Festplatte, nicht auf GitHub:** `reels/` (Videoschnitt, Dateien über 100 MB), `wallpaper/`, `planung/` (Übergaben, Ideen, Briefings) und der Rest von `instagram/`: weitere Karussells, neues Logo und Highlights in `profil/`, `FINAL/` zum Hochladen. In der Arbeitskopie blendet `.git/info/exclude` diese Ordner aus `git status` aus. Getrackte Dateien darin bleiben getrackt; neue lokale Dateien kommen nur mit `git add -f` dazu.
 
 ## Lokal ansehen
 
