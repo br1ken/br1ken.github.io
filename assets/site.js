@@ -209,7 +209,7 @@ const OSCI = (() => {
     }
     return lexLoading.then(() => OSCILexikon.open(id));
   }
-  const LEX_VERSION = 16;
+  const LEX_VERSION = 17;
   document.addEventListener('click', e => {
     const link = e.target.closest('[data-lex]');
     if (link) { e.preventDefault(); lexikon(link.dataset.lex).catch(() => {}); }

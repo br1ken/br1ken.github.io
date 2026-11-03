@@ -40,7 +40,7 @@ Bewusst minimal: **plain HTML, CSS und JavaScript, ohne Framework und ohne Build
 **Aktuelle Inhalte**
 - Notizen, Rechnungen (ET1, Rechenübung 2): *Knoten- und Maschengleichungen (A2.1)* · *Gemischte Widerstandsschaltung bei Wechselstrom (A2.2)* · *Brückenschaltung (A2.3)* · *Belastetes Potentiometer (A2.4)* · *Ersatzwiderstand mit der Dreieck-Stern-Umwandlung (A2.5)* · *Kurzschlussaufgabe (A2.6)*
 - Notizen, Rechnungen (ET1, Rechenübung 3): *Überlagerungsprinzip und Leistungsbilanz (A3.1)* · *Ersatzspannungsquelle (A3.2)* · *Ersatzspannungs- und Ersatzstromquelle (A3.3)* · *Ersatzspannungsquelle mit gesteuerten Quellen (A3.4)* · *Brückenschaltung zur Messwertumsetzung (A3.5)* · *Wirkungsgrad einer Spannungsquelle (A3.6)*
-- Notizen, Theorie: *Von Newton bis Ohm* · *Widerstandsnetzwerke* · *Die Kirchhoffschen Gesetze* · *Stern-Dreieck-Umwandlung* · *Strom in Flüssigkeiten* · *Mittelwert, Gleichrichtwert, Effektivwert*
+- Notizen, Theorie: *Von Newton bis Ohm* · *Widerstandsnetzwerke* · *Die Kirchhoffschen Gesetze* · *Stern-Dreieck-Umwandlung* · *Ersatzquellen: die Betriebsanleitung für Thévenin und Norton* · *Strom in Flüssigkeiten* · *Mittelwert, Gleichrichtwert, Effektivwert*
 - Notizen, Audiotechnik: *Vom Sinus zum Sound*, ein Kurs in fünf Teilen (19 Abschnitte, 58 Checkpoints, 26 getestete Python-Programme, drei Projekte; `werkzeug.py` in `notizen/dateien/`)
 - Notizen, Sonstiges: *Hallo, Labor.*
 - Projekte: Audiolabor · Messplatz · RC-Filter-Explorer · Crashtest-Labor
