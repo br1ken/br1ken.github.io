@@ -996,7 +996,7 @@ function drawScope() {
   const ratio = Math.min(devicePixelRatio || 1, 2), W = screen.clientWidth, H = W * .8;
   if (screen.width !== Math.round(W * ratio)) { screen.width = Math.round(W * ratio); screen.height = Math.round(H * ratio); screen.style.height = H + 'px'; }
   pen.setTransform(ratio, 0, 0, ratio, 0, 0);
-  pen.fillStyle = '#0d0f0b'; pen.fillRect(0, 0, W, H);
+  pen.fillStyle = '#0a0a14'; pen.fillRect(0, 0, W, H);
   const dx = W / 10, dy = H / 8;
   pen.strokeStyle = 'rgba(200, 210, 190, .16)'; pen.lineWidth = 1; pen.beginPath();
   for (let i = 1; i < 10; i++) { pen.moveTo(i * dx + .5, 0); pen.lineTo(i * dx + .5, H); }
@@ -1049,7 +1049,7 @@ function drawScope() {
     if (y < 0 || y > H) continue;
     pen.fillStyle = SCOPE_COLORS[c];
     pen.beginPath(); pen.moveTo(0, y - 6); pen.lineTo(9, y); pen.lineTo(0, y + 6); pen.fill();
-    pen.fillStyle = '#0d0f0b'; pen.fillText(c < 2 ? String(c + 1) : 'M', 1, y + 3.5);
+    pen.fillStyle = '#0a0a14'; pen.fillText(c < 2 ? String(c + 1) : 'M', 1, y + 3.5);
   }
   if (!o.xy) {
     const tc = o.trig.src, ty = yOf(tc, o.trig.lvl);
@@ -1557,7 +1557,7 @@ function drawBode() {
   const H = Math.round(clamp(W * .52, 300, 500)), ratio = Math.min(devicePixelRatio || 1, 2);
   if (bodeEl.width !== Math.round(W * ratio) || bodeEl.height !== Math.round(H * ratio)) { bodeEl.width = Math.round(W * ratio); bodeEl.height = Math.round(H * ratio); }
   bodeEl.style.height = H + 'px';
-  const g = bpen, cs = getComputedStyle(document.documentElement), col = name => cs.getPropertyValue(name).trim();
+  const g = bpen, cs = getComputedStyle(bodeEl), col = name => cs.getPropertyValue(name).trim();
   const C = {bg: col('--card'), fg: col('--fg'), text: col('--plot-text'), major: col('--grid-major'), minor: col('--grid-minor'), ph: col('--mp-ch2'), red: col('--mp-red'), mark: col('--control'), muted: col('--soft')};
   g.setTransform(ratio, 0, 0, ratio, 0, 0);
   g.fillStyle = C.bg; g.fillRect(0, 0, W, H);

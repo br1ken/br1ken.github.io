@@ -152,7 +152,7 @@ select { width: 100%; min-height: 40px; font: inherit; font-size: 12px; padding:
 /* Unten: Oszilloskop und Status */
 .computer-bottom { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--ink); }
 .scope-wrap { padding: 18px 20px; border-right: 1px solid var(--hairline); }
-.scope { display: block; width: 100%; height: 96px; margin-top: 12px; background: var(--paper); border: 1px solid var(--hairline); }
+.scope { display: block; width: 100%; height: 96px; margin-top: 12px; background: var(--scope-bg); border: 1px solid var(--hairline); }
 .patch-status { padding: 16px 20px; }
 .patch-status p { font-size: 12px; line-height: 1.55; margin: 0 0 8px; }
 #audio-status { font-weight: 500; }
@@ -324,7 +324,7 @@ select { width: 100%; min-height: 40px; font: inherit; font-size: 12px; padding:
   .transport { grid-column: 1; grid-row: 1; width: 100%; }
   .transport .master-label { display: none; }
   #audio-toggle { width: 100%; min-height: 52px; font-size: 15px; }
-  .scope-mini { display: block; grid-column: 2; grid-row: 1; width: 104px; height: 52px; border: 1px solid var(--hairline); background: var(--paper); }
+  .scope-mini { display: block; grid-column: 2; grid-row: 1; width: 104px; height: 52px; border: 1px solid var(--hairline); background: var(--scope-bg); }
   .lab-hint { display: block; grid-column: 1 / -1; margin: 0; font-size: 12px; line-height: 1.4; color: var(--ink); max-height: 0; overflow: hidden; opacity: 0; transition: max-height .25s ease, opacity .25s ease; }
   .lab-hint.show { max-height: 4.5em; opacity: 1; }
   .toolbar { position: static; }

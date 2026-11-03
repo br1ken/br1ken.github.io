@@ -248,7 +248,9 @@
 .ana-bar .lex-q { margin-left: auto; }
 .ana-range { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; color: var(--muted); }
 .ana-range .step output { min-width: 66px; color: var(--fg); }
-.bode-plot { display: block; width: 100%; height: 360px; border: 1px solid var(--hairline); touch-action: pan-y; cursor: crosshair; }
+/* Auch der Frequenzgang ist ein Messgerät: dunkler Schirm in beiden Modi. drawBode liest diese Werte vom Canvas. */
+.bode-plot { --card: var(--scope-bg); --fg: var(--kreide); --plot-text: #a9a69c; --grid-major: #3a3a4c; --grid-minor: #24243a; --mp-ch2: var(--kanal-2); --mp-red: #ff6a52; --control: #ff6a3d; --soft: #a9a69c;
+  display: block; width: 100%; height: 360px; border: 1px solid var(--hairline); touch-action: pan-y; cursor: crosshair; }
 .bode-read { margin: 0; font: 11px/1.7 var(--mono); font-variant-numeric: tabular-nums; min-height: 5em; }
 .bode-read b { font-weight: 600; }
 .mp-tablewrap { overflow-x: auto; }

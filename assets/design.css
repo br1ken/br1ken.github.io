@@ -2,6 +2,13 @@
    Ultramarin ist Lötstopplack, Mennige ist blankes Kupfer, Kreide ist Bestückungsdruck, Tinte ist das Oszilloskop.
    Schrift: überall Meslo LG. */
 
+/* ---------- Licht ---------- */
+/* Auf Kreide bleibt --glow durchsichtig, dort gibt es kein Glühen. Auf Lack ist es schwächer, sonst überstrahlt Orange zu Pink. */
+.flaeche-tinte, .oszi, .cover { --glow: rgba(255, 90, 46, .5); }
+.signal, .flaeche-blau { --glow: rgba(255, 90, 46, .3); }
+/* --schein hängt an --glow und muss darum auf jeder Fläche neu aufgelöst werden */
+:root, .flaeche-tinte, .flaeche-blau, .signal, .oszi, .cover { --schein: 0 0 2px var(--glow), 0 0 8px var(--glow); }
+
 /* ---------- Schrift ---------- */
 h1, h2, h3, .headline, .about-lead, .menu-item b, .post-nav b, .lesson h4, .news-item b, .lex-head h2, .news-head h2 {
   font-family: var(--mono); font-weight: 700; letter-spacing: -.035em;
@@ -60,18 +67,18 @@ html { scroll-padding-top: 72px; }
 .card::after { right: -12px; }
 a.card:hover, .card:has(.card-link:hover) { background: var(--card); box-shadow: none; transform: none; border-color: var(--accent); outline: 1px solid var(--accent); }
 .card:has(.card-link:hover)::before, .card:has(.card-link:hover)::after { background: repeating-linear-gradient(180deg, var(--accent) 0 6px, transparent 6px 22px); }
-.card-cover { aspect-ratio: 16 / 9; border-bottom: 1px solid var(--ink); background: #0a0a14; }
-.card-art { border: 0; background: var(--accent); color: #0a0a14; font-weight: 700; }
-.card-art[data-art="theorie"] { background: #efece2; color: #0a0a14; }
+.card-cover { aspect-ratio: 16 / 9; border-bottom: 1px solid var(--ink); background: var(--tinte); }
+.card-art { border: 0; background: var(--accent); color: var(--tinte); font-weight: 700; }
+.card-art[data-art="theorie"] { background: var(--kreide); color: var(--tinte); }
 .card-kicker { font-size: 10.5px; }
 
 /* Titelbilder: XY-Oszillogramm, immer auf dunklem Schirm */
-.cover .cv-bg { fill: #0a0a14; }
+.cover .cv-bg { fill: var(--tinte); }
 .cover .cv-raster path { stroke: rgba(239, 236, 226, .15); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .cover .cv-achse { stroke: rgba(239, 236, 226, .4); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.cover .cv-echo { fill: none; stroke: rgba(255, 90, 46, .3); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
-.cover .cv-spur { fill: none; stroke: #ff5a2e; stroke-width: 2.2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
-.cover .cv-text { font: 15px var(--mono); fill: #efece2; }
+.cover .cv-echo { fill: none; stroke: var(--phosphor-hof); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+.cover .cv-spur { fill: none; stroke: var(--mennige); stroke-width: 2.2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.cover .cv-text { font: 15px var(--mono); fill: var(--kreide); }
 .post-cover { aspect-ratio: 16 / 4; }
 
 /* ---------- Notiz ---------- */
@@ -86,25 +93,25 @@ a.card:hover, .card:has(.card-link:hover) { background: var(--card); box-shadow:
 .prose a:hover { background: var(--accent); }
 
 /* ---------- Startseite: die Platine ---------- */
-.signal { position: relative; height: 100svh; min-height: 640px; padding-top: 56px; overflow: hidden; background: #1a12ff; color: #efece2; }
+.signal { position: relative; height: 100svh; min-height: 640px; padding-top: 56px; overflow: hidden; background: var(--lack); color: var(--kreide); }
 .platine { display: block; width: 100%; height: 100%; touch-action: pan-y; }
 /* Das Oszilloskop liegt wie ein Messgerät neben der Platine */
-.oszi { position: absolute; top: 76px; right: var(--gutter); width: min(430px, calc(100% - 2 * var(--gutter))); background: #0a0a14; color: #efece2; border: 1px solid #efece2; font-size: 11px; pointer-events: none; }
+.oszi { position: absolute; top: 76px; right: var(--gutter); width: min(430px, calc(100% - 2 * var(--gutter))); background: var(--tinte); color: var(--kreide); border: 1px solid var(--kreide); font-size: 11px; pointer-events: none; }
 .oszi canvas { display: block; width: 100%; aspect-ratio: 5 / 3; }
 .oszi-kopf, .oszi-fuss { display: flex; justify-content: space-between; gap: 12px; padding: 8px 10px; }
 .oszi-kopf { border-bottom: 1px solid #3a3a4c; font-weight: 700; }
 .oszi-fuss { border-top: 1px solid #3a3a4c; color: #c8c6bc; }
-.oszi-kopf b { color: #ff5a2e; }
+.oszi-kopf b { color: var(--mennige); }
 /* Der Titel ist Bestückungsdruck in einem Bauteilrahmen */
-.titel { position: absolute; left: var(--gutter); bottom: 44px; width: min(760px, calc(100% - 2 * var(--gutter))); padding: 18px 22px 22px; background: #1a12ff; border: 1px solid #efece2; }
-.titel h1 { margin: 0; color: #efece2; font-size: clamp(50px, 8.4vw, 118px); line-height: 1; letter-spacing: -.075em; font-weight: 700; hyphens: none; }
-.titel h1 span { color: #ff5a2e; }
-.titel .headline { margin: 12px 0 0; font-size: clamp(15px, 1.5vw, 19px); line-height: 1.3; letter-spacing: -.03em; color: #efece2; }
-.titel .meta { margin-top: 8px; font-size: 11px; color: #efece2; }
+.titel { position: absolute; left: var(--gutter); bottom: 44px; width: min(760px, calc(100% - 2 * var(--gutter))); padding: 18px 22px 22px; background: var(--lack); border: 1px solid var(--kreide); }
+.titel h1 { margin: 0; color: var(--kreide); font-size: clamp(50px, 8.4vw, 118px); line-height: 1; letter-spacing: -.075em; font-weight: 700; hyphens: none; }
+.titel h1 span { color: var(--mennige); }
+.titel .headline { margin: 12px 0 0; font-size: clamp(15px, 1.5vw, 19px); line-height: 1.3; letter-spacing: -.03em; color: var(--kreide); }
+.titel .meta { margin-top: 8px; font-size: 11px; color: var(--kreide); }
 .titel .hero-links { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px; margin-top: 16px; }
-.titel .button { border-color: #efece2; color: #efece2; }
-.titel .button.primary { background: #ff5a2e; border-color: #ff5a2e; color: #0a0a14; }
-.titel .button:hover { background: #efece2; border-color: #efece2; color: #0a0a14; }
+.titel .button { border-color: var(--kreide); color: var(--kreide); }
+.titel .button.primary { background: var(--mennige); border-color: var(--mennige); color: var(--tinte); }
+.titel .button:hover { background: var(--kreide); border-color: var(--kreide); color: var(--tinte); }
 
 /* ---------- Farbflächen: jede Fläche setzt ihre eigenen Werte ---------- */
 .flaeche { max-width: none; padding: 54px max(var(--gutter), calc((100vw - var(--max)) / 2)) 72px; background: var(--bg); color: var(--fg); }
