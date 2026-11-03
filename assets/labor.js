@@ -842,18 +842,21 @@ function setChoice(node, key, value) {
   const spec = DEFINITIONS[node?.type]?.choices?.[key];
   if (!spec || !Object.hasOwn(spec.options, value) || node.p[key] === value) return;
   remember();
+  const frueher = node.p.frequency;
   node.p[key] = value;
   document.querySelectorAll(`[data-quick-choice="${node.id}"][data-choice-key="${key}"]`).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.choiceValue === value)));
   document.querySelectorAll(`[data-choice="${node.id}"][data-choice-key="${key}"]`).forEach(s => { s.value = value; });
   if (key === 'hit') {
-    /* Ein Kick braucht einen tiefen Sinus: 55 Hz am Regler spielt die unterste Moll-Zeile als 55 Hz. Ein Rückgängig-Schritt für alles. */
+    /* Ein Kick braucht einen tiefen Sinus: 55 Hz am Regler spielt das Raster zwei Oktaven unter 220 Hz (unterste Moll-Zeile, mittel: 55 Hz). Ein Rückgängig-Schritt für alles. */
     if (value === 'kick') { node.p.wave = 'sine'; node.p.frequency = 55; }
     render();
     document.querySelector(`[data-quick-choice="${node.id}"][data-choice-key="hit"][data-choice-value="${value}"]`)?.focus({preventScroll: true});
   }
   refreshTexts(node);
   save(); liveUpdate(node, key) || scheduleAudio();
-  message(key === 'hit' && value === 'kick' ? `${nodeName(node)}: Kick. ${controllerOf(node) ? 'Die unterste Zeile im Moll-Raster fällt jetzt von 220 auf 55 Hz.' : 'Steck noch einen Sequencer in SEQ, dann schlägt er.'}` : `${nodeName(node)}: ${spec.options[value]}.`);
+  const seq = controllerOf(node), unten = seq && seqFreq(seq, 0) / CONTROL_REF;
+  const tiefer = frueher === node.p.frequency ? `Die unterste Zeile im Raster spielt ${hz(unten * frueher)}.` : `Die unterste Zeile im Raster fällt jetzt von ${hz(unten * frueher)} auf ${hz(unten * node.p.frequency)}.`;
+  message(key === 'hit' && value === 'kick' ? `${nodeName(node)}: Kick. ${seq ? tiefer : 'Steck noch einen Sequencer in SEQ, dann schlägt er.'}` : `${nodeName(node)}: ${spec.options[value]}.`);
 }
 /* Binaural: Hirnwellen-Band setzt die Differenzfrequenz */
 function setBand(node, hz) {

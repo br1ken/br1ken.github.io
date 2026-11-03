@@ -190,6 +190,8 @@
   function groesse() {
     d = Math.min(devicePixelRatio || 1, 2);
     W = platine.clientWidth; H = platine.clientHeight;
+    /* Ohne Fläche (Tab noch ohne Größe) gibt es nichts zu routen; der ResizeObserver meldet sich, sobald sie da ist */
+    if (!W || !H) return;
     platine.width = W * d; platine.height = H * d;
     oszi.width = oszi.clientWidth * d; oszi.height = oszi.clientHeight * d;
     route();

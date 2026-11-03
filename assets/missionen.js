@@ -139,6 +139,7 @@
   let progress = {done: {}, hinted: {}, goals: {}, current: null, hidden: false, streak: {days: 0, last: ''}};
   try { progress = {...progress, ...JSON.parse(localStorage.getItem(KEY) || '{}')}; } catch { /* ohne Speicher */ }
   progress.goals ||= {}; progress.streak ||= {days: 0, last: ''};
+  progress.gesamt = MISSIONEN.length; // für die Fortschrittsanzeige auf der Startseite, die die Missionen nicht lädt
   const store = () => { try { localStorage.setItem(KEY, JSON.stringify(progress)); } catch { /* egal */ } };
   const doneCount = () => MISSIONEN.filter(m => progress.done[m.id]).length;
   const xp = () => MISSIONEN.reduce((sum, m) => sum + (progress.goals[m.id]?.length || 0) * XP_GOAL + (progress.done[m.id] ? XP_MISSION + (progress.done[m.id] === 3 ? XP_PERFECT : 0) : 0), 0);

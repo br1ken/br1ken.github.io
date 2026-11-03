@@ -13,11 +13,12 @@ addEventListener('hashchange', toLab);
   /* Fortschritt im Labor (Missionen) anzeigen, falls schon gespielt */
   try {
     const p = JSON.parse(localStorage.getItem('osci-log-missionen') || 'null');
-    const done = p ? Object.keys(p.done || {}).length : 0;
+    /* Die Gesamtzahl schreibt missionen.js mit; ältere Stände kennen sie noch nicht */
+    const gesamt = p?.gesamt || 17, done = p ? Math.min(Object.keys(p.done || {}).length, gesamt) : 0;
     if (done) {
       const box = document.getElementById('teaser-progress');
       box.hidden = false;
-      box.innerHTML = `<span>Dein Fortschritt: <b>${done} / 13 Missionen</b></span><span class="mh-bar"><i style="display:block;height:100%;background:var(--accent);width:${Math.round(done / 13 * 100)}%"></i></span>`;
+      box.innerHTML = `<span>Dein Fortschritt: <b>${done} / ${gesamt} Missionen</b></span><span class="mh-bar"><i style="display:block;height:100%;background:var(--accent);width:${Math.round(done / gesamt * 100)}%"></i></span>`;
     }
   } catch { /* ohne Speicher */ }
   const list = OSCI.projekte().slice(0, 3);

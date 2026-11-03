@@ -306,3 +306,8 @@ Ein Elektroniklabor auf TU-Niveau, gedacht zum Vorbereiten von Laborübungen und
 **Durchsicht (1. November)**
 - Alle Seiten headless geprüft (hell/dunkel, Desktop/Handy): keine Skriptfehler, keine toten Links, keine Formelfehler; alle 21 Notizen und 88 Lexikon-Einträge nachgerechnet, ohne Befund.
 - Behoben: Play-Leiste des Labors lief auf Handys über den rechten Rand (Aufnehmen rutscht jetzt bei Bedarf in eine zweite Zeile); Lautschrift-Hochstellungen (fᶜ, uᴸ) durch echte Indizes ersetzt; Symbole, die Meslo nicht kennt (∿ ⊣⊢ ⏚ ⎓ …), bekommen feste Ausweichschriften; Kicker-Zeile der Karten lesbarer; Binaural-Bereich im Lexikon wie im Labor (0,5 bis 40 Hz, Delta bis Gamma).
+
+**Durchsicht (3. November)**
+- Alle Seiten und 20 Notizen im Browser geprüft (Desktop und 375 px, hell und dunkel): kein Seitenüberlauf, keine Formel- oder Ladefehler; Verweise, Versionsnummern und Lexikon-Links stimmen. Prüfstand des Audiolabors danach: Stecken und ngspice-Abnahme 67 bestanden, 1 nur gemessen; Versuche 57 bestanden; keine Zeile durchgefallen.
+- Behoben: Die Startseite zählte 13 statt 17 Missionen (die Gesamtzahl schreibt jetzt `missionen.js` mit); die Platine warf einen Fehler, wenn die Seite beim Laden noch keine Breite hatte; der Kick-Hinweis im Labor nannte immer 220 → 55 Hz, jetzt die echte Tonhöhe der untersten Rasterzeile (im Dur-Raster 261,6 → 65,4 Hz); erledigte Missionen im Dunkelmodus hatten nur 2,6:1 Kontrast, jetzt 6,3:1.
+- Audiolabor: Dateien und geteilte Links (`#p=`) werden beim Laden geprüft. Kennungen nur aus Buchstaben und Ziffern, Zahlen nur als Zahl, Auswahlwerte nur aus der Liste, Drähte nur mit gültigen Punkten. Vorher konnte ein präparierter Link eigenes HTML in die Seite schreiben.
